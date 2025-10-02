@@ -75,6 +75,27 @@
         margin-bottom: 25px;
       }
 
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #555;
+      }
+
+      .form-group select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+        background-color: #f9f9f9;
+      }
+
       .upload-area {
         margin: 25px 0;
         display: flex;
@@ -177,7 +198,7 @@
   </head>
   <body>
     <div class="header-info">
-      <h1>Hanya untuk pengumpulan tugas Praktikum Perancangan dan pengujian perangkat lunak kelas A,B,C dan Praktikum Pemrograman Web A,B,C</h1>
+      <h1>Hanya untuk pengumpulan tugas Praktikum Perancangan dan pengujian perangkat lunak kelas A,B,C dan Pemrograman Web A,B,C</h1>
       <p>Dibuat oleh M. Putra Ramadhani</p>
     </div>
 
@@ -185,6 +206,15 @@
       <div class="card">
         <h2>Unggah Dokumen</h2>
         <p class="sub-text">Pilih file dokumen (PDF, DOCX, dsb.) untuk diunggah.</p>
+
+        <div class="form-group">
+          <label for="courseSelect">Pilih Mata Kuliah:</label>
+          <select id="courseSelect">
+            <option value="" disabled selected>-- Pilih salah satu --</option>
+            <option value="Perancangan dan Pengujian Perangkat Lunak">Praktikum Perancangan dan Pengujian Perangkat Lunak</option>
+            <option value="Pemrograman Web">Praktikum Pemrograman Web</option>
+          </select>
+        </div>
 
         <div class="upload-area">
           <input type="file" id="fileInput" accept=".pdf, .doc, .docx" hidden />
@@ -205,7 +235,6 @@
 
     <script>
       // Ganti dengan konfigurasi Firebase Anda sendiri
-      // JANGAN BAGIKAN kredensial ini ke publik!
       const firebaseConfig = {
         apiKey: "AIzaSyCZAfnelUdrwUz856j2hC3yJWqUm-JJmiI",
         authDomain: "ruangbelajar-52a67.firebaseapp.com",
@@ -222,6 +251,7 @@
       const storage = firebase.storage();
 
       const fileInput = document.getElementById("fileInput");
+      const courseSelect = document.getElementById("courseSelect");
       const fileNameSpan = document.getElementById("fileName");
       const progressBar = document.getElementById("progressBar");
       const progressContainer = document.getElementById("progressContainer");
@@ -229,43 +259,65 @@
 
       fileInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
+        const selectedCourse = courseSelect.value;
+
+        if (!selectedCourse) {
+          statusMessage.textContent = "❗ Mohon pilih mata kuliah terlebih dahulu.";
+          statusMessage.style.color = "#dc3545";
+          fileInput.value = ""; // Reset input file
+          return;
+        }
+
         if (file) {
           fileNameSpan.textContent = `File terpilih: ${file.name}`;
-          uploadFile(file);
+          uploadFile(file, selectedCourse);
         }
       });
 
-      function uploadFile(file) {
-        const storageRef = storage.ref();
-        const fileRef = storageRef.child(`dokumen/${file.name}`); // Menggunakan nama file asli
+      function uploadFile(file, course) {
+        let folderName;
+
+        // Menggunakan switch-case untuk menentukan nama folder singkat
+        switch (course) {
+          case "Perancangan dan Pengujian Perangkat Lunak":
+            folderName = "perancangandanppl";
+            break;
+          case "Pemrograman Web":
+            folderName = "pemrogramanweb";
+            break;
+          default:
+            folderName = "lainnya"; // Folder default jika pilihan tidak sesuai
+        }
+
+        // Tentukan path folder berdasarkan nama singkat
+        const folderPath = `dokumen/${folderName}/`;
+        const fileRef = storage.ref(folderPath + file.name);
 
         const uploadTask = fileRef.put(file);
 
         // Tampilkan progress bar dan reset status
         progressContainer.style.display = "block";
         progressBar.style.width = "0%";
-        statusMessage.textContent = "Mengunggah...";
+        statusMessage.textContent = "🚀 Mengunggah...";
+        statusMessage.style.color = "#555";
 
         // Dengarkan perubahan status pengunggahan
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            // Hitung persentase
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             progressBar.style.width = `${progress}%`;
           },
           (error) => {
-            // Tangani error
             console.error("Kesalahan unggah:", error);
-            statusMessage.textContent = `Gagal mengunggah: ${error.message}`;
+            statusMessage.textContent = `❌ Gagal mengunggah: ${error.message}`;
             statusMessage.style.color = "#dc3545";
             progressContainer.style.display = "none";
           },
           () => {
             // Unggahan berhasil
-            statusMessage.textContent = "Unggahan Berhasil!";
+            statusMessage.textContent = "✅ Unggahan Berhasil!";
             statusMessage.style.color = "#28a745";
-            // Dapatkan URL unduhan
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
               console.log("File tersedia di:", downloadURL);
             });
