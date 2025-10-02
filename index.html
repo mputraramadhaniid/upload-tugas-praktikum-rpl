@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Unggah Dokumen</title>
+    <title>Akses Dokumen</title>
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
@@ -12,7 +12,6 @@
         font-family: "Poppins", sans-serif;
         background-color: #f0f2f5;
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
@@ -20,35 +19,12 @@
         color: #333;
       }
 
-      .header-info {
-        text-align: center;
-        margin-bottom: 20px;
-        padding: 15px;
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        width: 90%;
-        max-width: 600px;
-      }
-
-      .header-info h1 {
-        color: #1a1a1a;
-        font-weight: 600;
-        font-size: 1.2rem;
-        margin: 0 0 5px 0;
-      }
-
-      .header-info p {
-        color: #666;
-        font-size: 0.9rem;
-        margin: 0;
-      }
-
       .container {
         padding: 20px;
         width: 100%;
-        max-width: 450px;
+        max-width: 600px;
         box-sizing: border-box;
+        display: none; /* Sembunyikan secara default */
       }
 
       .card {
@@ -57,22 +33,12 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         padding: 30px;
         text-align: center;
-        transition: transform 0.3s ease;
-      }
-
-      .card:hover {
-        transform: translateY(-5px);
       }
 
       h2 {
         color: #4a4a4a;
         font-weight: 600;
-        margin-bottom: 10px;
-      }
-
-      .sub-text {
-        color: #888;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
       }
 
       .form-group {
@@ -96,92 +62,82 @@
         background-color: #f9f9f9;
       }
 
-      .upload-area {
-        margin: 25px 0;
+      #fileList {
+        list-style-type: none;
+        padding: 0;
+        text-align: left;
+      }
+
+      #fileList li {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
         align-items: center;
+        transition: background-color 0.2s ease;
       }
 
-      .custom-file-upload {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 150px;
-        height: 150px;
-        border: 3px dashed #e0e0e0;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: border-color 0.3s ease, transform 0.3s ease;
+      #fileList li:hover {
+        background-color: #e2e6ea;
       }
 
-      .custom-file-upload:hover {
-        border-color: #007bff;
-        transform: scale(1.05);
-      }
-
-      .custom-file-upload img {
-        width: 60px;
-        margin-bottom: 5px;
-        transition: transform 0.3s ease;
-      }
-
-      .custom-file-upload:hover img {
-        transform: translateY(-5px);
-      }
-
-      .custom-file-upload span {
+      #fileList li .file-name-text {
         color: #007bff;
         font-weight: 500;
+        word-break: break-word;
+        flex-grow: 1;
       }
 
-      .file-name {
-        margin-top: 15px;
-        color: #555;
-        font-size: 14px;
-        font-style: italic;
+      .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
 
-      .progress-container {
-        width: 100%;
-        background-color: #e9ecef;
-        border-radius: 50px;
-        margin-top: 20px;
-        overflow: hidden;
-        height: 10px;
-        display: none; /* Sembunyikan secara default */
+      .preview-btn,
+      .download-btn,
+      .delete-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
       }
 
-      .progress-bar {
-        height: 100%;
-        width: 0%;
-        background-color: #007bff;
-        transition: width 0.3s ease;
-        border-radius: 50px;
+      .preview-btn img,
+      .download-btn img,
+      .delete-btn img {
+        width: 24px;
+        height: 24px;
       }
 
       .status-message {
-        margin-top: 15px;
-        font-weight: 500;
-        min-height: 20px; /* Menghindari layout bergeser */
+        margin-top: 20px;
+        color: #555;
       }
 
-      /* --- Dialog Akses Ditutup --- */
-      .access-closed-overlay {
+      .empty-message {
+        color: #888;
+        font-style: italic;
+      }
+
+      /* --- Dialog PIN --- */
+      .pin-dialog-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.7);
-        display: none; /* Sembunyikan secara default */
+        display: flex;
         justify-content: center;
         align-items: center;
         z-index: 1000;
       }
 
-      .access-closed-card {
+      .pin-dialog-card {
         background: #ffffff;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -192,22 +148,42 @@
         animation: fadeIn 0.3s ease-in-out;
       }
 
-      .access-closed-card img {
-        /* CSS untuk gambar di dialog penutup */
-        width: 80px;
-        height: 80px;
+      .pin-dialog-card h3 {
+        color: #4a4a4a;
         margin-bottom: 20px;
       }
 
-      .access-closed-card h3 {
-        color: #dc3545;
-        margin-bottom: 10px;
-        font-size: 1.5rem;
+      .pin-dialog-card input {
+        width: 80%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        text-align: center;
       }
 
-      .access-closed-card p {
-        color: #555;
-        margin: 0;
+      .pin-dialog-card button {
+        width: 80%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background-color: #007bff;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+
+      .pin-dialog-card button:hover {
+        background-color: #0056b3;
+      }
+
+      .error-message {
+        color: #dc3545;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        min-height: 20px;
       }
 
       @keyframes fadeIn {
@@ -220,6 +196,27 @@
           transform: scale(1);
         }
       }
+
+      /* Tombol Akses */
+      .access-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-bottom: 20px;
+      }
+
+      .access-open {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .access-closed {
+        background-color: #dc3545;
+        color: white;
+      }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -227,47 +224,36 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   </head>
   <body>
-    <div id="accessClosedOverlay" class="access-closed-overlay">
-      <div class="access-closed-card">
-        <img src="https://img.icons8.com/ios-filled/100/fa314a/lock.png" alt="Akses Ditutup" />
-        <h3>Pemberitahuan</h3>
-        <p>Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak putra untuk informasi lebih lanjut.</p>
+    <div id="pinDialogOverlay" class="pin-dialog-overlay">
+      <div class="pin-dialog-card">
+        <h3>Masukkan PIN Akses</h3>
+        <p>Untuk melihat daftar file, Anda harus memasukkan PIN.</p>
+        <form id="pinForm">
+          <input type="password" id="pinInput" placeholder="Masukkan PIN" required />
+          <button type="submit">Akses</button>
+          <p id="pinErrorMessage" class="error-message"></p>
+        </form>
       </div>
     </div>
 
     <div id="mainContent" class="container" style="display: none">
-      <div class="header-info">
-        <h1>Hanya untuk pengumpulan tugas Praktikum Perancangan dan pengujian perangkat lunak kelas A,B,C dan Praktikum Pemrograman Web A,B,C</h1>
-        <p>Dibuat oleh M. Putra Ramadhani</p>
-      </div>
-
       <div class="card">
-        <h2>Unggah Dokumen</h2>
-        <p class="sub-text">Pilih file dokumen (PDF, DOCX, dsb.) untuk diunggah.</p>
+        <h2>Daftar Dokumen Tugas</h2>
+
+        <button id="toggleAccessBtn" class="access-button">Memuat Status Akses...</button>
 
         <div class="form-group">
-          <label for="courseSelect">Pilih Mata Kuliah:</label>
-          <select id="courseSelect">
-            <option value="" disabled selected>-- Pilih salah satu --</option>
-            <option value="Perancangan dan Pengujian Perangkat Lunak">Praktikum Perancangan dan Pengujian Perangkat Lunak</option>
-            <option value="Pemrograman Web">Praktikum Pemrograman Web</option>
+          <label for="courseFilter">Filter Berdasarkan Mata Kuliah:</label>
+          <select id="courseFilter">
+            <option value="dokumen/">Semua Dokumen</option>
+            <option value="dokumen/perancangandanppl/">Praktikum Perancangan & Pengujian Perangkat Lunak</option>
+            <option value="dokumen/pemrogramanweb/">Praktikum Pemrograman Web</option>
           </select>
         </div>
 
-        <div class="upload-area">
-          <input type="file" id="fileInput" accept=".pdf, .doc, .docx" hidden />
-          <label for="fileInput" class="custom-file-upload">
-            <img src="https://img.icons8.com/plasticine/100/000000/upload--v1.png" alt="Upload Icon" />
-            <span>Pilih Dokumen</span>
-          </label>
-          <span id="fileName" class="file-name"></span>
-        </div>
-
-        <div id="progressContainer" class="progress-container">
-          <div id="progressBar" class="progress-bar"></div>
-        </div>
-
-        <p id="statusMessage" class="status-message"></p>
+        <ul id="fileList">
+          <p class="status-message">Memuat daftar file...</p>
+        </ul>
       </div>
     </div>
 
@@ -284,106 +270,192 @@
         measurementId: "G-9M8CKR66BW",
       };
 
-      // Inisialisasi Firebase
       firebase.initializeApp(firebaseConfig);
       const storage = firebase.storage();
       const database = firebase.database();
 
-      const fileInput = document.getElementById("fileInput");
-      const courseSelect = document.getElementById("courseSelect");
-      const fileNameSpan = document.getElementById("fileName");
-      const progressBar = document.getElementById("progressBar");
-      const progressContainer = document.getElementById("progressContainer");
-      const statusMessage = document.getElementById("statusMessage");
+      const pinDialogOverlay = document.getElementById("pinDialogOverlay");
+      const pinForm = document.getElementById("pinForm");
+      const pinInput = document.getElementById("pinInput");
+      const pinErrorMessage = document.getElementById("pinErrorMessage");
       const mainContent = document.getElementById("mainContent");
-      const accessClosedOverlay = document.getElementById("accessClosedOverlay");
+      const fileListContainer = document.getElementById("fileList");
+      const courseFilter = document.getElementById("courseFilter");
+      const toggleAccessBtn = document.getElementById("toggleAccessBtn");
 
-      document.addEventListener("DOMContentLoaded", () => {
-        checkAccessStatus();
+      pinForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        validatePin();
       });
 
-      async function checkAccessStatus() {
+      courseFilter.addEventListener("change", () => {
+        const selectedPath = courseFilter.value;
+        fetchFiles(selectedPath);
+      });
+
+      toggleAccessBtn.addEventListener("click", toggleAccessStatus);
+
+      async function validatePin() {
+        const enteredPin = pinInput.value.trim();
+        if (!enteredPin) {
+          pinErrorMessage.textContent = "PIN tidak boleh kosong.";
+          return;
+        }
+
+        try {
+          const snapshot = await database.ref("infopin").once("value");
+          const correctPin = snapshot.val();
+
+          if (enteredPin === correctPin) {
+            pinErrorMessage.textContent = "";
+            pinDialogOverlay.style.display = "none";
+            mainContent.style.display = "block";
+            fetchFiles(courseFilter.value);
+            updateAccessButtonStatus();
+          } else {
+            pinErrorMessage.textContent = "PIN salah! Silakan coba lagi.";
+          }
+        } catch (error) {
+          console.error("Gagal mendapatkan PIN dari database:", error);
+          pinErrorMessage.textContent = `Gagal memuat PIN: ${error.message}`;
+        }
+      }
+
+      async function fetchFiles(path) {
+        const storageRef = storage.ref(path);
+
+        try {
+          const listResult = await storageRef.listAll();
+          fileListContainer.innerHTML = "";
+
+          if (listResult.items.length === 0) {
+            fileListContainer.innerHTML = '<p class="empty-message">Tidak ada file yang ditemukan.</p>';
+            return;
+          }
+
+          listResult.items.forEach(async (itemRef) => {
+            const downloadURL = await itemRef.getDownloadURL();
+            const fileName = itemRef.name;
+            const filePath = itemRef.fullPath;
+            const fileExtension = fileName.split(".").pop().toLowerCase();
+
+            const li = document.createElement("li");
+
+            const fileNameSpan = document.createElement("span");
+            fileNameSpan.classList.add("file-name-text");
+            fileNameSpan.textContent = fileName;
+
+            const actionButtonsDiv = document.createElement("div");
+            actionButtonsDiv.classList.add("action-buttons");
+
+            // Tombol Pratinjau (hanya untuk file yang didukung)
+            const supportedPreviewExtensions = ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"];
+            if (supportedPreviewExtensions.includes(fileExtension)) {
+              const previewBtn = document.createElement("a");
+              previewBtn.classList.add("preview-btn");
+              previewBtn.target = "_blank";
+
+              let viewerUrl = "";
+              if (fileExtension === "pdf") {
+                viewerUrl = downloadURL;
+              } else {
+                viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(downloadURL)}&embedded=true`;
+              }
+              previewBtn.href = viewerUrl;
+
+              const previewIcon = document.createElement("img");
+              previewIcon.src = "https://img.icons8.com/material-outlined/24/000000/visible.png";
+              previewIcon.alt = "Pratinjau";
+              previewBtn.appendChild(previewIcon);
+              actionButtonsDiv.appendChild(previewBtn);
+            }
+
+            // Tombol Unduh
+            const downloadBtn = document.createElement("a");
+            downloadBtn.href = downloadURL;
+            downloadBtn.classList.add("download-btn");
+            downloadBtn.target = "_blank";
+            downloadBtn.download = fileName;
+            const downloadIcon = document.createElement("img");
+            downloadIcon.src = "https://img.icons8.com/material-outlined/24/000000/download--v1.png";
+            downloadIcon.alt = "Unduh";
+            downloadBtn.appendChild(downloadIcon);
+            actionButtonsDiv.appendChild(downloadBtn);
+
+            // Tombol Hapus
+            const deleteBtn = document.createElement("button");
+            deleteBtn.classList.add("delete-btn");
+            const deleteIcon = document.createElement("img");
+            deleteIcon.src = "https://img.icons8.com/material-outlined/24/000000/trash--v1.png";
+            deleteIcon.alt = "Hapus";
+            deleteBtn.appendChild(deleteIcon);
+
+            deleteBtn.addEventListener("click", () => {
+              if (confirm(`Apakah Anda yakin ingin menghapus file "${fileName}"?`)) {
+                deleteFile(filePath);
+              }
+            });
+
+            actionButtonsDiv.appendChild(deleteBtn);
+
+            li.appendChild(fileNameSpan);
+            li.appendChild(actionButtonsDiv);
+            fileListContainer.appendChild(li);
+          });
+        } catch (error) {
+          console.error("Gagal mengambil data file:", error);
+          fileListContainer.innerHTML = `<p class="status-message" style="color:#dc3545;">Gagal memuat file: ${error.message}</p>`;
+        }
+      }
+
+      async function deleteFile(filePath) {
+        const fileRef = storage.ref(filePath);
+
+        try {
+          await fileRef.delete();
+          alert(`File berhasil dihapus.`);
+          const currentPath = courseFilter.value;
+          fetchFiles(currentPath);
+        } catch (error) {
+          console.error("Gagal menghapus file:", error);
+          alert(`Gagal menghapus file: ${error.message}`);
+        }
+      }
+
+      async function updateAccessButtonStatus() {
         try {
           const snapshot = await database.ref("akses").once("value");
           const isOpen = snapshot.val();
 
           if (isOpen === true) {
-            mainContent.style.display = "block";
-            accessClosedOverlay.style.display = "none";
+            toggleAccessBtn.textContent = "Akses Pengumpulan Tugas: BUKA ✅";
+            toggleAccessBtn.classList.remove("access-closed");
+            toggleAccessBtn.classList.add("access-open");
           } else {
-            mainContent.style.display = "none";
-            accessClosedOverlay.style.display = "flex";
+            toggleAccessBtn.textContent = "Akses Pengumpulan Tugas: TUTUP 🔒";
+            toggleAccessBtn.classList.remove("access-open");
+            toggleAccessBtn.classList.add("access-closed");
           }
         } catch (error) {
-          console.error("Gagal memeriksa status akses:", error);
-          mainContent.style.display = "none";
-          accessClosedOverlay.style.display = "flex";
-          const message = accessClosedOverlay.querySelector("p");
-          message.textContent = `Gagal memuat status akses: ${error.message}`;
+          console.error("Gagal memperbarui status tombol:", error);
+          toggleAccessBtn.textContent = "Status tidak dapat dimuat.";
         }
       }
 
-      fileInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        const selectedCourse = courseSelect.value;
+      async function toggleAccessStatus() {
+        try {
+          const snapshot = await database.ref("akses").once("value");
+          const currentStatus = snapshot.val();
+          const newStatus = !currentStatus;
 
-        if (!selectedCourse) {
-          statusMessage.textContent = "❗ Mohon pilih mata kuliah terlebih dahulu.";
-          statusMessage.style.color = "#dc3545";
-          fileInput.value = "";
-          return;
+          await database.ref("akses").set(newStatus);
+          updateAccessButtonStatus();
+
+          alert(`Akses pengumpulan tugas berhasil diubah menjadi: ${newStatus ? "DIBUKA" : "DITUTUP"}`);
+        } catch (error) {
+          console.error("Gagal mengubah status akses:", error);
+          alert(`Gagal mengubah status akses: ${error.message}`);
         }
-
-        if (file) {
-          fileNameSpan.textContent = `File terpilih: ${file.name}`;
-          uploadFile(file, selectedCourse);
-        }
-      });
-
-      function uploadFile(file, course) {
-        let folderName;
-
-        switch (course) {
-          case "Perancangan dan Pengujian Perangkat Lunak":
-            folderName = "perancangandanppl";
-            break;
-          case "Pemrograman Web":
-            folderName = "pemrogramanweb";
-            break;
-          default:
-            folderName = "lainnya";
-        }
-
-        const folderPath = `dokumen/${folderName}/`;
-        const fileRef = storage.ref(folderPath + file.name);
-
-        const uploadTask = fileRef.put(file);
-
-        progressContainer.style.display = "block";
-        progressBar.style.width = "0%";
-        statusMessage.textContent = "🚀 Mengunggah...";
-        statusMessage.style.color = "#555";
-
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            progressBar.style.width = `${progress}%`;
-          },
-          (error) => {
-            console.error("Kesalahan unggah:", error);
-            statusMessage.textContent = `❌ Gagal mengunggah: ${error.message}`;
-            statusMessage.style.color = "#dc3545";
-            progressContainer.style.display = "none";
-          },
-          () => {
-            statusMessage.textContent = "✅ Unggahan Berhasil!";
-            statusMessage.style.color = "#28a745";
-            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-              console.log("File tersedia di:", downloadURL);
-            });
-          }
-        );
       }
     </script>
   </body>
