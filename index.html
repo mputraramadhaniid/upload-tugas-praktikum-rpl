@@ -278,8 +278,6 @@
           <label for="courseSelect">Pilih Mata Kuliah:</label>
           <select id="courseSelect">
             <option value="" disabled selected>-- Pilih salah satu --</option>
-            <option value="perancangandanppl">Praktikum Perancangan dan Pengujian Perangkat Lunak</option>
-            <option value="pemrogramanweb">Praktikum Pemrograman Web</option>
           </select>
         </div>
 
@@ -335,6 +333,7 @@
 
       document.addEventListener("DOMContentLoaded", () => {
         checkMainAccessStatus();
+        fetchCourseList();
       });
 
       courseSelect.addEventListener("change", () => {
@@ -386,6 +385,35 @@
       closeCourseAccessBtn.addEventListener("click", () => {
         courseAccessClosedOverlay.style.display = "none";
       });
+
+      // ======================= FUNGSI UTAMA =======================
+      async function fetchCourseList() {
+        try {
+          const snapshot = await database.ref("mata_kuliah").once("value");
+          const courses = snapshot.val();
+
+          // Clear existing options, except the first one
+          while (courseSelect.options.length > 1) {
+            courseSelect.remove(1);
+          }
+
+          if (courses) {
+            for (const key in courses) {
+              if (Object.hasOwnProperty.call(courses, key)) {
+                const courseName = courses[key];
+                const option = document.createElement("option");
+                option.value = key;
+                option.textContent = courseName;
+                courseSelect.appendChild(option);
+              }
+            }
+          } else {
+            console.log("No courses found in the database.");
+          }
+        } catch (error) {
+          console.error("Gagal memuat daftar mata kuliah:", error);
+        }
+      }
 
       async function checkMainAccessStatus() {
         try {
