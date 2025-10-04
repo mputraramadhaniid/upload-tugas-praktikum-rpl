@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Upload Tugas Teknologi Informasi UM-Palembang</title>
-    <link rel="icon" type="image/x-icon" href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1">
+    <link rel="icon" type="image/x-icon" href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" />
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
@@ -132,11 +132,6 @@
         transform: translateY(-5px);
       }
 
-      .custom-file-upload span {
-        color: #007bff;
-        font-weight: 500;
-      }
-
       .file-name {
         margin-top: 15px;
         color: #555;
@@ -151,7 +146,7 @@
         margin-top: 20px;
         overflow: hidden;
         height: 10px;
-        display: none; /* Sembunyikan secara default */
+        display: none;
       }
 
       .progress-bar {
@@ -165,7 +160,7 @@
       .status-message {
         margin-top: 15px;
         font-weight: 500;
-        min-height: 20px; /* Menghindari layout bergeser */
+        min-height: 20px;
       }
 
       /* --- Dialog Akses Ditutup --- */
@@ -210,18 +205,11 @@
         margin: 0 0 20px 0;
       }
 
-      .access-card button {
+      .access-card .dialog-button {
         background-color: #6c757d;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
       }
 
-      .access-card button:hover {
+      .access-card .dialog-button:hover {
         background-color: #5a6268;
       }
 
@@ -233,6 +221,106 @@
         to {
           opacity: 1;
           transform: scale(1);
+        }
+      }
+
+      /* --- Dialog Unggah Status --- */
+      .upload-status-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .upload-status-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 40px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      .upload-status-card .icon {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+      }
+
+      .upload-status-card h3 {
+        margin-bottom: 10px;
+      }
+
+      #uploadSuccessCard h3 {
+        color: #28a745;
+      }
+
+      #uploadFailCard h3 {
+        color: #dc3545;
+      }
+
+      .upload-status-card .status-text {
+        font-size: 1rem;
+        color: #555;
+      }
+
+      .dialog-button {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+
+      .dialog-button:hover {
+        background-color: #0056b3;
+      }
+
+      /* --- Animasi Roket --- */
+      .rocket-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+        display: none;
+      }
+
+      .rocket-icon {
+        width: 80px;
+        height: 80px;
+        animation: fly 2s ease-out infinite;
+      }
+
+      .rocket-text {
+        margin-top: 10px;
+        color: #007bff;
+        font-weight: 600;
+      }
+
+      @keyframes fly {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        50% {
+          transform: translateY(-30px);
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
         }
       }
     </style>
@@ -247,7 +335,7 @@
         <img src="https://img.icons8.com/ios-filled/100/fa314a/lock.png" alt="Akses Ditutup" />
         <h3>Pemberitahuan</h3>
         <p>Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak putra untuk informasi lebih lanjut.</p>
-        <button id="closeMainAccessBtn">Tutup</button>
+        <button id="closeMainAccessBtn" class="dialog-button">Tutup</button>
       </div>
     </div>
 
@@ -256,11 +344,29 @@
         <img src="https://img.icons8.com/ios-filled/100/fa314a/lock.png" alt="Akses Ditutup" />
         <h3 id="courseAccessTitle">Pengumpulan Tugas Ditutup</h3>
         <p id="courseAccessMessage">Pengumpulan tugas untuk mata kuliah ini telah ditutup.</p>
-        <button id="closeCourseAccessBtn">Tutup</button>
+        <button id="closeCourseAccessBtn" class="dialog-button">Tutup</button>
       </div>
     </div>
 
-    <div id="mainContent" class="container" style="display: none">
+    <div id="uploadSuccessOverlay" class="upload-status-overlay">
+      <div id="uploadSuccessCard" class="upload-status-card">
+        <img class="icon" src="https://img.icons8.com/color/96/000000/ok--v1.png" alt="Berhasil" />
+        <h3>Unggah Berhasil!</h3>
+        <p class="status-text" id="successMessage"></p>
+        <button onclick="closeSuccessDialog()" class="dialog-button">Tutup</button>
+      </div>
+    </div>
+
+    <div id="uploadFailOverlay" class="upload-status-overlay">
+      <div id="uploadFailCard" class="upload-status-card">
+        <img class="icon" src="https://img.icons8.com/color/96/000000/cancel--v1.png" alt="Gagal" />
+        <h3>Unggah Gagal!</h3>
+        <p class="status-text" id="failMessage"></p>
+        <button onclick="closeFailDialog()" class="dialog-button">Tutup</button>
+      </div>
+    </div>
+
+    <div id="mainContent" class="container">
       <div class="header-info">
         <h1>PENGUMPULAN TUGAS TEKNOLOGI INFORMASI UM-PALEMBANG</h1>
         <p>Dibuat oleh M. Putra Ramadhani</p>
@@ -289,6 +395,11 @@
             <span>Pilih Dokumen</span>
           </label>
           <span id="fileName" class="file-name"></span>
+        </div>
+
+        <div id="rocketAnimation" class="rocket-container">
+          <img class="rocket-icon" src="https://pngfre.com/wp-content/uploads/Rocket-Emoji-10-1.png" alt="Roket Animasi" />
+          <span class="rocket-text">Mengunggah...</span>
         </div>
 
         <div id="progressContainer" class="progress-container">
@@ -328,6 +439,11 @@
       const courseAccessMessage = document.getElementById("courseAccessMessage");
       const closeMainAccessBtn = document.getElementById("closeMainAccessBtn");
       const closeCourseAccessBtn = document.getElementById("closeCourseAccessBtn");
+      const uploadSuccessOverlay = document.getElementById("uploadSuccessOverlay");
+      const uploadFailOverlay = document.getElementById("uploadFailOverlay");
+      const successMessage = document.getElementById("successMessage");
+      const failMessage = document.getElementById("failMessage");
+      const rocketAnimation = document.getElementById("rocketAnimation");
 
       const MAX_FILE_SIZE_MB = 12;
       const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
@@ -348,8 +464,7 @@
         const selectedCourse = courseSelect.value;
 
         if (!selectedCourse) {
-          statusMessage.textContent = "❗ Mohon pilih mata kuliah terlebih dahulu.";
-          statusMessage.style.color = "#dc3545";
+          showFailDialog("❗ Mohon pilih mata kuliah terlebih dahulu.");
           fileInput.value = "";
           return;
         }
@@ -357,16 +472,14 @@
         if (file) {
           const fileExtension = "." + file.name.split(".").pop().toLowerCase();
           if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
-            statusMessage.textContent = `❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`;
-            statusMessage.style.color = "#dc3545";
+            showFailDialog(`❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`);
             fileInput.value = "";
             return;
           }
         }
 
         if (file && file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-          statusMessage.textContent = `❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`;
-          statusMessage.style.color = "#dc3545";
+          showFailDialog(`❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`);
           fileInput.value = "";
           return;
         }
@@ -386,6 +499,34 @@
       closeCourseAccessBtn.addEventListener("click", () => {
         courseAccessClosedOverlay.style.display = "none";
       });
+
+      function showSuccessDialog(message) {
+        successMessage.textContent = message;
+        uploadSuccessOverlay.style.display = "flex";
+      }
+
+      function showFailDialog(message) {
+        failMessage.textContent = message;
+        uploadFailOverlay.style.display = "flex";
+      }
+
+      function closeSuccessDialog() {
+        uploadSuccessOverlay.style.display = "none";
+        resetUploadState();
+      }
+
+      function closeFailDialog() {
+        uploadFailOverlay.style.display = "none";
+        resetUploadState();
+      }
+
+      function resetUploadState() {
+        fileInput.value = "";
+        fileNameSpan.textContent = "";
+        progressContainer.style.display = "none";
+        statusMessage.textContent = "";
+        rocketAnimation.style.display = "none";
+      }
 
       // ======================= FUNGSI UTAMA =======================
       async function fetchCourseList() {
@@ -463,14 +604,34 @@
       }
 
       function uploadFile(file, folderName) {
+        // Mendapatkan tanggal, bulan, tahun, jam, menit, detik saat ini
+        const now = new Date();
+        const date = String(now.getDate()).padStart(2, "0");
+        const month = String(now.getMonth() + 1).padStart(2, "0"); // Januari adalah 0
+        const year = now.getFullYear();
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const seconds = String(now.getSeconds()).padStart(2, "0");
+        const timestamp = `${date}-${month}-${year}_${hours}-${minutes}-${seconds}`;
+
+        // Memisahkan nama file dan ekstensinya
+        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".");
+        const fileExtension = file.name.split(".").pop();
+
+        // Membuat nama file baru dengan stempel waktu
+        const newFileName = `${fileNameWithoutExt}_${timestamp}.${fileExtension}`;
+
         const folderPath = `dokumen/${folderName}/`;
-        const fileRef = storage.ref(folderPath + file.name);
+        const fileRef = storage.ref(folderPath + newFileName);
 
         const uploadTask = fileRef.put(file);
 
+        // Hide upload area, show rocket animation and progress bar
+        document.querySelector(".upload-area").style.display = "none";
+        rocketAnimation.style.display = "flex";
         progressContainer.style.display = "block";
         progressBar.style.width = "0%";
-        statusMessage.textContent = "🚀 Mengunggah...";
+        statusMessage.textContent = "Sedang mengunggah...";
         statusMessage.style.color = "#555";
 
         uploadTask.on(
@@ -481,13 +642,14 @@
           },
           (error) => {
             console.error("Kesalahan unggah:", error);
-            statusMessage.textContent = `❌ Gagal mengunggah: ${error.message}`;
-            statusMessage.style.color = "#dc3545";
-            progressContainer.style.display = "none";
+            rocketAnimation.style.display = "none";
+            document.querySelector(".upload-area").style.display = "flex";
+            showFailDialog(`Gagal mengunggah file: ${error.message}`);
           },
           () => {
-            statusMessage.textContent = "✅ Unggahan Berhasil!";
-            statusMessage.style.color = "#28a745";
+            rocketAnimation.style.display = "none";
+            document.querySelector(".upload-area").style.display = "flex";
+            showSuccessDialog("File Anda berhasil diunggah!");
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
               console.log("File tersedia di:", downloadURL);
             });
