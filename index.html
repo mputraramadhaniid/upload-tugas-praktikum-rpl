@@ -502,8 +502,12 @@
         courseAccessClosedOverlay.style.display = "none";
       });
 
-      function showSuccessDialog(message) {
-        successMessage.textContent = message;
+      function showSuccessDialog(message, fileCount) {
+        let fullMessage = message;
+        if (typeof fileCount === "number" && fileCount > 0) {
+          fullMessage += `<br><br>Anda menjadi No.${fileCount} yang kumpul saat ini. File Anda telah terkirim, semoga hasil tugas mu memuaskan! 😊`;
+        }
+        successMessage.innerHTML = fullMessage;
         uploadSuccessOverlay.style.display = "flex";
       }
 
@@ -607,7 +611,9 @@
 
       function uploadFile(file, courseKey) {
         const now = new Date();
-        const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(now.getSeconds()).padStart(2, "0")}`;
+        const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
+          now.getSeconds()
+        ).padStart(2, "0")}`;
         const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".");
         const fileExtension = file.name.split(".").pop();
         const newFileName = `${fileNameWithoutExt}_${timestamp}.${fileExtension}`;
@@ -639,7 +645,20 @@
           () => {
             rocketAnimation.style.display = "none";
             document.querySelector(".upload-area").style.display = "flex";
-            showSuccessDialog("File Anda berhasil diunggah!");
+
+            // Dapatkan jumlah file di folder setelah unggahan berhasil
+            const folderRef = storage.ref(folderPath);
+            folderRef
+              .listAll()
+              .then((result) => {
+                const fileCount = result.items.length;
+                showSuccessDialog("File Anda berhasil diunggah!", fileCount);
+              })
+              .catch((error) => {
+                console.error("Gagal menghitung file:", error);
+                showSuccessDialog("File Anda berhasil diunggah!", null); // Tampilkan pesan tanpa jumlah file
+              });
+
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
               console.log("File tersedia di:", downloadURL);
             });
