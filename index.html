@@ -242,21 +242,23 @@
         background: #ffffff;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        padding: 40px;
+        padding: 25px; /* Disesuaikan agar lebih responsif */
         text-align: center;
-        max-width: 400px;
-        width: 90%;
+        width: 90%; /* Menggunakan persentase untuk responsif */
+        max-width: 400px; /* Batasi lebar maksimum untuk tampilan desktop */
+        box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
         animation: fadeIn 0.3s ease-in-out;
       }
 
       .upload-status-card .icon {
-        width: 80px;
-        height: 80px;
-        margin-bottom: 20px;
+        width: 60px; /* Disesuaikan agar lebih kecil */
+        height: 60px; /* Disesuaikan agar lebih kecil */
+        margin-bottom: 15px; /* Disesuaikan */
       }
 
       .upload-status-card h3 {
         margin-bottom: 10px;
+        font-size: 1.2rem; /* Disesuaikan */
       }
 
       #uploadSuccessCard h3 {
@@ -268,7 +270,7 @@
       }
 
       .upload-status-card .status-text {
-        font-size: 1rem;
+        font-size: 0.9rem; /* Disesuaikan */
         color: #555;
       }
 
@@ -379,7 +381,7 @@
 
       <div class="card">
         <h2>Unggah Dokumen</h2>
-        <p class="sub-text">Pilih file dokumen (PDF, DOCX, dsb.) untuk diunggah.</p>
+        <p class="sub-text">Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.</p>
 
         <div class="form-group">
           <label for="courseSelect">Pilih Mata Kuliah:</label>
@@ -603,30 +605,18 @@
         }
       }
 
-      function uploadFile(file, folderName) {
-        // Mendapatkan tanggal, bulan, tahun, jam, menit, detik saat ini
+      function uploadFile(file, courseKey) {
         const now = new Date();
-        const date = String(now.getDate()).padStart(2, "0");
-        const month = String(now.getMonth() + 1).padStart(2, "0"); // Januari adalah 0
-        const year = now.getFullYear();
-        const hours = String(now.getHours()).padStart(2, "0");
-        const minutes = String(now.getMinutes()).padStart(2, "0");
-        const seconds = String(now.getSeconds()).padStart(2, "0");
-        const timestamp = `${date}-${month}-${year}_${hours}-${minutes}-${seconds}`;
-
-        // Memisahkan nama file dan ekstensinya
+        const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(now.getSeconds()).padStart(2, "0")}`;
         const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".");
         const fileExtension = file.name.split(".").pop();
-
-        // Membuat nama file baru dengan stempel waktu
         const newFileName = `${fileNameWithoutExt}_${timestamp}.${fileExtension}`;
-
-        const folderPath = `dokumen/${folderName}/`;
+        const folderNameForStorage = courseKey.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+        const folderPath = `dokumen/${folderNameForStorage}/`;
         const fileRef = storage.ref(folderPath + newFileName);
 
         const uploadTask = fileRef.put(file);
 
-        // Hide upload area, show rocket animation and progress bar
         document.querySelector(".upload-area").style.display = "none";
         rocketAnimation.style.display = "flex";
         progressContainer.style.display = "block";
