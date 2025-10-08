@@ -116,6 +116,12 @@
         cursor: pointer;
         transition: border-color 0.3s ease, transform 0.3s ease;
       }
+      
+      .custom-file-upload.dragover {
+        border-color: #007bff;
+        transform: scale(1.05);
+        background-color: #e6f2ff;
+      }
 
       .custom-file-upload:hover {
         border-color: #007bff;
@@ -325,6 +331,100 @@
           opacity: 1;
         }
       }
+
+      /* --- Animasi Pemindaian (Diperbarui) --- */
+      .scan-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 25px 0;
+        display: none;
+        position: relative;
+      }
+
+      .spinner {
+        border: 4px solid #e0e0e0;
+        border-left-color: #007bff;
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: all 0.3s ease;
+      }
+
+      .shield-icon {
+        width: 80px;
+        height: 80px;
+        animation: pulse 1.5s infinite ease-in-out;
+        position: relative;
+        z-index: 10;
+      }
+
+      .scan-text {
+        margin-top: 15px;
+        font-weight: 600;
+        color: #007bff;
+        animation: fadePulse 1.5s infinite ease-in-out;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes fadePulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      /* --- Teks Berjalan --- */
+      .running-text-container {
+        width: 100%;
+        background-color: #dc3545;
+        padding: 4px 0;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        color: white;
+        text-align: center;
+      }
+
+      .running-text-container marquee {
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .running-text-container a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+      }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -332,6 +432,13 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   </head>
   <body>
+    <div class="running-text-container">
+      <marquee behavior="scroll" direction="left" scrollamount="5">
+        Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi UM-Palembang! Untuk bantuan,
+        <a style="color: #007bff" href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
+      </marquee>
+    </div>
+
     <div id="mainAccessClosedOverlay" class="access-overlay">
       <div class="access-card">
         <img src="https://img.icons8.com/ios-filled/100/fa314a/lock.png" alt="Akses Ditutup" />
@@ -394,9 +501,15 @@
           <input type="file" id="fileInput" accept=".pdf, .doc, .docx, .zip, .rar, .7z" hidden />
           <label for="fileInput" class="custom-file-upload">
             <img src="https://img.icons8.com/plasticine/100/000000/upload--v1.png" alt="Upload Icon" />
-            <span>Pilih Dokumen</span>
+            <span>Pilih Dokumen atau Seret dan Lepas di Sini</span>
           </label>
           <span id="fileName" class="file-name"></span>
+        </div>
+
+        <div id="scanAnimation" class="scan-container">
+          <div class="spinner"></div>
+          <img class="shield-icon" src="images/file.png" alt="Shield Icon" />
+          <span class="scan-text">Memindai file...</span>
         </div>
 
         <div id="rocketAnimation" class="rocket-container">
@@ -446,6 +559,8 @@
       const successMessage = document.getElementById("successMessage");
       const failMessage = document.getElementById("failMessage");
       const rocketAnimation = document.getElementById("rocketAnimation");
+      const scanAnimation = document.getElementById("scanAnimation");
+      const dropArea = document.querySelector(".custom-file-upload");
 
       const MAX_FILE_SIZE_MB = 12;
       const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
@@ -461,8 +576,32 @@
         checkCourseAccess(courseKey, courseName);
       });
 
+      // ========================== Fungsionalitas Drag & Drop ==========================
+      dropArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropArea.classList.add("dragover");
+      });
+
+      dropArea.addEventListener("dragleave", () => {
+        dropArea.classList.remove("dragover");
+      });
+
+      dropArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropArea.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFile(files[0]);
+        }
+      });
+      // =================================================================================
+
       fileInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
+        handleFile(file);
+      });
+
+      function handleFile(file) {
         const selectedCourse = courseSelect.value;
 
         if (!selectedCourse) {
@@ -486,13 +625,22 @@
           return;
         }
 
-        checkCourseAccess(selectedCourse, courseSelect.options[courseSelect.selectedIndex].text, () => {
-          if (file) {
-            fileNameSpan.textContent = `File terpilih: ${file.name}`;
-            uploadFile(file, selectedCourse);
-          }
-        });
-      });
+        // Mulai simulasi pemindaian
+        document.querySelector(".upload-area").style.display = "none";
+        scanAnimation.style.display = "flex";
+        fileNameSpan.textContent = `File terpilih: ${file.name}`;
+        statusMessage.textContent = "Sedang memindai file untuk memastikan keamanan...";
+
+        setTimeout(() => {
+          // Setelah 3 detik, sembunyikan animasi pemindaian dan lanjutkan ke unggah file
+          scanAnimation.style.display = "none";
+          checkCourseAccess(selectedCourse, courseSelect.options[courseSelect.selectedIndex].text, () => {
+            if (file) {
+              uploadFile(file, selectedCourse);
+            }
+          });
+        }, 3000); // Waktu simulasi pemindaian (3 detik)
+      }
 
       closeMainAccessBtn.addEventListener("click", () => {
         mainAccessClosedOverlay.style.display = "none";
@@ -532,6 +680,8 @@
         progressContainer.style.display = "none";
         statusMessage.textContent = "";
         rocketAnimation.style.display = "none";
+        scanAnimation.style.display = "none";
+        document.querySelector(".upload-area").style.display = "flex";
       }
 
       // ======================= FUNGSI UTAMA =======================
