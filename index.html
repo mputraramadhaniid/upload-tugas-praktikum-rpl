@@ -116,7 +116,7 @@
         cursor: pointer;
         transition: border-color 0.3s ease, transform 0.3s ease;
       }
-      
+
       .custom-file-upload.dragover {
         border-color: #007bff;
         transform: scale(1.05);
@@ -169,7 +169,7 @@
         min-height: 20px;
       }
 
-      /* --- Dialog Akses Ditutup --- */
+      /* --- Dialog Akses Ditutup & Syarat Pengumpulan --- */
       .access-overlay {
         position: fixed;
         top: 0;
@@ -209,6 +209,7 @@
       .access-card p {
         color: #555;
         margin: 0 0 20px 0;
+        line-height: 1.5;
       }
 
       .access-card .dialog-button {
@@ -217,6 +218,30 @@
 
       .access-card .dialog-button:hover {
         background-color: #5a6268;
+      }
+
+      .dialog-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .dialog-button {
+        flex: 1;
+        background-color: #007bff;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+
+      .dialog-button:hover {
+        background-color: #0056b3;
       }
 
       @keyframes fadeIn {
@@ -248,23 +273,23 @@
         background: #ffffff;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        padding: 25px; /* Disesuaikan agar lebih responsif */
+        padding: 25px;
         text-align: center;
-        width: 90%; /* Menggunakan persentase untuk responsif */
-        max-width: 400px; /* Batasi lebar maksimum untuk tampilan desktop */
-        box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+        width: 90%;
+        max-width: 400px;
+        box-sizing: border-box;
         animation: fadeIn 0.3s ease-in-out;
       }
 
       .upload-status-card .icon {
-        width: 60px; /* Disesuaikan agar lebih kecil */
-        height: 60px; /* Disesuaikan agar lebih kecil */
-        margin-bottom: 15px; /* Disesuaikan */
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
       }
 
       .upload-status-card h3 {
         margin-bottom: 10px;
-        font-size: 1.2rem; /* Disesuaikan */
+        font-size: 1.2rem;
       }
 
       #uploadSuccessCard h3 {
@@ -276,24 +301,8 @@
       }
 
       .upload-status-card .status-text {
-        font-size: 0.9rem; /* Disesuaikan */
+        font-size: 0.9rem;
         color: #555;
-      }
-
-      .dialog-button {
-        background-color: #007bff;
-        color: white;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-      }
-
-      .dialog-button:hover {
-        background-color: #0056b3;
       }
 
       /* --- Animasi Roket --- */
@@ -332,7 +341,7 @@
         }
       }
 
-      /* --- Animasi Pemindaian (Diperbarui) --- */
+      /* --- Animasi Pemindaian --- */
       .scan-container {
         display: flex;
         flex-direction: column;
@@ -403,27 +412,108 @@
           opacity: 1;
         }
       }
-
       /* --- Teks Berjalan --- */
+      /* --- Teks Berjalan Modern (Ganti Teks Berjalan Lama) --- */
       .running-text-container {
         width: 100%;
-        background-color: #dc3545;
-        padding: 4px 0;
+        padding: 8px 0;
         margin-bottom: 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        background-color: #dc3545; /* Ganti dengan gradasi */
+        background: linear-gradient(90deg, #dc3545, #c00707);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         color: white;
         text-align: center;
+        overflow: hidden; /* Penting untuk menyembunyikan teks di luar kontainer */
+        position: relative;
+        white-space: nowrap; /* Mencegah teks turun ke baris baru */
+        display: flex; /* Gunakan Flexbox untuk penempatan yang lebih baik */
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
       }
 
-      .running-text-container marquee {
+      .running-text-container .text-wrapper {
+        display: inline-block;
+        padding-left: 100%; /* Memulai teks dari luar sisi kanan */
+        animation: marquee-animation 15s linear infinite; /* Animasi inti */
+      }
+
+      .running-text-container:hover .text-wrapper {
+        animation-play-state: paused; /* Berhenti saat kursor diarahkan */
+      }
+
+      .running-text-container span {
         font-weight: 600;
         font-size: 1.1rem;
+        padding-right: 50px; /* Jarak antar pengulangan teks */
       }
 
       .running-text-container a {
-        color: white;
+        color: #ffd700; /* Warna kuning emas untuk tautan */
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 700;
+        transition: color 0.3s ease;
+      }
+
+      .running-text-container a:hover {
+        color: #fff;
+        text-decoration: underline;
+      }
+
+      /* --- Keyframe untuk animasi marquee --- */
+      @keyframes marquee-animation {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+
+      /* --- Perbaikan Tampilan Syarat Pengumpulan --- */
+      #syaratDialogOverlay .access-card {
+        padding: 25px; /* Kurangi padding untuk efisiensi ruang */
+        max-width: 350px;
+      }
+
+      #syaratDialogOverlay .access-card h3 {
+        color: #dc3545; /* Ganti warna judul */
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+      }
+
+      .syarat-list {
+        text-align: left;
+        margin-bottom: 20px;
+      }
+
+      .syarat-list ul {
+        list-style: none; /* Hilangkan bullet default */
+        padding: 0;
+        margin: 0;
+      }
+
+      .syarat-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px; /* Jarak antar list item */
+        font-size: 0.95rem;
+        color: #4a4a4a;
+        line-height: 1.4;
+      }
+
+      .syarat-list .list-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+        flex-shrink: 0; /* Mencegah icon mengecil */
+      }
+
+      #syaratDialogOverlay p {
+        font-size: 0.9rem;
+        margin: 20px 0 0; /* Atur jarak atas */
       }
     </style>
 
@@ -437,6 +527,33 @@
         Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi UM-Palembang! Untuk bantuan,
         <a style="color: #007bff" href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
       </marquee>
+    </div>
+
+    <div id="syaratDialogOverlay" class="access-overlay">
+      <div class="access-card">
+        <img src="https://img.icons8.com/ios-filled/96/fa314a/info.png" alt="Informasi" />
+        <h3>Syarat Pengumpulan Tugas</h3>
+        <div class="syarat-list">
+          <ul>
+            <li>
+              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
+              <span>Nama file harus sesuai format: <b>Nama_NIM</b></span>
+            </li>
+            <li>
+              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
+              <span>Contoh: <b>M.PutraRamadhani_19223344</b></span>
+            </li>
+            <li>
+              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
+              <span>Pastikan file sudah dalam format yang diizinkan (.pdf, .doc, .docx, .zip, .rar, .7z)</span>
+            </li>
+          </ul>
+        </div>
+        <div class="dialog-buttons">
+          <button id="cancelSyaratBtn" class="dialog-button">Batal</button>
+          <button id="confirmSyaratBtn" class="dialog-button" style="background-color: #dc3545">Lanjutkan</button>
+        </div>
+      </div>
     </div>
 
     <div id="mainAccessClosedOverlay" class="access-overlay">
@@ -481,10 +598,10 @@
         <p>Dibuat oleh M. Putra Ramadhani</p>
       </div>
 
-      <div class="header-info" style="background-color: #dc3545">
+      <!--<div class="header-info" style="background-color: #dc3545">
         <h1 style="color: white">INFORMASI UNTUK MAHASISWA TEKNOLOGI INFORMASI</h1>
         <p style="color: #ededed">Untuk pengumpulan tugas, nama file harus ada NamaMahasiswa_Nim</p>
-      </div>
+      </div>-->
 
       <div class="card">
         <h2>Unggah Dokumen</h2>
@@ -561,6 +678,9 @@
       const rocketAnimation = document.getElementById("rocketAnimation");
       const scanAnimation = document.getElementById("scanAnimation");
       const dropArea = document.querySelector(".custom-file-upload");
+      const syaratDialogOverlay = document.getElementById("syaratDialogOverlay");
+      const cancelSyaratBtn = document.getElementById("cancelSyaratBtn");
+      const confirmSyaratBtn = document.getElementById("confirmSyaratBtn");
 
       const MAX_FILE_SIZE_MB = 12;
       const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
@@ -568,6 +688,7 @@
       document.addEventListener("DOMContentLoaded", () => {
         checkMainAccessStatus();
         fetchCourseList();
+        showSyaratDialogAtStart();
       });
 
       courseSelect.addEventListener("change", () => {
@@ -598,10 +719,12 @@
 
       fileInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
-        handleFile(file);
+        if (file) {
+          handleFile(file);
+        }
       });
 
-      function handleFile(file) {
+      async function handleFile(file) {
         const selectedCourse = courseSelect.value;
 
         if (!selectedCourse) {
@@ -610,36 +733,43 @@
           return;
         }
 
-        if (file) {
-          const fileExtension = "." + file.name.split(".").pop().toLowerCase();
-          if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
-            showFailDialog(`❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`);
-            fileInput.value = "";
-            return;
-          }
-        }
-
-        if (file && file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+        if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
           showFailDialog(`❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`);
           fileInput.value = "";
           return;
         }
 
-        // Mulai simulasi pemindaian
+        const fileExtension = "." + file.name.split(".").pop().toLowerCase();
+        if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
+          showFailDialog(`❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`);
+          fileInput.value = "";
+          return;
+        }
+
+        // Lanjutkan proses unggah tanpa menampilkan dialog syarat
         document.querySelector(".upload-area").style.display = "none";
         scanAnimation.style.display = "flex";
         fileNameSpan.textContent = `File terpilih: ${file.name}`;
         statusMessage.textContent = "Sedang memindai file untuk memastikan keamanan...";
 
         setTimeout(() => {
-          // Setelah 3 detik, sembunyikan animasi pemindaian dan lanjutkan ke unggah file
           scanAnimation.style.display = "none";
           checkCourseAccess(selectedCourse, courseSelect.options[courseSelect.selectedIndex].text, () => {
-            if (file) {
-              uploadFile(file, selectedCourse);
-            }
+            uploadFile(file, selectedCourse);
           });
         }, 3000); // Waktu simulasi pemindaian (3 detik)
+      }
+
+      function showSyaratDialogAtStart() {
+        syaratDialogOverlay.style.display = "flex";
+
+        confirmSyaratBtn.onclick = () => {
+          syaratDialogOverlay.style.display = "none";
+        };
+
+        cancelSyaratBtn.onclick = () => {
+          syaratDialogOverlay.style.display = "none";
+        };
       }
 
       closeMainAccessBtn.addEventListener("click", () => {
@@ -806,7 +936,7 @@
               })
               .catch((error) => {
                 console.error("Gagal menghitung file:", error);
-                showSuccessDialog("File Anda berhasil diunggah!", null); // Tampilkan pesan tanpa jumlah file
+                showSuccessDialog("File Anda berhasil diunggah!", null);
               });
 
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
