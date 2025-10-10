@@ -598,11 +598,6 @@
         <p>Dibuat oleh M. Putra Ramadhani</p>
       </div>
 
-      <!--<div class="header-info" style="background-color: #dc3545">
-        <h1 style="color: white">INFORMASI UNTUK MAHASISWA TEKNOLOGI INFORMASI</h1>
-        <p style="color: #ededed">Untuk pengumpulan tugas, nama file harus ada NamaMahasiswa_Nim</p>
-      </div>-->
-
       <div class="card">
         <h2>Unggah Dokumen</h2>
         <p class="sub-text">Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.</p>
@@ -684,11 +679,14 @@
 
       const MAX_FILE_SIZE_MB = 12;
       const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
+      const NOTIFICATION_KEY = "last-notification-id";
 
       document.addEventListener("DOMContentLoaded", () => {
+        requestNotificationPermission(); // Meminta izin notifikasi saat halaman dimuat
         checkMainAccessStatus();
         fetchCourseList();
         showSyaratDialogAtStart();
+        listenForManualNotifications();
       });
 
       courseSelect.addEventListener("change", () => {
@@ -746,7 +744,6 @@
           return;
         }
 
-        // Lanjutkan proses unggah tanpa menampilkan dialog syarat
         document.querySelector(".upload-area").style.display = "none";
         scanAnimation.style.display = "flex";
         fileNameSpan.textContent = `File terpilih: ${file.name}`;
@@ -782,11 +779,23 @@
 
       function showSuccessDialog(message, fileCount) {
         let fullMessage = message;
+        let notificationBody = message;
+
         if (typeof fileCount === "number" && fileCount > 0) {
-          fullMessage += `<br><br>Anda menjadi No.${fileCount} yang kumpul saat ini. File Anda telah terkirim, semoga hasil tugas mu memuaskan! 😊`;
+          const fileCountMessage = `Anda menjadi No.${fileCount} yang kumpul saat ini. File Anda telah terkirim, semoga hasil tugas mu memuaskan! 😊`;
+          fullMessage += `<br><br>${fileCountMessage}`;
+          notificationBody += `\n${fileCountMessage}`;
         }
+
         successMessage.innerHTML = fullMessage;
         uploadSuccessOverlay.style.display = "flex";
+
+        if (Notification.permission === "granted") {
+          new Notification("Unggah Berhasil!", {
+            body: notificationBody,
+            icon: "https://img.icons8.com/color/96/000000/ok--v1.png",
+          });
+        }
       }
 
       function showFailDialog(message) {
@@ -815,12 +824,22 @@
       }
 
       // ======================= FUNGSI UTAMA =======================
+      function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+          console.log("Browser ini tidak mendukung notifikasi desktop.");
+          return;
+        }
+
+        Notification.requestPermission().then((permission) => {
+          console.log("Izin notifikasi:", permission);
+        });
+      }
+
       async function fetchCourseList() {
         try {
           const snapshot = await database.ref("mata_kuliah").once("value");
           const courses = snapshot.val();
 
-          // Clear existing options, except the first one
           while (courseSelect.options.length > 1) {
             courseSelect.remove(1);
           }
@@ -836,7 +855,7 @@
               }
             }
           } else {
-            console.log("No courses found in the database.");
+            console.log("Tidak ada mata kuliah ditemukan di database.");
           }
         } catch (error) {
           console.error("Gagal memuat daftar mata kuliah:", error);
@@ -854,6 +873,12 @@
           } else {
             mainContent.style.display = "none";
             mainAccessClosedOverlay.style.display = "flex";
+            if (Notification.permission === "granted") {
+              new Notification("Pengumpulan Tugas Ditutup", {
+                body: "Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak putra untuk informasi lebih lanjut.",
+                icon: "https://img.icons8.com/ios-filled/100/fa314a/lock.png",
+              });
+            }
           }
         } catch (error) {
           console.error("Gagal memeriksa status akses:", error);
@@ -926,7 +951,6 @@
             rocketAnimation.style.display = "none";
             document.querySelector(".upload-area").style.display = "flex";
 
-            // Dapatkan jumlah file di folder setelah unggahan berhasil
             const folderRef = storage.ref(folderPath);
             folderRef
               .listAll()
@@ -944,6 +968,42 @@
             });
           }
         );
+      }
+
+      // ======================= FUNGSI NOTIFIKASI MANUAL BARU =======================
+      function listenForManualNotifications() {
+        const notifRef = database.ref("notifikasi_manual");
+
+        notifRef.on("value", (snapshot) => {
+          const notifData = snapshot.val();
+          if (notifData && notifData.aktif === true) {
+            const lastNotifId = localStorage.getItem(NOTIFICATION_KEY);
+
+            // Tampilkan notifikasi hanya jika ID notifikasi berbeda dari yang terakhir dilihat
+            if (lastNotifId !== notifData.id) {
+              displaySystemNotification(notifData);
+            }
+          }
+        });
+      }
+
+      function displaySystemNotification(data) {
+        if (Notification.permission === "granted") {
+          new Notification(data.judul, {
+            body: data.isi,
+            icon: "https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1", // Mengubah icon ke jalur file lokal
+          });
+
+          // Simpan ID notifikasi yang sudah dilihat ke local storage
+          localStorage.setItem(NOTIFICATION_KEY, data.id);
+        } else if (Notification.permission !== "denied") {
+          // Jika izin belum diberikan, coba minta izin terlebih dahulu
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              displaySystemNotification(data);
+            }
+          });
+        }
       }
     </script>
   </body>
