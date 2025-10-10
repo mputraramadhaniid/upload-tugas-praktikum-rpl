@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Upload Tugas Teknologi Informasi UM-Palembang</title>
     <link rel="icon" type="image/x-icon" href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" />
+    <link rel="manifest" href="/manifest.json" />
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
@@ -520,6 +521,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
   </head>
   <body>
     <div class="running-text-container">
@@ -652,6 +654,7 @@
       firebase.initializeApp(firebaseConfig);
       const storage = firebase.storage();
       const database = firebase.database();
+      const messaging = firebase.messaging(); // Inisialisasi Firebase Messaging
 
       const fileInput = document.getElementById("fileInput");
       const courseSelect = document.getElementById("courseSelect");
@@ -679,15 +682,56 @@
 
       const MAX_FILE_SIZE_MB = 12;
       const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
-      const NOTIFICATION_KEY = "last-notification-id";
 
       document.addEventListener("DOMContentLoaded", () => {
-        requestNotificationPermission(); // Meminta izin notifikasi saat halaman dimuat
+        // PERHATIAN: Meminta izin notifikasi sekarang dilakukan setelah pendaftaran service worker
         checkMainAccessStatus();
         fetchCourseList();
         showSyaratDialogAtStart();
-        listenForManualNotifications();
+
+        // DAFTARKAN SERVICE WORKER & MINTA IZIN NOTIFIKASI
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker
+            .register("/firebase-messaging-sw.js")
+            .then((registration) => {
+              console.log("Service Worker berhasil didaftarkan dengan cakupan:", registration.scope);
+              requestPushPermission();
+            })
+            .catch((error) => {
+              console.error("Pendaftaran Service Worker gagal:", error);
+            });
+        }
       });
+
+      // Fungsi untuk meminta izin notifikasi dan mendapatkan token perangkat
+      async function requestPushPermission() {
+        try {
+          const permission = await Notification.requestPermission();
+          if (permission === "granted") {
+            const token = await messaging.getToken();
+            console.log("Token perangkat:", token);
+            // Simpan token ini ke Firebase Realtime Database
+            database.ref("fcm_tokens").push(token);
+          } else {
+            console.log("Izin notifikasi ditolak.");
+          }
+        } catch (error) {
+          console.error("Gagal mendapatkan token:", error);
+        }
+      }
+
+      // Tangani pesan push yang diterima saat browser di latar depan
+      messaging.onMessage((payload) => {
+        console.log("Pesan push latar depan diterima.", payload);
+        const notificationTitle = payload.notification.title;
+        const notificationOptions = {
+          body: payload.notification.body,
+          icon: payload.notification.icon || "https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1",
+        };
+        new Notification(notificationTitle, notificationOptions);
+      });
+
+      // --- LOGIKA LAMA TETAP SAMA ---
 
       courseSelect.addEventListener("change", () => {
         const courseKey = courseSelect.value;
@@ -824,17 +868,6 @@
       }
 
       // ======================= FUNGSI UTAMA =======================
-      function requestNotificationPermission() {
-        if (!("Notification" in window)) {
-          console.log("Browser ini tidak mendukung notifikasi desktop.");
-          return;
-        }
-
-        Notification.requestPermission().then((permission) => {
-          console.log("Izin notifikasi:", permission);
-        });
-      }
-
       async function fetchCourseList() {
         try {
           const snapshot = await database.ref("mata_kuliah").once("value");
@@ -968,42 +1001,6 @@
             });
           }
         );
-      }
-
-      // ======================= FUNGSI NOTIFIKASI MANUAL BARU =======================
-      function listenForManualNotifications() {
-        const notifRef = database.ref("notifikasi_manual");
-
-        notifRef.on("value", (snapshot) => {
-          const notifData = snapshot.val();
-          if (notifData && notifData.aktif === true) {
-            const lastNotifId = localStorage.getItem(NOTIFICATION_KEY);
-
-            // Tampilkan notifikasi hanya jika ID notifikasi berbeda dari yang terakhir dilihat
-            if (lastNotifId !== notifData.id) {
-              displaySystemNotification(notifData);
-            }
-          }
-        });
-      }
-
-      function displaySystemNotification(data) {
-        if (Notification.permission === "granted") {
-          new Notification(data.judul, {
-            body: data.isi,
-            icon: "https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1", // Mengubah icon ke jalur file lokal
-          });
-
-          // Simpan ID notifikasi yang sudah dilihat ke local storage
-          localStorage.setItem(NOTIFICATION_KEY, data.id);
-        } else if (Notification.permission !== "denied") {
-          // Jika izin belum diberikan, coba minta izin terlebih dahulu
-          Notification.requestPermission().then((permission) => {
-            if (permission === "granted") {
-              displaySystemNotification(data);
-            }
-          });
-        }
       }
     </script>
   </body>
