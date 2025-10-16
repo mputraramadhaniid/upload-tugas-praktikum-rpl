@@ -4,11 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Upload Tugas Teknologi Informasi UM-Palembang</title>
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1"
-    />
+    <link rel="icon" type="image/x-icon" href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" />
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
@@ -529,129 +525,80 @@
   <body>
     <div class="running-text-container">
       <marquee behavior="scroll" direction="left" scrollamount="5">
-        Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi
-        UM-Palembang! Untuk bantuan,
-        <a style="color: #007bff" href="https://www.instagram.com/putramdhanii_"
-          >klik di sini</a
-        >.
+        Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi UM-Palembang! Mendownload StarUml Gratis
+        <a style="color: #007bff" href="https://www.mediafire.com/file/d7pcu7trst58gfo/StarUML.v5.1.0.x86-x64.kuyhAa.7z/file">Download Disini</a>. , Untuk bantuan,
+        <a style="color: #007bff" href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
       </marquee>
     </div>
 
     <div id="syaratDialogOverlay" class="access-overlay">
       <div class="access-card">
-        <img
-          src="https://img.icons8.com/ios-filled/96/fa314a/info.png"
-          alt="Informasi"
-        />
+        <img src="https://img.icons8.com/ios-filled/96/fa314a/info.png" alt="Informasi" />
         <h3>Syarat Pengumpulan Tugas</h3>
 
         <div class="syarat-list">
           <ul>
             <li>
-              <img
-                src="https://img.icons8.com/fluency/48/ok.png"
-                alt="Check Icon"
-                class="list-icon"
-              />
+              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
               <span>Nama file harus sesuai format: <b>Nama_NIM</b></span>
             </li>
 
             <li>
-              <img
-                src="https://img.icons8.com/fluency/48/ok.png"
-                alt="Check Icon"
-                class="list-icon"
-              />
+              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
               <span>Contoh: <b>M.PutraRamadhani_19223344</b></span>
             </li>
 
             <li>
-              <img
-                src="https://img.icons8.com/fluency/48/ok.png"
-                alt="Check Icon"
-                class="list-icon"
-              />
-              <span>
-                Pastikan file sudah dalam format yang diizinkan (.pdf, .doc,
-                .docx, .zip, .rar, .7z)</span
-              >
+              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
+              <span> Pastikan file sudah dalam format yang diizinkan (.pdf, .doc, .docx, .zip, .rar, .7z)</span>
             </li>
           </ul>
         </div>
 
         <div class="dialog-buttons">
           <button id="cancelSyaratBtn" class="dialog-button">Batal</button>
-          <button
-            id="confirmSyaratBtn"
-            class="dialog-button"
-            style="background-color: #dc3545"
-          >
-            Lanjutkan
-          </button>
+          <button id="confirmSyaratBtn" class="dialog-button" style="background-color: #dc3545">Lanjutkan</button>
         </div>
       </div>
     </div>
 
     <div id="mainAccessClosedOverlay" class="access-overlay">
       <div class="access-card">
-        <img
-          src="https://img.icons8.com/ios-filled/100/fa314a/lock.png"
-          alt="Akses Ditutup"
-        />
+        <img src="https://img.icons8.com/ios-filled/100/fa314a/lock.png" alt="Akses Ditutup" />
         <h3>Pemberitahuan</h3>
 
-        <p>
-          Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak
-          putra untuk informasi lebih lanjut.
-        </p>
+        <p>Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak putra untuk informasi lebih lanjut.</p>
         <button id="closeMainAccessBtn" class="dialog-button">Tutup</button>
       </div>
     </div>
 
     <div id="courseAccessClosedOverlay" class="access-overlay">
       <div class="access-card">
-        <img
-          src="https://img.icons8.com/ios-filled/100/fa314a/lock.png"
-          alt="Akses Ditutup"
-        />
+        <img src="https://img.icons8.com/ios-filled/100/fa314a/lock.png" alt="Akses Ditutup" />
         <h3 id="courseAccessTitle">Pengumpulan Tugas Ditutup</h3>
 
-        <p id="courseAccessMessage">
-          Pengumpulan tugas untuk mata kuliah ini telah ditutup.
-        </p>
+        <p id="courseAccessMessage">Pengumpulan tugas untuk mata kuliah ini telah ditutup.</p>
         <button id="closeCourseAccessBtn" class="dialog-button">Tutup</button>
       </div>
     </div>
 
     <div id="uploadSuccessOverlay" class="upload-status-overlay">
       <div id="uploadSuccessCard" class="upload-status-card">
-        <img
-          class="icon"
-          src="https://img.icons8.com/color/96/000000/ok--v1.png"
-          alt="Berhasil"
-        />
+        <img class="icon" src="https://img.icons8.com/color/96/000000/ok--v1.png" alt="Berhasil" />
         <h3>Unggah Berhasil!</h3>
 
         <p class="status-text" id="successMessage"></p>
-        <button onclick="closeSuccessDialog()" class="dialog-button">
-          Tutup
-        </button>
+        <button onclick="closeSuccessDialog()" class="dialog-button">Tutup</button>
       </div>
     </div>
 
     <div id="uploadFailOverlay" class="upload-status-overlay">
       <div id="uploadFailCard" class="upload-status-card">
-        <img
-          class="icon"
-          src="https://img.icons8.com/color/96/000000/cancel--v1.png"
-          alt="Gagal"
-        />
+        <img class="icon" src="https://img.icons8.com/color/96/000000/cancel--v1.png" alt="Gagal" />
         <h3>Unggah Gagal!</h3>
 
         <p class="status-text" id="failMessage"></p>
-        <button onclick="closeFailDialog()" class="dialog-button">
-          Tutup
-        </button>
+        <button onclick="closeFailDialog()" class="dialog-button">Tutup</button>
       </div>
     </div>
 
@@ -665,9 +612,7 @@
       <div class="card">
         <h2>Unggah Dokumen</h2>
 
-        <p class="sub-text">
-          Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.
-        </p>
+        <p class="sub-text">Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.</p>
 
         <div class="form-group">
           <label for="courseSelect">Pilih Mata Kuliah:</label>
@@ -677,17 +622,9 @@
         </div>
 
         <div class="upload-area">
-          <input
-            type="file"
-            id="fileInput"
-            accept=".pdf, .doc, .docx, .zip, .rar, .7z"
-            hidden
-          />
+          <input type="file" id="fileInput" accept=".pdf, .doc, .docx, .zip, .rar, .7z" hidden />
           <label for="fileInput" class="custom-file-upload">
-            <img
-              src="https://img.icons8.com/plasticine/100/000000/upload--v1.png"
-              alt="Upload Icon"
-            />
+            <img src="https://img.icons8.com/plasticine/100/000000/upload--v1.png" alt="Upload Icon" />
             <span>Pilih Dokumen atau Seret dan Lepas di Sini</span>
           </label>
           <span id="fileName" class="file-name"></span>
@@ -695,20 +632,12 @@
 
         <div id="scanAnimation" class="scan-container">
           <div class="spinner"></div>
-          <img
-            class="shield-icon"
-            src="images/file.png"
-            alt="Shield Icon"
-          />
+          <img class="shield-icon" src="images/file.png" alt="Shield Icon" />
           <span class="scan-text">Memindai file...</span>
         </div>
 
         <div id="rocketAnimation" class="rocket-container">
-          <img
-            class="rocket-icon"
-            src="https://pngfre.com/wp-content/uploads/Rocket-Emoji-10-1.png"
-            alt="Roket Animasi"
-          />
+          <img class="rocket-icon" src="https://pngfre.com/wp-content/uploads/Rocket-Emoji-10-1.png" alt="Roket Animasi" />
           <span class="rocket-text">Mengunggah...</span>
         </div>
 
@@ -743,12 +672,8 @@
       const progressContainer = document.getElementById("progressContainer");
       const statusMessage = document.getElementById("statusMessage");
       const mainContent = document.getElementById("mainContent");
-      const mainAccessClosedOverlay = document.getElementById(
-        "mainAccessClosedOverlay"
-      );
-      const courseAccessClosedOverlay = document.getElementById(
-        "courseAccessClosedOverlay"
-      );
+      const mainAccessClosedOverlay = document.getElementById("mainAccessClosedOverlay");
+      const courseAccessClosedOverlay = document.getElementById("courseAccessClosedOverlay");
       const courseAccessTitle = document.getElementById("courseAccessTitle");
       const courseAccessMessage = document.getElementById("courseAccessMessage");
       const closeMainAccessBtn = document.getElementById("closeMainAccessBtn");
@@ -816,20 +741,14 @@
         }
 
         if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-          showFailDialog(
-            `❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`
-          );
+          showFailDialog(`❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`);
           fileInput.value = "";
           return;
         }
 
         const fileExtension = "." + file.name.split(".").pop().toLowerCase();
         if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
-          showFailDialog(
-            `❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(
-              ", "
-            )} yang diizinkan.`
-          );
+          showFailDialog(`❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`);
           fileInput.value = "";
           return;
         }
@@ -837,18 +756,13 @@
         document.querySelector(".upload-area").style.display = "none";
         scanAnimation.style.display = "flex";
         fileNameSpan.textContent = `File terpilih: ${file.name}`;
-        statusMessage.textContent =
-          "Sedang memindai file untuk memastikan keamanan...";
+        statusMessage.textContent = "Sedang memindai file untuk memastikan keamanan...";
 
         setTimeout(() => {
           scanAnimation.style.display = "none";
-          checkCourseAccess(
-            selectedCourse,
-            courseSelect.options[courseSelect.selectedIndex].text,
-            () => {
-              uploadFile(file, selectedCourse);
-            }
-          );
+          checkCourseAccess(selectedCourse, courseSelect.options[courseSelect.selectedIndex].text, () => {
+            uploadFile(file, selectedCourse);
+          });
         }, 3000); // Waktu simulasi pemindaian (3 detik)
       }
 
@@ -985,9 +899,7 @@
 
       async function checkCourseAccess(courseKey, courseName, callback = null) {
         try {
-          const snapshot = await database
-            .ref(`akses_unggah/${courseKey}`)
-            .once("value");
+          const snapshot = await database.ref(`akses_unggah/${courseKey}`).once("value");
           const isOpen = snapshot.val();
 
           if (isOpen === true) {
@@ -1012,20 +924,13 @@
 
       function uploadFile(file, courseKey) {
         const now = new Date();
-        const timestamp = `${now.getFullYear()}-${String(
-          now.getMonth() + 1
-        ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(
-          now.getHours()
-        ).padStart(2, "0")}-${String(now.getMinutes()).padStart(
-          2,
-          "0"
-        )}-${String(now.getSeconds()).padStart(2, "0")}`;
+        const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
+          now.getSeconds()
+        ).padStart(2, "0")}`;
         const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".");
         const fileExtension = file.name.split(".").pop();
         const newFileName = `${fileNameWithoutExt}_${timestamp}.${fileExtension}`;
-        const folderNameForStorage = courseKey
-          .replace(/[^a-zA-Z0-9]/g, "")
-          .toLowerCase();
+        const folderNameForStorage = courseKey.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
         const folderPath = `dokumen/${folderNameForStorage}/`;
         const fileRef = storage.ref(folderPath + newFileName);
 
