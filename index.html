@@ -167,6 +167,9 @@
         margin-top: 15px;
         font-weight: 500;
         min-height: 20px;
+        color: #555;
+        /* Tambahkan ini agar pesan default/non-timer tetap terlihat */
+        text-align: center;
       }
 
       /* --- Dialog Akses Ditutup & Syarat Pengumpulan --- */
@@ -305,7 +308,7 @@
         color: #555;
       }
 
-      /* --- Animasi Roket --- */
+      /* --- Animasi Roket & Pemindaian CSS lainnya... (dibiarkan sama) --- */
       .rocket-container {
         display: flex;
         flex-direction: column;
@@ -412,21 +415,19 @@
           opacity: 1;
         }
       }
-      /* --- Teks Berjalan --- */
       /* --- Teks Berjalan Modern (Ganti Teks Berjalan Lama) --- */
       .running-text-container {
         width: 100%;
         padding: 8px 0;
         margin-bottom: 20px;
-        background-color: #dc3545; /* Ganti dengan gradasi */
         background: linear-gradient(90deg, #dc3545, #c00707);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         color: white;
         text-align: center;
-        overflow: hidden; /* Penting untuk menyembunyikan teks di luar kontainer */
+        overflow: hidden;
         position: relative;
-        white-space: nowrap; /* Mencegah teks turun ke baris baru */
-        display: flex; /* Gunakan Flexbox untuk penempatan yang lebih baik */
+        white-space: nowrap;
+        display: flex;
         align-items: center;
         position: fixed;
         top: 0;
@@ -436,22 +437,22 @@
 
       .running-text-container .text-wrapper {
         display: inline-block;
-        padding-left: 100%; /* Memulai teks dari luar sisi kanan */
-        animation: marquee-animation 15s linear infinite; /* Animasi inti */
+        padding-left: 100%;
+        animation: marquee-animation 15s linear infinite;
       }
 
       .running-text-container:hover .text-wrapper {
-        animation-play-state: paused; /* Berhenti saat kursor diarahkan */
+        animation-play-state: paused;
       }
 
       .running-text-container span {
         font-weight: 600;
         font-size: 1.1rem;
-        padding-right: 50px; /* Jarak antar pengulangan teks */
+        padding-right: 50px;
       }
 
       .running-text-container a {
-        color: #ffd700; /* Warna kuning emas untuk tautan */
+        color: #ffd700;
         text-decoration: none;
         font-weight: 700;
         transition: color 0.3s ease;
@@ -474,12 +475,12 @@
 
       /* --- Perbaikan Tampilan Syarat Pengumpulan --- */
       #syaratDialogOverlay .access-card {
-        padding: 25px; /* Kurangi padding untuk efisiensi ruang */
+        padding: 25px;
         max-width: 350px;
       }
 
       #syaratDialogOverlay .access-card h3 {
-        color: #dc3545; /* Ganti warna judul */
+        color: #dc3545;
         font-size: 1.4rem;
         margin-bottom: 20px;
       }
@@ -490,7 +491,7 @@
       }
 
       .syarat-list ul {
-        list-style: none; /* Hilangkan bullet default */
+        list-style: none;
         padding: 0;
         margin: 0;
       }
@@ -498,7 +499,7 @@
       .syarat-list li {
         display: flex;
         align-items: center;
-        margin-bottom: 12px; /* Jarak antar list item */
+        margin-bottom: 12px;
         font-size: 0.95rem;
         color: #4a4a4a;
         line-height: 1.4;
@@ -508,12 +509,84 @@
         width: 24px;
         height: 24px;
         margin-right: 10px;
-        flex-shrink: 0; /* Mencegah icon mengecil */
+        flex-shrink: 0;
       }
 
       #syaratDialogOverlay p {
         font-size: 0.9rem;
-        margin: 20px 0 0; /* Atur jarak atas */
+        margin: 20px 0 0;
+      }
+      /* --- Tambahan CSS --- */
+      /* --- Perbaikan Style Timer Baru --- */
+      .status-message {
+        margin-top: 15px;
+        font-weight: 500;
+        min-height: 20px;
+        color: #555;
+        /* Tambahkan ini agar pesan default/non-timer tetap terlihat */
+        text-align: center;
+      }
+
+      .timer-text {
+        /* CONTAINER UTAMA TIMER */
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #c00707 !important; /* Warna teks merah gelap */
+        background-color: #ffe6e6; /* Latar belakang merah muda lembut */
+        padding: 12px 20px; /* Padding yang lebih besar */
+        border-radius: 12px;
+        border: 1px solid #dc3545; /* Border untuk kontras */
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.15); /* Bayangan yang lebih menonjol */
+        display: inline-flex; /* Gunakan flex untuk alignment */
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 15px; /* Jarak dari elemen di atasnya */
+        max-width: 100%;
+      }
+
+      .timer-icon {
+        /* Menggunakan ikon yang lebih besar dan berotasi */
+        font-size: 1.5rem;
+        line-height: 1;
+        animation: rotateTimer 4s linear infinite; /* Animasi rotasi lembut */
+      }
+
+      .timer-days {
+        /* Stylizing Hari */
+        font-size: 1.25em; /* Ukuran yang lebih besar untuk hari */
+        font-weight: 800;
+        color: #dc3545; /* Warna kontras cerah untuk Hari */
+        padding: 2px 5px;
+        border-radius: 6px;
+        background-color: #fff; /* Latar belakang putih untuk hari */
+      }
+
+      /* Keyframe untuk animasi timer icon */
+      @keyframes rotateTimer {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Style untuk Akses Terbuka (non-timer status) */
+      .timer-text[style*="#28a745"] {
+        background-color: #e6ffe6;
+        border: 1px solid #28a745;
+        color: #155724 !important;
+        box-shadow: 0 6px 15px rgba(40, 167, 69, 0.15);
+      }
+
+      /* Style untuk Akses Tertutup (error status) */
+      .timer-text[style*="#dc3545"] {
+        background-color: #f8d7da;
+        border: 1px solid #dc3545;
+        color: #721c24 !important;
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.2);
       }
     </style>
 
@@ -524,11 +597,12 @@
 
   <body>
     <div class="running-text-container">
-      <marquee behavior="scroll" direction="left" scrollamount="5">
-        Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi UM-Palembang! Mendownload StarUml Gratis
-        <a style="color: #007bff" href="https://www.mediafire.com/file/d7pcu7trst58gfo/StarUML.v5.1.0.x86-x64.kuyhAa.7z/file">Download Disini</a>. , Untuk bantuan,
-        <a style="color: #007bff" href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
-      </marquee>
+      <div class="text-wrapper">
+        <span>
+          Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi UM-Palembang! Mendownload StarUml Gratis
+          <a href="https://www.mediafire.com/file/d7pcu7trst58gfo/StarUML.v5.1.0.x86-x64.kuyhAa.7z/file">Download Disini</a>. , Untuk bantuan, <a href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
+        </span>
+      </div>
     </div>
 
     <div id="syaratDialogOverlay" class="access-overlay">
@@ -602,7 +676,7 @@
       </div>
     </div>
 
-    <div style="margin-top: 40px" id="mainContent" class="container">
+    <div style="margin-top: 60px" id="mainContent" class="container">
       <div class="header-info">
         <h1>PENGUMPULAN TUGAS TEKNOLOGI INFORMASI UM-PALEMBANG</h1>
 
@@ -645,7 +719,7 @@
           <div id="progressBar" class="progress-bar"></div>
         </div>
 
-        <p id="statusMessage" class="status-message"></p>
+        <p id="statusMessage" class="status-message">Pilih Mata Kuliah untuk melihat status akses dan deadline.</p>
       </div>
     </div>
 
@@ -693,20 +767,28 @@
       const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
       const NOTIFICATION_KEY = "last-notification-id";
 
+      let courseDeadlines = {};
+      let countdownInterval = null;
+
       document.addEventListener("DOMContentLoaded", () => {
-        requestNotificationPermission(); // Meminta izin notifikasi saat halaman dimuat
+        requestNotificationPermission();
         checkMainAccessStatus();
         fetchCourseList();
+        fetchCourseDeadlines();
         showSyaratDialogAtStart();
         listenForManualNotifications();
+        // Atur pesan awal
+        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
       });
 
       courseSelect.addEventListener("change", () => {
         const courseKey = courseSelect.value;
         const courseName = courseSelect.options[courseSelect.selectedIndex].text;
         checkCourseAccess(courseKey, courseName);
-      }); // ========================== Fungsionalitas Drag & Drop ==========================
+        startCourseCountdown(courseKey, courseName);
+      });
 
+      // ========================== Fungsionalitas Drag & Drop ==========================
       dropArea.addEventListener("dragover", (e) => {
         e.preventDefault();
         dropArea.classList.add("dragover");
@@ -723,7 +805,8 @@
         if (files.length > 0) {
           handleFile(files[0]);
         }
-      }); // =================================================================================
+      });
+      // =================================================================================
       fileInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -760,8 +843,12 @@
 
         setTimeout(() => {
           scanAnimation.style.display = "none";
-          checkCourseAccess(selectedCourse, courseSelect.options[courseSelect.selectedIndex].text, () => {
-            uploadFile(file, selectedCourse);
+          checkCourseAccess(selectedCourse, courseSelect.options[courseSelect.selectedIndex].text, (isAccessOpen) => {
+            if (isAccessOpen) {
+              uploadFile(file, selectedCourse);
+            } else {
+              resetUploadState();
+            }
           });
         }, 3000); // Waktu simulasi pemindaian (3 detik)
       }
@@ -826,11 +913,155 @@
         fileInput.value = "";
         fileNameSpan.textContent = "";
         progressContainer.style.display = "none";
-        statusMessage.textContent = "";
         rocketAnimation.style.display = "none";
         scanAnimation.style.display = "none";
         document.querySelector(".upload-area").style.display = "flex";
-      } // ======================= FUNGSI UTAMA =======================
+
+        // Hentikan timer yang berjalan
+        clearInterval(countdownInterval);
+
+        // Kembalikan status message ke kondisi "Pilih Mata Kuliah..."
+        statusMessage.classList.remove("timer-text");
+        statusMessage.style.color = "#555";
+        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
+
+        // Jika ada mata kuliah yang terpilih, segera tampilkan statusnya lagi
+        if (courseSelect.value) {
+          const courseKey = courseSelect.value;
+          const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+          checkCourseAccess(courseKey, courseName);
+          startCourseCountdown(courseKey, courseName);
+        }
+      }
+      // ======================= FUNGSI COOLDOWN TIMER & AKses =======================
+      async function fetchCourseDeadlines() {
+        try {
+          const snapshot = await database.ref("akses_unggah").once("value");
+          courseDeadlines = snapshot.val() || {};
+        } catch (error) {
+          console.error("Gagal memuat deadline mata kuliah:", error);
+        }
+      }
+
+      function formatTime(ms) {
+        if (ms < 0) return "00 Hari 00:00:00";
+
+        const totalSeconds = Math.floor(ms / 1000);
+        const days = Math.floor(totalSeconds / (3600 * 24));
+        const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        const h = String(hours).padStart(2, "0");
+        const m = String(minutes).padStart(2, "0");
+        const s = String(seconds).padStart(2, "0");
+
+        return `${days} Hari ${h}:${m}:${s}`;
+      }
+
+      function updateCountdownDisplay(courseKey, courseName, deadlineTime) {
+        const now = new Date().getTime();
+        let distance = deadlineTime - now;
+
+        // Hentikan interval lama jika ada
+        clearInterval(countdownInterval);
+
+        statusMessage.style.color = ""; // Hapus transparansi
+        statusMessage.classList.add("timer-text");
+
+        const updateTimer = () => {
+          distance = deadlineTime - new Date().getTime();
+
+          if (distance < 0) {
+            clearInterval(countdownInterval);
+            closeCourseAccess(courseKey, courseName); // Tutup otomatis
+          } else {
+            statusMessage.innerHTML = `Waktu Pengumpulan Tersisa: ${formatTime(distance)}`;
+          }
+        };
+
+        // Panggil sekali segera
+        updateTimer();
+        // Lalu atur interval
+        countdownInterval = setInterval(updateTimer, 1000);
+      }
+
+      function startCourseCountdown(courseKey, courseName) {
+        clearInterval(countdownInterval); // Hentikan timer sebelumnya
+
+        // Atur ulang statusMessage ke kondisi dasar
+        statusMessage.classList.remove("timer-text");
+        statusMessage.style.color = "#555";
+        statusMessage.textContent = "Memuat status pengumpulan...";
+
+        const courseData = courseDeadlines[courseKey];
+
+        if (courseData && courseData.isOpen === false) {
+          // Status Akses Ditutup Manual
+          statusMessage.classList.add("timer-text");
+          statusMessage.style.color = "#dc3545"; // Merah
+          statusMessage.innerHTML = "Akses pengumpulan sudah ditutup.";
+        } else if (courseData && courseData.deadline) {
+          // Ada Deadline dan Akses Terbuka
+          const deadlineString = courseData.deadline;
+          const deadlineTime = new Date(deadlineString).getTime();
+          const now = new Date().getTime();
+
+          if (deadlineTime < now) {
+            // Waktu Sudah Habis
+            closeCourseAccess(courseKey, courseName);
+            statusMessage.classList.add("timer-text");
+            statusMessage.style.color = "#dc3545"; // Merah
+            statusMessage.innerHTML = `Pengumpulan ditutup karena Waktu habis sejak ${new Date(deadlineTime).toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })}`;
+          } else {
+            // Waktu Sedang Berjalan
+            updateCountdownDisplay(courseKey, courseName, deadlineTime);
+          }
+        } else {
+          // Akses Terbuka Tanpa Deadline
+          statusMessage.classList.add("timer-text");
+          statusMessage.style.color = "#28a745"; // Hijau
+          statusMessage.innerHTML = "Akses terbuka silakan Pilih dokumen untuk diunggah.";
+        }
+      }
+
+      // Fungsi untuk menutup akses dan memberi notifikasi
+      function closeCourseAccess(courseKey, courseName) {
+        // Tampilkan dialog penutupan
+        courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
+        courseAccessMessage.textContent = `Waktu pengumpulan untuk mata kuliah ${courseName} telah habis. Akses ditutup secara otomatis.`;
+        courseAccessClosedOverlay.style.display = "flex";
+        fileInput.value = "";
+
+        // Tutup akses di Firebase
+        database
+          .ref(`akses_unggah/${courseKey}/isOpen`)
+          .set(false)
+          .then(() => {
+            console.log(`Akses ${courseName} berhasil ditutup di Firebase.`);
+            // Perbarui data lokal
+            if (courseDeadlines[courseKey]) {
+              courseDeadlines[courseKey].isOpen = false;
+            }
+            // Perbarui tampilan status
+            statusMessage.classList.add("timer-text");
+            statusMessage.style.color = "#dc3545"; // Warna merah
+            statusMessage.innerHTML = `Pengumpulan tugas untuk ${courseName} telah ditutup.`;
+
+            if (Notification.permission === "granted") {
+              new Notification("Pengumpulan Ditutup Otomatis", {
+                body: `Waktu pengumpulan untuk ${courseName} sudah habis.`,
+                icon: "https://img.icons8.com/ios-filled/100/fa314a/lock.png",
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Gagal menutup akses di Firebase:", error);
+            statusMessage.innerHTML = `Gagal menutup akses di Firebase, namun waktu sudah habis.`;
+          });
+      }
+
+      // ======================= FUNGSI UTAMA =======================
 
       function requestNotificationPermission() {
         if (!("Notification" in window)) {
@@ -899,26 +1130,46 @@
 
       async function checkCourseAccess(courseKey, courseName, callback = null) {
         try {
-          const snapshot = await database.ref(`akses_unggah/${courseKey}`).once("value");
-          const isOpen = snapshot.val();
+          const courseData = courseDeadlines[courseKey];
+          const isOpen = courseData ? courseData.isOpen : true; // Default ke terbuka jika data tidak ada
+          const deadlineString = courseData ? courseData.deadline : null;
+          const now = new Date().getTime();
 
-          if (isOpen === true) {
-            courseAccessClosedOverlay.style.display = "none";
-            if (callback) {
-              callback();
+          let isAccessOpen = isOpen;
+
+          // 1. Cek apakah deadline sudah terlewati (hanya jika akses masih terbuka)
+          if (isOpen === true && deadlineString) {
+            const deadlineTime = new Date(deadlineString).getTime();
+            if (deadlineTime < now) {
+              isAccessOpen = false;
+              closeCourseAccess(courseKey, courseName); // Tutup otomatis dan notifikasi
             }
+          }
+
+          // 2. Tampilkan dialog penutupan jika akses (atau waktu) tertutup
+          if (isAccessOpen === true) {
+            courseAccessClosedOverlay.style.display = "none";
           } else {
             courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
-            courseAccessMessage.textContent = `Pengumpulan tugas untuk mata kuliah ${courseName} telah ditutup.`;
+            courseAccessMessage.textContent = `Pengumpulan tugas untuk mata kuliah ${courseName} telah ditutup (baik secara manual maupun otomatis karena waktu habis).`;
             courseAccessClosedOverlay.style.display = "flex";
             fileInput.value = "";
           }
+
+          if (callback) {
+            callback(isAccessOpen);
+          }
+          return isAccessOpen;
         } catch (error) {
           console.error("Gagal memeriksa status akses mata kuliah:", error);
           courseAccessTitle.textContent = "Gagal Memuat Status";
           courseAccessMessage.textContent = `Gagal memuat status akses mata kuliah: ${error.message}`;
           courseAccessClosedOverlay.style.display = "flex";
           fileInput.value = "";
+          if (callback) {
+            callback(false);
+          }
+          return false;
         }
       }
 
@@ -976,7 +1227,8 @@
             });
           }
         );
-      } // ======================= FUNGSI NOTIFIKASI MANUAL BARU =======================
+      }
+      // ======================= FUNGSI NOTIFIKASI MANUAL =======================
 
       function listenForManualNotifications() {
         const notifRef = database.ref("notifikasi_manual");
@@ -984,7 +1236,7 @@
         notifRef.on("value", (snapshot) => {
           const notifData = snapshot.val();
           if (notifData && notifData.aktif === true) {
-            const lastNotifId = localStorage.getItem(NOTIFICATION_KEY); // Tampilkan notifikasi hanya jika ID notifikasi berbeda dari yang terakhir dilihat
+            const lastNotifId = localStorage.getItem(NOTIFICATION_KEY);
 
             if (lastNotifId !== notifData.id) {
               displaySystemNotification(notifData);
@@ -997,12 +1249,11 @@
         if (Notification.permission === "granted") {
           new Notification(data.judul, {
             body: data.isi,
-            icon: "https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1", // Mengubah icon ke jalur file lokal
-          }); // Simpan ID notifikasi yang sudah dilihat ke local storage
+            icon: "https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1",
+          });
 
           localStorage.setItem(NOTIFICATION_KEY, data.id);
         } else if (Notification.permission !== "denied") {
-          // Jika izin belum diberikan, coba minta izin terlebih dahulu
           Notification.requestPermission().then((permission) => {
             if (permission === "granted") {
               displaySystemNotification(data);
