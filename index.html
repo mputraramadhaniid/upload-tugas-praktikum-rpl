@@ -9,20 +9,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-      /* ========================== CSS DARK MODE ELEGAN ========================== */
+      /* ========================== CSS DARK MODE ELEGAN & RESPONSIVE ========================== */
       
       :root {
           /* Palet Warna Dark Mode */
-          --bg-dark: #1e1e2d; /* Latar belakang utama */
-          --card-bg: #27293d; /* Latar belakang kartu/elemen */
-          --sidebar-bg: #222533; /* Latar belakang sidebar */
-          --text-light: #e0e0e0; /* Teks umum */
-          --text-muted: #aaaaaa; /* Teks sekunder/deskripsi */
-          --accent-blue: #007bff; /* Warna aksen biru */
+          --bg-dark: #1e1e2d; 
+          --card-bg: #27293d; 
+          --sidebar-bg: #222533; 
+          --text-light: #e0e0e0; 
+          --text-muted: #aaaaaa; 
+          --accent-blue: #007bff; 
           --accent-blue-hover: #0056b3;
-          --delete-red: #dc3545; /* Warna tombol hapus */
-          --border-dark: #3a3a5a; /* Warna border di dark mode */
-          --red-header: #c0392b; /* Warna header merah paling atas */
+          --delete-red: #dc3545; 
+          --border-dark: #3a3a5a; 
+          --red-header: #c0392b; 
       }
 
       body {
@@ -36,7 +36,7 @@
           min-height: 100vh;
       }
 
-      /* Running Text (Header Paling Atas) */
+      /* Running Text */
       .running-text-container {
           width: 100%;
           padding: 8px 0;
@@ -77,7 +77,7 @@
       .main-layout {
           display: flex;
           flex: 1;
-          padding-top: 40px; /* Jarak untuk running text */
+          padding-top: 40px; 
           width: 100%;
       }
       
@@ -328,12 +328,13 @@
         text-align: center;
       }
       
-      /* Animasi Scan & Rocket (diperlukan untuk fungsi) */
+      /* Animasi Scan & Rocket */
       #scanAnimation, #rocketAnimation {
           display: flex;
           flex-direction: column;
           align-items: center;
           margin: 20px 0;
+          text-align: center;
       }
       
       /* Upload Button */
@@ -385,19 +386,6 @@
           padding-right: 15px;
       }
       
-      .file-details strong {
-          display: block;
-          font-size: 1rem;
-          color: var(--text-light);
-          margin-bottom: 3px;
-      }
-      
-      .file-details span {
-          display: block;
-          font-size: 0.8em;
-          color: var(--text-muted);
-      }
-      
       .delete-btn {
           background-color: var(--delete-red);
           color: white;
@@ -410,22 +398,7 @@
           flex-shrink: 0;
       }
       
-      .delete-btn:hover {
-          background-color: #a71d2a;
-      }
-      
-      #noHistoryMessage {
-          text-align: center;
-          color: var(--text-muted);
-          padding: 30px;
-      }
-
-      /* Login Screen (Dark Mode) */
-      #loginScreen {
-          /* ... style lainnya ... */
-      }
-
-      /* --- GENERAL UTILS & DIALOGS (Modified for Dark Mode) --- */
+      /* Dialogs */
       .access-overlay, .upload-status-overlay {
           background-color: rgba(0, 0, 0, 0.85);
       }
@@ -435,25 +408,13 @@
           border-radius: 15px;
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       }
-      .access-card h3, .upload-status-card h3 {
-          color: var(--text-light);
+      /* Login Card fix */
+      .login-card {
+          background: var(--card-bg);
+          /* Tambahan untuk menengahkan tombol */
+          text-align: center; 
       }
-      .upload-status-card h3 {
-          color: #28a745; /* Hijau untuk sukses */
-      }
-      #uploadFailCard h3 {
-          color: #dc3545; /* Merah untuk gagal */
-      }
-      .dialog-button {
-          background-color: var(--accent-blue);
-      }
-      .dialog-button:hover {
-          background-color: var(--accent-blue-hover);
-      }
-      .access-card p, .upload-status-card .status-text {
-          color: var(--text-muted);
-      }
-
+      
       /* ========================== MEDIA QUERIES (RESPONSIVE FIX) ========================== */
       @media (max-width: 768px) {
           .main-layout {
@@ -488,7 +449,7 @@
           .content-area {
               padding: 10px;
               max-width: 100%;
-              margin-top: 55px; /* Jarak dari sidebar horizontal yang fixed */
+              margin-top: 55px;
           }
       
           .navbar {
@@ -631,11 +592,9 @@
             </div>
 
             <div id="scanAnimation" style="display: none;">
-                <p style="color:var(--accent-blue); font-weight: 500;">Memindai file...</p>
-            </div>
+                </div>
             <div id="rocketAnimation" style="display: none;">
-                <p style="color:var(--accent-blue); font-weight: 500;">Mengunggah...</p>
-            </div>
+                </div>
             
             <div id="progressContainer" class="progress-container">
               <div id="progressBar" class="progress-bar"></div>
@@ -752,12 +711,11 @@
       document.addEventListener("DOMContentLoaded", () => {
         fetchCourseList();
         fetchCourseDeadlines();
-        // showSyaratDialogAtStart(); // Bisa diaktifkan lagi jika perlu
       });
       
       googleSignInBtn.addEventListener("click", handleSignIn);
       logoutBtn.addEventListener("click", handleSignOut);
-      confirmSyaratBtn.addEventListener("click", () => { syaratDialogOverlay.style.display = 'none'; });
+      document.getElementById("confirmSyaratBtn").addEventListener("click", () => { document.getElementById("syaratDialogOverlay").style.display = 'none'; });
 
       navHome.addEventListener("click", (e) => { e.preventDefault(); showView("home"); });
       navHistory.addEventListener("click", (e) => { e.preventDefault(); showView("history"); });
@@ -767,7 +725,6 @@
         const courseName = courseSelect.options[courseSelect.selectedIndex].text;
         checkCourseAccess(courseKey, courseName);
         startCourseCountdown(courseKey, courseName);
-        // Tampilkan tombol unggah jika file sudah terpilih
         if (selectedFile) {
             startUploadBtn.style.display = 'block';
         }
@@ -779,7 +736,6 @@
         }
       });
       
-      // FIX: Tombol Mulai Unggah Sekarang Memanggil Fungsi Upload
       startUploadBtn.addEventListener("click", () => {
           if (selectedFile) {
               handleFileUpload(selectedFile);
@@ -996,7 +952,6 @@
         startUploadBtn.style.display = 'none';
         document.querySelector(".drop-area-wrap").style.display = 'flex';
         
-        // Atur ulang status timer
         clearInterval(countdownInterval);
         statusMessage.classList.remove("timer-text");
         statusMessage.style.color = "var(--text-muted)";
@@ -1007,7 +962,7 @@
         }
       }
       
-      // ========================== RIWAYAT & HAPUS (Sudah diperbaiki) ==========================
+      // ========================== RIWAYAT & HAPUS ==========================
       async function fetchUploadHistory(userUid) {
         historyList.innerHTML = "";
         noHistoryMessage.style.display = "block";
@@ -1082,21 +1037,35 @@
         uploadFailOverlay.style.display = "none";
       }
 
+      // --- Placeholder Firebase Functions ---
+      // Fungsi ini harus diimplementasikan untuk mengambil data sebenarnya dari Firebase
       function fetchCourseList() {
-        // Logika fetch course list
+         // Placeholder: Isi dropdown dengan dummy data untuk pengujian
+         const dummyCourses = {
+             "mk1": "Praktikum Pemrograman Web",
+             "mk2": "Basis Data Lanjut",
+             "mk3": "Jaringan Komputer"
+         };
+         for (const key in dummyCourses) {
+            const option = document.createElement("option");
+            option.value = key;
+            option.textContent = dummyCourses[key];
+            courseSelect.appendChild(option);
+         }
       }
       
       function fetchCourseDeadlines() {
-        // Logika fetch deadlines
+        // Placeholder: Untuk menghindari error
       }
 
       function startCourseCountdown(courseKey, courseName) {
-        // Logika timer
+        // Placeholder: Timer display logic
+        statusMessage.innerHTML = `<i class="fas fa-check-circle" style="color:#28a745;"></i> Akses Terbuka. Unggah sekarang!`;
       }
 
       async function checkCourseAccess(courseKey, courseName) {
-        // Logika check akses. Mengembalikan true/false
-        return true; // Asumsi akses terbuka untuk tes unggah
+        // Placeholder: Asumsikan akses selalu true untuk pengujian unggah
+        return true; 
       }
       
     </script>
