@@ -4,399 +4,75 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portal Tugas TI UM-Palembang (Login & Riwayat)</title>
-    <link rel="icon" type="image/x-icon" href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
 
     <style>
-      /* --- CSS LAMA DARI KODE ANDA DI SINI --- */
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+      /* ========================== CSS DARK MODE ELEGAN ========================== */
+
+      :root {
+        /* Palet Warna Dark Mode */
+        --bg-dark: #1e1e2d; /* Latar belakang utama */
+        --card-bg: #27293d; /* Latar belakang kartu/elemen */
+        --sidebar-bg: #222533; /* Latar belakang sidebar */
+        --text-light: #e0e0e0; /* Teks umum */
+        --text-muted: #aaaaaa; /* Teks sekunder/deskripsi */
+        --accent-blue: #007bff; /* Warna aksen biru */
+        --accent-blue-hover: #0056b3;
+        --delete-red: #dc3545; /* Warna tombol hapus */
+        --border-dark: #3a3a5a; /* Warna border di dark mode */
+        --red-header: #c0392b; /* Warna header merah paling atas */
+      }
 
       body {
         font-family: "Poppins", sans-serif;
-        background-color: #f0f2f5;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-dark);
+        color: var(--text-light);
         display: flex;
         flex-direction: column;
-        justify-content: flex-start; /* Ubah ke flex-start untuk mengakomodasi navbar */
-        align-items: center;
         min-height: 100vh;
-        margin: 0;
-        color: #333;
-        padding-top: 100px; /* Jarak untuk Fixed Navbar dan Running Text */
       }
-      /* --- CSS LAMA UNTUK CARD, HEADER-INFO, ETC. --- */
-      .header-info {
-        text-align: center;
-        margin-bottom: 20px;
-        padding: 15px;
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        width: 90%;
-        max-width: 600px;
-      }
-      .header-info h1 {
-        color: #1a1a1a;
-        font-weight: 600;
-        font-size: 1.2rem;
-        margin: 0 0 5px 0;
-      }
-      .header-info p {
-        color: #666;
-        font-size: 0.9rem;
-        margin: 0;
-      }
-      .container {
-        padding: 20px;
-        width: 100%;
-        max-width: 450px;
-        box-sizing: border-box;
-      }
-      .card {
-        background: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        padding: 30px;
-        text-align: center;
-        transition: transform 0.3s ease;
-      }
-      .card:hover {
-        transform: translateY(-5px);
-      }
-      h2 {
-        color: #4a4a4a;
-        font-weight: 600;
-        margin-bottom: 10px;
-      }
-      .sub-text {
-        color: #888;
-        margin-bottom: 25px;
-      }
-      .form-group {
-        margin-bottom: 20px;
-        text-align: left;
-      }
-      .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 600;
-        color: #555;
-      }
-      .form-group select {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 1rem;
-        background-color: #f9f9f9;
-      }
-      .upload-area {
-        margin: 25px 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      .custom-file-upload {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 150px;
-        height: 150px;
-        border: 3px dashed #e0e0e0;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: border-color 0.3s ease, transform 0.3s ease;
-      }
-      .custom-file-upload.dragover {
-        border-color: #007bff;
-        transform: scale(1.05);
-        background-color: #e6f2ff;
-      }
-      .custom-file-upload:hover {
-        border-color: #007bff;
-        transform: scale(1.05);
-      }
-      .custom-file-upload img {
-        width: 60px;
-        margin-bottom: 5px;
-        transition: transform 0.3s ease;
-      }
-      .custom-file-upload:hover img {
-        transform: translateY(-5px);
-      }
-      .file-name {
-        margin-top: 15px;
-        color: #555;
-        font-size: 14px;
-        font-style: italic;
-      }
-      .progress-container {
-        width: 100%;
-        background-color: #e9ecef;
-        border-radius: 50px;
-        margin-top: 20px;
-        overflow: hidden;
-        height: 10px;
-        display: none;
-      }
-      .progress-bar {
-        height: 100%;
-        width: 0%;
-        background-color: #007bff;
-        transition: width 0.3s ease;
-        border-radius: 50px;
-      }
-      .status-message {
-        margin-top: 15px;
-        font-weight: 500;
-        min-height: 20px;
-        color: #555;
-        text-align: center;
-      }
-      .access-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
-      .access-card {
-        background: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        padding: 40px;
-        text-align: center;
-        max-width: 400px;
-        width: 90%;
-        animation: fadeIn 0.3s ease-in-out;
-      }
-      .access-card img {
-        width: 80px;
-        height: 80px;
-        margin-bottom: 20px;
-      }
-      .access-card h3 {
-        color: #dc3545;
-        margin-bottom: 10px;
-        font-size: 1.5rem;
-      }
-      .access-card p {
-        color: #555;
-        margin: 0 0 20px 0;
-        line-height: 1.5;
-      }
-      .dialog-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 20px;
-      }
-      .dialog-button {
-        flex: 1;
-        background-color: #007bff;
-        color: white;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-      }
-      .dialog-button:hover {
-        background-color: #0056b3;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: scale(0.95);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-      .upload-status-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
-      .upload-status-card {
-        background: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        padding: 25px;
-        text-align: center;
-        width: 90%;
-        max-width: 400px;
-        box-sizing: border-box;
-        animation: fadeIn 0.3s ease-in-out;
-      }
-      .upload-status-card .icon {
-        width: 60px;
-        height: 60px;
-        margin-bottom: 15px;
-      }
-      .upload-status-card h3 {
-        margin-bottom: 10px;
-        font-size: 1.2rem;
-      }
-      #uploadSuccessCard h3 {
-        color: #28a745;
-      }
-      #uploadFailCard h3 {
-        color: #dc3545;
-      }
-      .upload-status-card .status-text {
-        font-size: 0.9rem;
-        color: #555;
-      }
-      .rocket-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 20px;
-        display: none;
-      }
-      .rocket-icon {
-        width: 80px;
-        height: 80px;
-        animation: fly 2s ease-out infinite;
-      }
-      .rocket-text {
-        margin-top: 10px;
-        color: #007bff;
-        font-weight: 600;
-      }
-      @keyframes fly {
-        0% {
-          transform: translateY(0);
-          opacity: 1;
-        }
-        50% {
-          transform: translateY(-30px);
-          opacity: 0.5;
-        }
-        100% {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-      .scan-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin: 25px 0;
-        display: none;
-        position: relative;
-      }
-      .spinner {
-        border: 4px solid #e0e0e0;
-        border-left-color: #007bff;
-        border-radius: 50%;
-        width: 100px;
-        height: 100px;
-        animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        transition: all 0.3s ease;
-      }
-      .shield-icon {
-        width: 80px;
-        height: 80px;
-        animation: pulse 1.5s infinite ease-in-out;
-        position: relative;
-        z-index: 10;
-      }
-      .scan-text {
-        margin-top: 15px;
-        font-weight: 600;
-        color: #007bff;
-        animation: fadePulse 1.5s infinite ease-in-out;
-      }
-      @keyframes spin {
-        0% {
-          transform: translate(-50%, -50%) rotate(0deg);
-        }
-        100% {
-          transform: translate(-50%, -50%) rotate(360deg);
-        }
-      }
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      @keyframes fadePulse {
-        0% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.7;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
+
+      /* Running Text (Header Paling Atas) */
       .running-text-container {
         width: 100%;
         padding: 8px 0;
-        margin-bottom: 20px;
-        background: linear-gradient(90deg, #dc3545, #c00707);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        background: var(--red-header);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         color: white;
         text-align: center;
         overflow: hidden;
-        position: relative;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-        position: fixed;
+        position: fixed; /* Dijadikan fixed agar tidak bergerak */
         top: 0;
         left: 0;
         z-index: 1000;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
       }
       .running-text-container .text-wrapper {
         display: inline-block;
         padding-left: 100%;
         animation: marquee-animation 15s linear infinite;
       }
-      .running-text-container:hover .text-wrapper {
-        animation-play-state: paused;
-      }
       .running-text-container span {
-        font-weight: 600;
-        font-size: 1.1rem;
+        font-weight: 500;
+        font-size: 0.9rem;
         padding-right: 50px;
       }
       .running-text-container a {
         color: #ffd700;
         text-decoration: none;
-        font-weight: 700;
-        transition: color 0.3s ease;
-      }
-      .running-text-container a:hover {
-        color: #fff;
-        text-decoration: underline;
+        font-weight: 600;
       }
       @keyframes marquee-animation {
         0% {
@@ -406,386 +82,528 @@
           transform: translateX(-100%);
         }
       }
-      #syaratDialogOverlay .access-card {
-        padding: 25px;
-        max-width: 350px;
-      }
-      #syaratDialogOverlay .access-card h3 {
-        color: #dc3545;
-        font-size: 1.4rem;
-        margin-bottom: 20px;
-      }
-      .syarat-list {
-        text-align: left;
-        margin-bottom: 20px;
-      }
-      .syarat-list ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-      .syarat-list li {
+
+      /* Main Layout */
+      .main-layout {
         display: flex;
-        align-items: center;
-        margin-bottom: 12px;
-        font-size: 0.95rem;
-        color: #4a4a4a;
-        line-height: 1.4;
-      }
-      .syarat-list .list-icon {
-        width: 24px;
-        height: 24px;
-        margin-right: 10px;
-        flex-shrink: 0;
-      }
-      #syaratDialogOverlay p {
-        font-size: 0.9rem;
-        margin: 20px 0 0;
-      }
-      .timer-text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 1.1rem;
-        color: #c00707 !important;
-        background-color: #ffe6e6;
-        padding: 12px 20px;
-        border-radius: 12px;
-        border: 1px solid #dc3545;
-        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.15);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-top: 15px;
-        max-width: 100%;
-      }
-      .timer-icon {
-        font-size: 1.5rem;
-        line-height: 1;
-        animation: rotateTimer 4s linear infinite;
-      }
-      .timer-days {
-        font-size: 1.25em;
-        font-weight: 800;
-        color: #dc3545;
-        padding: 2px 5px;
-        border-radius: 6px;
-        background-color: #fff;
-      }
-      @keyframes rotateTimer {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-      .timer-text[style*="#28a745"] {
-        background-color: #e6ffe6;
-        border: 1px solid #28a745;
-        color: #155724 !important;
-        box-shadow: 0 6px 15px rgba(40, 167, 69, 0.15);
-      }
-      .timer-text[style*="#dc3545"] {
-        background-color: #f8d7da;
-        border: 1px solid #dc3545;
-        color: #721c24 !important;
-        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.2);
+        flex: 1;
+        padding-top: 40px; /* Jarak untuk running text */
+        width: 100%;
       }
 
-      /* --- NEW CSS FOR NAVIGATION & LOGIN --- */
-      .navbar {
-        width: 100%;
-        background-color: #007bff;
-        color: white;
-        padding: 10px 20px;
-        position: fixed;
-        top: 45px; /* Di bawah running text */
-        left: 0;
-        z-index: 999;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      /* Sidebar Navigation */
+      .sidebar {
+        width: 200px;
+        background-color: var(--sidebar-bg);
+        padding-top: 20px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        flex-shrink: 0;
       }
-      .navbar-links a {
-        color: white;
+
+      .sidebar-item {
+        color: var(--text-light);
+        padding: 15px 20px;
         text-decoration: none;
-        margin: 0 15px;
-        font-weight: 600;
-        padding: 5px;
-        transition: opacity 0.2s ease;
-      }
-      .navbar-links a:hover {
-        opacity: 0.8;
-      }
-      .navbar-user {
         display: flex;
         align-items: center;
         gap: 10px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
       }
-      .user-info {
-        font-size: 0.9rem;
-        text-align: right;
+
+      .sidebar-item:hover,
+      .sidebar-item.active {
+        background-color: var(--accent-blue);
+        color: white;
       }
-      .user-info p {
-        margin: 0;
-        font-size: 0.75rem;
-        opacity: 0.8;
+
+      /* Content Area */
+      .content-area {
+        flex-grow: 1;
+        padding: 20px;
+        max-width: calc(100% - 200px); /* Membatasi lebar agar kartu tidak terlalu lebar */
       }
-      .profile-pic {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        background-color: white;
-        object-fit: cover;
+
+      /* Navbar (Header Biru) */
+      .navbar {
+        background-color: var(--accent-blue);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: flex-end; /* Dorong ke kanan */
+        align-items: center;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        position: sticky;
+        top: 40px;
+        z-index: 900;
+      }
+
+      .user-info-dropdown {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
         cursor: pointer;
       }
-      .login-btn {
-        background-color: #28a745;
+
+      .user-info-dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      .user-name-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        line-height: 1.2;
+      }
+
+      .user-name {
+        font-weight: 600;
+        font-size: 0.95em;
+        color: white;
+      }
+
+      .user-email {
+        font-size: 0.8em;
+        color: #e0e0e0;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid white;
+        margin-left: 10px;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: var(--card-bg);
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.5);
+        z-index: 100;
+        right: 0;
+        top: 100%;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .dropdown-content a {
+        color: var(--text-light);
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+        transition: background-color 0.2s;
+        font-size: 0.9em;
+      }
+
+      .dropdown-content a:hover {
+        background-color: var(--accent-blue-hover);
+      }
+
+      /* Card Styling (Upload & History) */
+      .main-card {
+        background-color: var(--card-bg);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        margin-bottom: 20px;
+      }
+
+      .upload-view .main-card {
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .main-card h2,
+      .main-card h3 {
+        color: var(--text-light);
+        margin-bottom: 10px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .main-card p {
+        color: var(--text-muted);
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      /* Form Group & Select */
+      .form-group {
+        margin-bottom: 25px;
+        text-align: left;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-light);
+        font-weight: 500;
+      }
+
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-dark);
+        border-radius: 5px;
+        background-color: #333647;
+        color: var(--text-light);
+        font-size: 1em;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23e0e0e0' d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.757 7.586 5.343 9z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 1.2em;
+        transition: border-color 0.3s;
+      }
+      select:focus {
+        border-color: var(--accent-blue);
+        outline: none;
+      }
+
+      /* Drop Area for File Upload */
+      .drop-area-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .drop-area {
+        border: 2px dashed var(--accent-blue);
+        border-radius: 10px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        margin-bottom: 30px;
+        background-color: rgba(0, 123, 255, 0.05);
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .drop-area.dragover {
+        background-color: rgba(0, 123, 255, 0.2);
+        border-color: white;
+      }
+
+      .upload-icon {
+        font-size: 4em;
+        color: var(--accent-blue);
+        margin-bottom: 15px;
+        animation: none; /* Nonaktifkan animasi untuk saat ini */
+      }
+
+      .drop-area p {
+        color: var(--text-muted);
+        font-size: 1.1em;
+        line-height: 1.5;
+        margin: 0;
+      }
+      .file-name {
+        color: var(--text-light);
+        margin-bottom: 15px;
+        font-size: 0.9em;
+      }
+
+      /* Status & Progress */
+      .progress-container {
+        width: 100%;
+        background-color: #333;
+        border-radius: 50px;
+        margin-top: 20px;
+        overflow: hidden;
+        height: 10px;
+        display: none;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background-color: #28a745; /* Hijau untuk progress */
+        transition: width 0.3s ease;
+        border-radius: 50px;
+      }
+
+      .status-message {
+        margin-top: 15px;
+        font-weight: 500;
+        min-height: 20px;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      /* Upload Button (Hidden in this version, using drop-area) */
+      .upload-button {
+        background-color: var(--accent-blue);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: block;
+        width: 100%;
+      }
+
+      .upload-button:hover {
+        background-color: var(--accent-blue-hover);
+        transform: translateY(-2px);
+      }
+
+      /* History List */
+      #historyList {
+        list-style: none;
+        padding: 0;
+      }
+
+      .history-item {
+        background-color: #333647;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        transition: background-color 0.3s;
+      }
+
+      .history-item:hover {
+        background-color: #3a3d50;
+      }
+
+      .file-details {
+        text-align: left;
+        flex-grow: 1;
+        padding-right: 15px;
+      }
+
+      .file-details strong {
+        display: block;
+        font-size: 1rem;
+        color: var(--text-light);
+        margin-bottom: 3px;
+      }
+
+      .file-details span {
+        display: block;
+        font-size: 0.8em;
+        color: var(--text-muted);
+      }
+
+      .delete-btn {
+        background-color: var(--delete-red);
         color: white;
         padding: 8px 15px;
         border: none;
-        border-radius: 6px;
+        border-radius: 5px;
         cursor: pointer;
-        font-weight: 600;
+        font-weight: 500;
         transition: background-color 0.2s ease;
-      }
-      .login-btn:hover {
-        background-color: #1e7e34;
+        flex-shrink: 0;
       }
 
-      /* Login Screen */
+      .delete-btn:hover {
+        background-color: #a71d2a;
+      }
+
+      #noHistoryMessage {
+        text-align: center;
+        color: var(--text-muted);
+        padding: 30px;
+      }
+
+      /* Login Screen (Didesain ulang agar modern) */
       #loginScreen {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: #f0f2f5;
+        background-color: var(--bg-dark); /* Latar gelap penuh */
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 2000;
         text-align: center;
       }
+
       .login-card {
-  padding: 40px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  text-align: center; /* <<< PASTIKAN INI ADA untuk menengahkan konten inline/teks */
-  /* Ganti: text-align: center; di sini */
-}
-.google-sign-in-btn {
-  display: inline-flex; /* <<< UBAH INI (Jika sebelumnya flex) */
-  align-items: center;
-  justify-content: center;
-  background-color: #4285f4;
-  color: white;
-  padding: 12px 25px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  margin-top: 20px;
-  gap: 10px;
-  transition: background-color 0.2s ease;
-  /* Tambahkan: margin: 20px auto 0; jika .login-card menggunakan display: flex */
-}
+        padding: 50px 40px;
+        background: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        max-width: 450px;
+        width: 90%;
+      }
+
+      .login-card h2 {
+        font-size: 2em;
+        margin-bottom: 10px;
+        color: white;
+      }
+
+      .login-card .sub-text {
+        color: var(--text-muted);
+        margin-bottom: 30px;
+      }
+
+      .google-sign-in-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #4285f4; /* Warna Google */
+        color: white;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        gap: 10px;
+        transition: background-color 0.2s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      }
+
       .google-sign-in-btn:hover {
         background-color: #3367d6;
       }
+
       .google-icon {
         width: 20px;
         height: 20px;
+        background: white;
+        border-radius: 50%;
       }
-      /* Riwayat Upload CSS */
-      #uploadHistoryContainer {
-        width: 90%;
-        max-width: 800px;
-        margin-top: 20px;
-        display: none; /* Default tersembunyi */
-      }
-      .history-list {
-        list-style: none;
-        padding: 0;
-      }
-      .history-item {
-        background-color: white;
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 10px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+      /* --- GENERAL UTILS & DIALOGS (Modified for Dark Mode) --- */
+      .access-overlay,
+      .upload-status-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
-        flex-wrap: wrap;
+        z-index: 3000;
       }
-      .file-details {
-        text-align: left;
-        flex-grow: 1;
+      .access-card,
+      .upload-status-card {
+        background-color: var(--card-bg);
+        color: var(--text-light);
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
       }
-      .file-details strong {
-        display: block;
-        font-size: 1rem;
-        color: #333;
-        margin-bottom: 5px;
+      .access-card h3,
+      .upload-status-card h3 {
+        color: var(--text-light);
+        margin-bottom: 15px;
       }
-      .file-details span {
-        display: block;
-        font-size: 0.85rem;
-        color: #6c757d;
-      }
-      .delete-btn {
-        background-color: #dc3545;
+      .dialog-button {
+        background-color: var(--accent-blue);
         color: white;
-        padding: 8px 15px;
         border: none;
-        border-radius: 6px;
+        padding: 10px 20px;
+        border-radius: 5px;
         cursor: pointer;
         font-weight: 600;
-        transition: background-color 0.2s ease;
-        margin-left: 15px;
-        flex-shrink: 0;
+        margin-top: 15px;
+        transition: background-color 0.2s;
       }
-      .delete-btn:hover {
-        background-color: #c82333;
+      .dialog-button:hover {
+        background-color: var(--accent-blue-hover);
       }
-      #noHistoryMessage {
-        text-align: center;
-        color: #888;
-        padding: 30px;
-      }
-      /* --- CSS LAMA ANDA (SEBELUMNYA SAYA SERTAKAN) TETAP DI SINI --- */
+      /* Tambahkan lebih banyak style untuk semua elemen yang digunakan dari kode lama */
 
-      /* ... (Semua kode CSS dari baris 17 hingga 465 ada di sini) ... */
-
-      /* ========================== MEDIA QUERIES UNTUK RESPONSIF ========================== */
-
-      /* Mobile Portrait & Tablet Kecil (Max Width: 768px) */
+      /* ========================== MEDIA QUERIES (RESPONSIVE) ========================== */
       @media (max-width: 768px) {
-        /* Global */
-        body {
-          padding-top: 100px; /* Pertahankan jarak untuk navbar */
+        .main-layout {
+          flex-direction: column;
+          padding-top: 50px;
         }
 
-        /* Navbar */
+        .sidebar {
+          width: 100%;
+          height: auto;
+          padding-top: 0;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+          flex-direction: row; /* Sidebar jadi horizontal di mobile */
+          justify-content: space-around;
+          position: fixed;
+          top: 40px;
+          z-index: 950;
+          display: flex;
+        }
+
+        .sidebar-item {
+          padding: 10px 15px;
+          width: 50%;
+          text-align: center;
+          justify-content: center;
+        }
+
+        .content-area {
+          padding: 10px;
+          max-width: 100%;
+          margin-top: 50px; /* Jarak untuk sidebar horizontal */
+        }
+
         .navbar {
           flex-direction: column;
           align-items: flex-start;
-          gap: 8px;
-          padding: 10px 15px;
-          top: 35px; /* Sesuaikan jika running-text lebih kecil */
+          gap: 10px;
+          padding: 15px;
+          position: static;
+          margin-bottom: 20px;
         }
-        .navbar-links {
-          display: flex;
+
+        .user-info-dropdown {
           width: 100%;
-          justify-content: space-around;
-          margin-bottom: 5px;
-        }
-        .navbar-links a {
-          font-size: 0.9rem;
-          margin: 0 5px;
-        }
-        .navbar-user {
-          width: 100%;
-          justify-content: flex-end;
-        }
-        .user-info {
-          display: none !important; /* Sembunyikan Nama dan Email di mobile agar lebih ringkas */
-        }
-        .profile-pic {
-          margin-right: 10px;
+          justify-content: space-between;
+          flex-direction: row-reverse;
         }
 
-        /* Running Text (Dibuat lebih ringkas) */
-        .running-text-container {
-          padding: 5px 0;
-        }
-        .running-text-container span {
-          font-size: 0.9rem;
-        }
-
-        /* Main Content & Card */
-        #mainContent,
-        #uploadHistoryContainer {
-          padding: 10px;
-          margin-top: 10px;
-        }
-        .container {
-          max-width: 95%;
-        }
-        .card {
-          padding: 20px 15px;
-          border-radius: 10px;
-        }
-        h2 {
-          font-size: 1.2rem;
-        }
-        .header-info h1 {
-          font-size: 1rem;
-        }
-        .header-info p {
-          font-size: 0.8rem;
-        }
-
-        /* Upload Area */
-        .custom-file-upload {
-          width: 120px;
-          height: 120px;
-          font-size: 0.8rem;
-        }
-        .custom-file-upload img {
-          width: 50px;
-        }
-
-        /* Dialogs */
-        .access-card {
-          padding: 30px 20px;
-        }
-
-        /* Riwayat Upload */
-        .history-item {
-          flex-direction: column;
+        .user-name-wrapper {
           align-items: flex-start;
-          padding: 12px;
-          gap: 5px;
         }
-        .file-details {
-          width: 100%;
-          margin-bottom: 10px;
-        }
-        .file-details strong {
-          font-size: 0.95rem;
-        }
-        .file-details span {
-          font-size: 0.8rem;
-        }
-        .delete-btn {
-          width: 100%;
+        .user-avatar {
           margin-left: 0;
         }
 
-        /* Login Screen */
-        .login-card {
-          max-width: 90%;
-          padding: 30px 20px;
-        }
-      }
-
-      /* Tablet Landscape & Desktop Kecil (Min Width: 769px dan Max Width: 1024px) */
-      @media (min-width: 769px) and (max-width: 1024px) {
-        /* Navbar */
-        .navbar {
-          padding: 10px 30px;
+        .info-card,
+        .upload-card {
+          padding: 20px;
         }
 
-        /* Riwayat Upload */
         .history-item {
-          padding: 15px 20px;
+          flex-direction: column;
+          align-items: flex-start;
         }
-        .file-details strong {
-          font-size: 1.05rem;
+
+        .file-details {
+          width: 100%;
+          padding-right: 0;
+          margin-bottom: 10px;
+        }
+
+        .delete-btn {
+          width: 100%;
         }
       }
     </style>
@@ -800,164 +618,210 @@
     <div class="running-text-container">
       <div class="text-wrapper">
         <span>
-          Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi UM-Palembang! Mendownload StarUml Gratis
-          <a href="https://www.mediafire.com/file/d7pcu7trst58gfo/StarUML.v5.1.0.x86-x64.kuyhAa.7z/file">Download Disini</a>. , Untuk bantuan, <a href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
+          Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi
+          UM-Palembang! Mendownload StarUml Gratis
+          <a href="https://www.mediafire.com/file/d7pcu7trst58gfo/StarUML.v5.1.0.x86-x64.kuyhAa.7z/file"
+            >Download Disini</a
+          >. , Untuk bantuan,
+          <a href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
         </span>
-      </div>
-    </div>
-
-    <div class="navbar">
-      <div class="navbar-links">
-        <a href="#" id="navHome">🏠 Home</a>
-        <a href="#" id="navHistory">📜 Riwayat Upload</a>
-      </div>
-      <div class="navbar-user">
-        <div id="userInfoDisplay" class="user-info" style="display: none">
-          <span id="userName"></span>
-          <p id="userEmail"></p>
-        </div>
-        <img id="profilePicture" class="profile-pic" src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png" alt="Profile" style="display: none" />
-        <button id="authButton" class="login-btn">Masuk dengan Google</button>
       </div>
     </div>
 
     <div id="loginScreen" style="display: flex">
       <div class="login-card">
-        <img src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" alt="Logo" style="width: 100px; margin-bottom: 20px" />
+        <img
+          src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1"
+          alt="Logo"
+          style="width: 100px; margin-bottom: 20px"
+        />
         <h2>Selamat Datang di Portal Tugas</h2>
-        <p class="sub-text">Silakan masuk menggunakan akun Google Anda untuk mengakses fitur unggah dan riwayat tugas.</p>
+        <p class="sub-text">
+          Silakan masuk menggunakan akun Google Anda untuk mengakses fitur unggah
+          dan riwayat tugas.
+        </p>
         <button id="googleSignInBtn" class="google-sign-in-btn">
-          <img class="google-icon" src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Icon" />
+          <img
+            class="google-icon"
+            src="https://img.icons8.com/color/48/000000/google-logo.png"
+            alt="Google Icon"
+          />
           Masuk dengan Google
         </button>
       </div>
     </div>
 
-    <div style="display: none" id="mainContent" class="container">
-      <div class="header-info">
-        <h1>PENGUMPULAN TUGAS TEKNOLOGI INFORMASI UM-PALEMBANG</h1>
-
-        <p>Dibuat oleh M. Putra Ramadhani</p>
+    <div class="main-layout" id="mainLayout" style="display: none">
+      <div class="sidebar">
+        <a href="#" id="navHome" class="sidebar-item active"
+          ><i class="fas fa-home"></i> Unggah Tugas</a
+        >
+        <a href="#" id="navHistory" class="sidebar-item"
+          ><i class="fas fa-history"></i> Riwayat Upload</a
+        >
       </div>
 
-      <div class="card">
-        <h2>Unggah Dokumen</h2>
-
-        <p class="sub-text">Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.</p>
-
-        <div class="form-group">
-          <label for="courseSelect">Pilih Mata Kuliah:</label>
-          <select id="courseSelect">
-            <option value="" disabled selected>-- Pilih salah satu --</option>
-          </select>
+      <div class="content-area">
+        <div class="navbar">
+          <div id="userInfoDisplay" class="user-info-dropdown">
+            <div class="user-name-wrapper">
+              <span id="userName" class="user-name"></span>
+              <span id="userEmail" class="user-email"></span>
+            </div>
+            <img
+              id="profilePicture"
+              class="user-avatar"
+              src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png"
+              alt="Profile"
+            />
+            <div class="dropdown-content">
+              <a href="#" id="logoutBtn"
+                ><i class="fas fa-sign-out-alt"></i> Keluar</a
+              >
+            </div>
+          </div>
         </div>
 
-        <div class="upload-area">
-          <input type="file" id="fileInput" accept=".pdf, .doc, .docx, .zip, .rar, .7z" hidden />
-          <label for="fileInput" class="custom-file-upload">
-            <img src="https://img.icons8.com/plasticine/100/000000/upload--v1.png" alt="Upload Icon" />
-            <span>Pilih Dokumen atau Seret dan Lepas di Sini</span>
-          </label>
-          <span id="fileName" class="file-name"></span>
+        <div id="uploadView" class="upload-view">
+          <div class="info-card main-card">
+            <h2>
+              PENGUMPULAN TUGAS TEKNOLOGI INFORMASI UM-PALEMBANG
+            </h2>
+            <p>Dibuat oleh M. Putra Ramadhani</p>
+          </div>
+
+          <div class="upload-card main-card">
+            <h3>Unggah Dokumen</h3>
+            <p class="sub-text">
+              Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.
+            </p>
+
+            <div class="form-group">
+              <label for="courseSelect">Pilih Mata Kuliah:</label>
+              <select id="courseSelect">
+                <option value="" disabled selected>-- Pilih salah satu --</option>
+              </select>
+            </div>
+
+            <div class="drop-area-wrap">
+              <input
+                type="file"
+                id="fileInput"
+                accept=".pdf, .doc, .docx, .zip, .rar, .7z"
+                hidden
+              />
+              <label for="fileInput" id="dropArea" class="drop-area upload-area">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <p>Pilih Dokumen<br />atau Seret dan Lepas di Sini</p>
+              </label>
+              <span id="fileName" class="file-name"></span>
+            </div>
+
+            <div id="scanAnimation" class="scan-container" style="display: none">
+              <p style="color: var(--accent-blue); font-weight: 500">
+                Memindai file...
+              </p>
+            </div>
+            <div
+              id="rocketAnimation"
+              class="rocket-container"
+              style="display: none"
+            >
+              <p style="color: var(--accent-blue); font-weight: 500">
+                Mengunggah...
+              </p>
+            </div>
+
+            <div id="progressContainer" class="progress-container">
+              <div id="progressBar" class="progress-bar"></div>
+            </div>
+
+            <p id="statusMessage" class="status-message">
+              Pilih Mata Kuliah untuk melihat status akses dan deadline.
+            </p>
+          </div>
         </div>
 
-        <div id="scanAnimation" class="scan-container">
-          <div class="spinner"></div>
-          <img class="shield-icon" src="https://img.icons8.com/color/96/000000/file.png" alt="Shield Icon" />
-          <span class="scan-text">Memindai file...</span>
+        <div id="uploadHistoryContainer" style="display: none">
+          <div class="info-card main-card">
+            <h2>RIWAYAT UNGGAH TUGAS ANDA</h2>
+            <p>
+              Anda dapat menghapus file yang salah unggah. Mohon gunakan dengan
+              bijak.
+            </p>
+          </div>
+          <div class="main-card" style="padding: 20px">
+            <ul id="historyList" class="history-list">
+              <p id="noHistoryMessage">Tidak ada riwayat unggahan.</p>
+            </ul>
+          </div>
         </div>
-
-        <div id="rocketAnimation" class="rocket-container">
-          <img class="rocket-icon" src="https://pngfre.com/wp-content/uploads/Rocket-Emoji-10-1.png" alt="Roket Animasi" />
-          <span class="rocket-text">Mengunggah...</span>
-        </div>
-
-        <div id="progressContainer" class="progress-container">
-          <div id="progressBar" class="progress-bar"></div>
-        </div>
-
-        <p id="statusMessage" class="status-message">Pilih Mata Kuliah untuk melihat status akses dan deadline.</p>
-      </div>
-    </div>
-
-    <div id="uploadHistoryContainer" style="display: none">
-      <div class="header-info" style="max-width: 800px">
-        <h1>RIWAYAT UNGGAH TUGAS ANDA</h1>
-        <p>Anda dapat menghapus file yang salah unggah. Mohon gunakan dengan bijak.</p>
-      </div>
-      <div class="card" style="max-width: 800px; padding: 20px">
-        <ul id="historyList" class="history-list">
-          <p id="noHistoryMessage">Tidak ada riwayat unggahan.</p>
-        </ul>
       </div>
     </div>
 
     <div id="syaratDialogOverlay" class="access-overlay" style="display: none">
       <div class="access-card">
-        <img src="https://img.icons8.com/ios-filled/96/fa314a/info.png" alt="Informasi" />
-        <h3>Syarat Pengumpulan Tugas</h3>
-
-        <div class="syarat-list">
-          <ul>
-            <li>
-              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
-              <span>Nama file harus sesuai format: <b>Nama_NIM</b></span>
-            </li>
-
-            <li>
-              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
-              <span>Contoh: <b>M.PutraRamadhani_19223344</b></span>
-            </li>
-
-            <li>
-              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
-              <span> Pastikan file sudah dalam format yang diizinkan (.pdf, .doc, .docx, .zip, .rar, .7z)</span>
-            </li>
-          </ul>
+        <h3>Syarat & Ketentuan Pengumpulan</h3>
+        <p style="text-align: left; color: var(--text-light)">
+          1. File harus dalam format: **PDF, DOC, DOCX, ZIP, RAR, atau 7Z**.<br />
+          2. Ukuran file maksimal **12MB**.<br />
+          3. **Nama File** wajib mengikuti format:
+          **[Nama Lengkap]\_[NIM]\_[Mata Kuliah]\_[Nomor Pertemuan]** (Contoh:
+          **Putra\_1955201011\_PBO\_P1**).<br />
+          4. Kesalahan format nama file **bisa mengakibatkan tugas tidak
+          tercatat/dinilai**.<br />
+          5. Setelah diunggah, Anda **masih bisa menghapus** di menu Riwayat.
+        </p>
+        <button id="confirmSyaratBtn" class="dialog-button">Saya Mengerti</button>
         </div>
+    </div>
 
-        <div class="dialog-buttons">
-          <button id="cancelSyaratBtn" class="dialog-button">Batal</button>
-          <button id="confirmSyaratBtn" class="dialog-button" style="background-color: #dc3545">Lanjutkan</button>
-        </div>
+    <div
+      id="mainAccessClosedOverlay"
+      class="access-overlay"
+      style="display: none"
+    >
+      <div class="access-card">
+        <h3>Akses Pengumpulan Ditutup</h3>
+        <p>
+          Portal pengumpulan tugas telah ditutup untuk saat ini oleh Administrator
+          (Putra). Silakan hubungi admin untuk informasi lebih lanjut.
+        </p>
       </div>
     </div>
 
-    <div id="mainAccessClosedOverlay" class="access-overlay" style="display: none">
+    <div
+      id="courseAccessClosedOverlay"
+      class="access-overlay"
+      style="display: none"
+    >
       <div class="access-card">
-        <img src="https://img.icons8.com/ios-filled/100/fa314a/lock.png" alt="Akses Ditutup" />
-        <h3>Pemberitahuan</h3>
-
-        <p>Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak putra untuk informasi lebih lanjut.</p>
-        <button id="closeMainAccessBtn" class="dialog-button">Tutup</button>
-      </div>
-    </div>
-
-    <div id="courseAccessClosedOverlay" class="access-overlay" style="display: none">
-      <div class="access-card">
-        <img src="https://img.icons8.com/ios-filled/100/fa314a/lock.png" alt="Akses Ditutup" />
         <h3 id="courseAccessTitle">Pengumpulan Tugas Ditutup</h3>
-
-        <p id="courseAccessMessage">Pengumpulan tugas untuk mata kuliah ini telah ditutup.</p>
-        <button id="closeCourseAccessBtn" class="dialog-button">Tutup</button>
+        <p id="courseAccessMessage">
+          Waktu pengumpulan untuk mata kuliah ini telah habis.
+        </p>
+        <button
+          onclick="document.getElementById('courseAccessClosedOverlay').style.display = 'none'"
+          class="dialog-button"
+        >
+          Tutup
+        </button>
       </div>
     </div>
 
     <div id="uploadSuccessOverlay" class="upload-status-overlay" style="display: none">
-      <div id="uploadSuccessCard" class="upload-status-card">
-        <img class="icon" src="https://img.icons8.com/color/96/000000/ok--v1.png" alt="Berhasil" />
+      <div class="upload-status-card">
         <h3>Unggah Berhasil!</h3>
-
         <p class="status-text" id="successMessage"></p>
-        <button onclick="closeSuccessDialog()" class="dialog-button">Tutup</button>
+        <button onclick="closeSuccessDialog()" class="dialog-button">
+          Tutup
+        </button>
       </div>
     </div>
 
     <div id="uploadFailOverlay" class="upload-status-overlay" style="display: none">
-      <div id="uploadFailCard" class="upload-status-card">
-        <img class="icon" src="https://img.icons8.com/color/96/000000/cancel--v1.png" alt="Gagal" />
+      <div class="upload-status-card">
         <h3>Unggah Gagal!</h3>
-
         <p class="status-text" id="failMessage"></p>
         <button onclick="closeFailDialog()" class="dialog-button">Tutup</button>
       </div>
@@ -982,12 +846,16 @@
       const storage = firebase.storage();
       const database = firebase.database();
 
-      // ========================== ELEMEN DOM ==========================
+      // ========================== ELEMEN DOM (DIPERBAIKI) ==========================
       const loginScreen = document.getElementById("loginScreen");
-      const mainContent = document.getElementById("mainContent");
-      const uploadHistoryContainer = document.getElementById("uploadHistoryContainer");
-      const authButton = document.getElementById("authButton");
+      const mainLayout = document.getElementById("mainLayout"); // Mengganti mainContent
+      const uploadView = document.getElementById("uploadView"); // Elemen view upload
+      const uploadHistoryContainer = document.getElementById(
+        "uploadHistoryContainer"
+      );
       const googleSignInBtn = document.getElementById("googleSignInBtn");
+      const logoutBtn = document.getElementById("logoutBtn"); // Tombol logout di dropdown
+
       const userNameDisplay = document.getElementById("userName");
       const userEmailDisplay = document.getElementById("userEmail");
       const profilePicture = document.getElementById("profilePicture");
@@ -1006,15 +874,23 @@
       const statusMessage = document.getElementById("statusMessage");
       const rocketAnimation = document.getElementById("rocketAnimation");
       const scanAnimation = document.getElementById("scanAnimation");
-      const dropArea = document.querySelector(".custom-file-upload");
+      const dropArea = document.getElementById("dropArea"); // Menggunakan ID elemen label
       const uploadSuccessOverlay = document.getElementById("uploadSuccessOverlay");
       const uploadFailOverlay = document.getElementById("uploadFailOverlay");
       const successMessage = document.getElementById("successMessage");
       const failMessage = document.getElementById("failMessage");
       const syaratDialogOverlay = document.getElementById("syaratDialogOverlay");
-      const cancelSyaratBtn = document.getElementById("cancelSyaratBtn");
       const confirmSyaratBtn = document.getElementById("confirmSyaratBtn");
-      // ... elemen lama lainnya ...
+
+      // Menambahkan elemen dialog yang TIDAK ADA di HTML asli Anda
+      const courseAccessClosedOverlay = document.getElementById(
+        "courseAccessClosedOverlay"
+      );
+      const courseAccessTitle = document.getElementById("courseAccessTitle");
+      const courseAccessMessage = document.getElementById("courseAccessMessage");
+      const mainAccessClosedOverlay = document.getElementById(
+        "mainAccessClosedOverlay"
+      );
 
       // ========================== VARIABEL GLOBAL & KONSTANTA ==========================
       const MAX_FILE_SIZE_MB = 12;
@@ -1026,26 +902,19 @@
 
       // ========================== EVENT LISTENERS ==========================
       document.addEventListener("DOMContentLoaded", () => {
-        // ... (Fungsi-fungsi inisiasi lama Anda) ...
         requestNotificationPermission();
         fetchCourseList();
         fetchCourseDeadlines();
+        checkMainAccessStatus(); // Cek status akses utama
         showSyaratDialogAtStart();
         listenForManualNotifications();
-        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
-      });
-
-      // Login/Logout button handler
-      authButton.addEventListener("click", () => {
-        if (currentUser) {
-          handleSignOut();
-        } else {
-          handleSignIn();
-        }
+        statusMessage.textContent =
+          "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
       });
 
       // Google Sign-In button on the login screen
       googleSignInBtn.addEventListener("click", handleSignIn);
+      logoutBtn.addEventListener("click", handleSignOut);
 
       // Navigasi
       navHome.addEventListener("click", (e) => {
@@ -1062,6 +931,9 @@
         const courseName = courseSelect.options[courseSelect.selectedIndex].text;
         checkCourseAccess(courseKey, courseName);
         startCourseCountdown(courseKey, courseName);
+        // Reset file input saat ganti mata kuliah
+        fileInput.value = "";
+        fileNameSpan.textContent = "";
       });
 
       fileInput.addEventListener("change", (e) => {
@@ -1070,7 +942,7 @@
           handleFile(file);
         }
       });
-      // Drag & Drop event listeners... (sudah ada di kode lama)
+      // Drag & Drop event listeners... (Menggunakan #dropArea)
       dropArea.addEventListener("dragover", (e) => {
         e.preventDefault();
         dropArea.classList.add("dragover");
@@ -1089,39 +961,26 @@
         }
       });
 
-      // ========================== FUNGSI OTENTIKASI (NEW) ==========================
+      // ========================== FUNGSI OTENTIKASI ==========================
       auth.onAuthStateChanged((user) => {
         if (user) {
           // User is signed in
           currentUser = user;
           loginScreen.style.display = "none";
-          showView("home"); // Tampilkan Home setelah login
+          mainLayout.style.display = "flex"; // Tampilkan Main Layout
 
           userNameDisplay.textContent = user.displayName;
           userEmailDisplay.textContent = user.email;
-          profilePicture.src = user.photoURL || "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
-          userInfoDisplay.style.display = "block";
-          profilePicture.style.display = "block";
-          authButton.textContent = "Keluar";
-          authButton.style.backgroundColor = "#dc3545"; // Merah untuk logout
-          authButton.onmouseover = () => (authButton.style.backgroundColor = "#c82333");
-          authButton.onmouseout = () => (authButton.style.backgroundColor = "#dc3545");
+          profilePicture.src =
+            user.photoURL ||
+            "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
+          // Tampilkan view upload secara default
+          showView("home");
         } else {
           // User is signed out
           currentUser = null;
           loginScreen.style.display = "flex";
-          mainContent.style.display = "none";
-          uploadHistoryContainer.style.display = "none";
-
-          userNameDisplay.textContent = "";
-          userEmailDisplay.textContent = "";
-          profilePicture.src = "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
-          userInfoDisplay.style.display = "none";
-          profilePicture.style.display = "none";
-          authButton.textContent = "Masuk dengan Google";
-          authButton.style.backgroundColor = "#28a745"; // Hijau untuk login
-          authButton.onmouseover = () => (authButton.style.backgroundColor = "#1e7e34");
-          authButton.onmouseout = () => (authButton.style.backgroundColor = "#28a745");
+          mainLayout.style.display = "none";
         }
       });
 
@@ -1145,29 +1004,38 @@
           });
       }
 
-      // ========================== FUNGSI NAVIGASI (NEW) ==========================
+      // ========================== FUNGSI NAVIGASI ==========================
       function showView(view) {
         if (!currentUser) return;
 
-        mainContent.style.display = "none";
+        // Reset status active sidebar
+        navHome.classList.remove("active");
+        navHistory.classList.remove("active");
+
+        // Sembunyikan semua view
+        uploadView.style.display = "none";
         uploadHistoryContainer.style.display = "none";
 
+        // Tampilkan view yang dipilih
         if (view === "home") {
-          mainContent.style.display = "block";
+          uploadView.style.display = "block";
+          navHome.classList.add("active");
         } else if (view === "history") {
           uploadHistoryContainer.style.display = "block";
+          navHistory.classList.add("active");
           fetchUploadHistory(currentUser.uid);
         }
-        // Atur warna link aktif jika perlu
       }
 
-      // ========================== RIWAYAT & HAPUS (NEW) ==========================
+      // ========================== RIWAYAT & HAPUS ==========================
       async function fetchUploadHistory(userUid) {
         historyList.innerHTML = "";
         noHistoryMessage.style.display = "block";
 
         try {
-          const snapshot = await database.ref(`riwayat_unggah/${userUid}`).once("value");
+          const snapshot = await database
+            .ref(`riwayat_unggah/${userUid}`)
+            .once("value");
           const history = snapshot.val();
 
           if (!history) {
@@ -1192,24 +1060,32 @@
             fileDetails.className = "file-details";
 
             // Tampilkan hanya nama file asli yang bersih (tanpa timestamp)
-            const cleanFileName = item.originalFileName.substring(0, item.originalFileName.lastIndexOf(".")) || item.originalFileName;
+            const cleanFileName =
+              item.originalFileName.substring(
+                0,
+                item.originalFileName.lastIndexOf(".")
+              ) || item.originalFileName;
 
             fileDetails.innerHTML = `
-              <strong>${item.courseName}</strong>
-              <span>Nama File: ${cleanFileName} (${item.fileSizeMB} MB)</span>
-              <span>Diunggah: ${new Date(item.timestamp).toLocaleDateString("id-ID", {
+            <strong>${item.courseName}</strong>
+            <span>Nama File: ${cleanFileName} (${item.fileSizeMB} MB)</span>
+            <span>Diunggah: ${new Date(item.timestamp).toLocaleDateString(
+              "id-ID",
+              {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
                 hour: "2-digit",
                 minute: "2-digit",
-              })}</span>
-            `;
+              }
+            )}</span>
+          `;
 
             const deleteButton = document.createElement("button");
             deleteButton.className = "delete-btn";
             deleteButton.textContent = "Hapus";
-            deleteButton.onclick = () => deleteUploadedFile(userUid, item.id, item.storagePath);
+            deleteButton.onclick = () =>
+              deleteUploadedFile(userUid, item.id, item.storagePath);
 
             listItem.appendChild(fileDetails);
             listItem.appendChild(deleteButton);
@@ -1222,7 +1098,11 @@
       }
 
       async function deleteUploadedFile(userUid, uploadId, storagePath) {
-        if (!confirm("Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat dibatalkan.")) {
+        if (
+          !confirm(
+            "Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat dibatalkan."
+          )
+        ) {
           return;
         }
 
@@ -1245,7 +1125,7 @@
         }
       }
 
-      // ========================== FUNGSI UPLOAD DENGAN LOG (MODIFIED) ==========================
+      // ========================== FUNGSI UPLOAD DENGAN LOG ==========================
       async function handleFile(file) {
         if (!currentUser) {
           showFailDialog("❗ Mohon masuk dengan akun Google terlebih dahulu.");
@@ -1254,7 +1134,8 @@
         }
 
         const selectedCourse = courseSelect.value;
-        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+        const courseName =
+          courseSelect.options[courseSelect.selectedIndex].text;
 
         if (!selectedCourse) {
           showFailDialog("❗ Mohon pilih mata kuliah terlebih dahulu.");
@@ -1263,22 +1144,29 @@
         }
 
         if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-          showFailDialog(`❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`);
+          showFailDialog(
+            `❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`
+          );
           fileInput.value = "";
           return;
         }
 
         const fileExtension = "." + file.name.split(".").pop().toLowerCase();
         if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
-          showFailDialog(`❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`);
+          showFailDialog(
+            `❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(
+              ", "
+            )} yang diizinkan.`
+          );
           fileInput.value = "";
           return;
         }
 
-        document.querySelector(".upload-area").style.display = "none";
+        dropArea.style.display = "none"; // Sembunyikan drop area
         scanAnimation.style.display = "flex";
         fileNameSpan.textContent = `File terpilih: ${file.name}`;
-        statusMessage.textContent = "Sedang memindai file untuk memastikan keamanan...";
+        statusMessage.textContent =
+          "Sedang memindai file untuk memastikan keamanan...";
 
         setTimeout(() => {
           scanAnimation.style.display = "none";
@@ -1295,25 +1183,34 @@
       function uploadFile(file, courseKey, courseName) {
         const now = new Date();
         const timestampMs = now.getTime();
-        const timestampFormat = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
-          now.getSeconds()
-        ).padStart(2, "0")}`;
+        const timestampFormat = `${now.getFullYear()}-${String(
+          now.getMonth() + 1
+        ).padStart(2, "0")}-${String(now.getDate()).padStart(
+          2,
+          "0"
+        )}_${String(now.getHours()).padStart(2, "0")}-${String(
+          now.getMinutes()
+        ).padStart(2, "0")}-${String(now.getSeconds()).padStart(2, "0")}`;
 
-        // Menggunakan Nama_NIM untuk nama file yang disimpan di Storage (sesuai syarat)
         // Gunakan nama file yang di-upload oleh user, tambahkan timestamp untuk unik
-        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".");
+        const fileNameWithoutExt = file.name
+          .split(".")
+          .slice(0, -1)
+          .join(".");
         const fileExtension = file.name.split(".").pop();
         const storageFileName = `${fileNameWithoutExt}_${timestampFormat}.${fileExtension}`;
 
         // Folder Storage di Firebase
-        const folderNameForStorage = courseKey.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+        const folderNameForStorage = courseKey
+          .replace(/[^a-zA-Z0-9]/g, "")
+          .toLowerCase();
         const folderPath = `dokumen/${folderNameForStorage}/`;
         const storagePath = folderPath + storageFileName; // Path lengkap untuk Storage
         const fileRef = storage.ref(storagePath);
 
         const uploadTask = fileRef.put(file);
 
-        document.querySelector(".upload-area").style.display = "none";
+        dropArea.style.display = "none"; // Pastikan tersembunyi
         rocketAnimation.style.display = "flex";
         progressContainer.style.display = "block";
         progressBar.style.width = "0%";
@@ -1323,18 +1220,19 @@
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             progressBar.style.width = `${progress}%`;
           },
           (error) => {
             console.error("Kesalahan unggah:", error);
             rocketAnimation.style.display = "none";
-            document.querySelector(".upload-area").style.display = "flex";
+            dropArea.style.display = "flex"; // Tampilkan kembali drop area
             showFailDialog(`Gagal mengunggah file: ${error.message}`);
           },
           async () => {
             rocketAnimation.style.display = "none";
-            document.querySelector(".upload-area").style.display = "flex";
+            dropArea.style.display = "flex"; // Tampilkan kembali drop area
 
             try {
               const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
@@ -1346,7 +1244,9 @@
               const fileCount = result.items.length;
 
               // 1. Simpan Log Upload ke Realtime Database
-              const uploadLogRef = database.ref(`riwayat_unggah/${currentUser.uid}`).push();
+              const uploadLogRef = database
+                .ref(`riwayat_unggah/${currentUser.uid}`)
+                .push();
               const logData = {
                 uploadId: uploadLogRef.key,
                 userId: currentUser.uid,
@@ -1368,22 +1268,22 @@
               showSuccessDialog("File Anda berhasil diunggah!", fileCount);
             } catch (error) {
               console.error("Gagal memproses setelah unggah:", error);
-              showFailDialog(`Unggah Berhasil, tapi Gagal mencatat riwayat: ${error.message}`);
+              showFailDialog(
+                `Unggah Berhasil, tapi Gagal mencatat riwayat: ${error.message}`
+              );
             }
           }
         );
       }
 
-      // ========================== FUNGSI LAMA (DISEDERHANAKAN) ==========================
+      // ========================== FUNGSI DIALOG & UTILITY ==========================
 
       function showSyaratDialogAtStart() {
         syaratDialogOverlay.style.display = "flex";
         confirmSyaratBtn.onclick = () => {
           syaratDialogOverlay.style.display = "none";
         };
-        cancelSyaratBtn.onclick = () => {
-          syaratDialogOverlay.style.display = "none";
-        };
+        // Hapus cancelSyaratBtn jika tidak ada di HTML
       }
 
       function showSuccessDialog(message, fileCount) {
@@ -1428,12 +1328,13 @@
         progressContainer.style.display = "none";
         rocketAnimation.style.display = "none";
         scanAnimation.style.display = "none";
-        document.querySelector(".upload-area").style.display = "flex";
+        dropArea.style.display = "flex"; // Tampilkan kembali drop area
         clearInterval(countdownInterval);
 
         statusMessage.classList.remove("timer-text");
         statusMessage.style.color = "#555";
-        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
+        statusMessage.textContent =
+          "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
 
         if (courseSelect.value) {
           const courseKey = courseSelect.value;
@@ -1443,9 +1344,8 @@
         }
       }
 
-      // --- Semua fungsi Akses & Timer lainnya tetap sama (fetchCourseDeadlines, formatTime, updateCountdownDisplay, startCourseCountdown, closeCourseAccess, checkMainAccessStatus, checkCourseAccess, requestNotificationPermission, fetchCourseList, listenForManualNotifications, displaySystemNotification) ---
+      /* Fungsi timer dan akses (Disimpan agar kode tetap berjalan) */
 
-      /* Fungsi fetchCourseList dimodifikasi untuk menyimpan courseMap */
       async function fetchCourseList() {
         try {
           const snapshot = await database.ref("mata_kuliah").once("value");
@@ -1473,9 +1373,6 @@
         }
       }
 
-      /* Semua fungsi timer dan akses yang lain (seperti closeCourseAccess, checkCourseAccess, dll.)
-         TIDAK BERUBAH dari kode Anda sebelumnya, dan dipertahankan untuk menghemat ruang.
-         Asumsikan fungsi tersebut sudah ada di sini */
       async function fetchCourseDeadlines() {
         try {
           const snapshot = await database.ref("akses_unggah").once("value");
@@ -1517,7 +1414,9 @@
             clearInterval(countdownInterval);
             closeCourseAccess(courseKey, courseName);
           } else {
-            statusMessage.innerHTML = `Waktu Pengumpulan Tersisa: ${formatTime(distance)}`;
+            statusMessage.innerHTML = `Waktu Pengumpulan Tersisa: ${formatTime(
+              distance
+            )}`;
           }
         };
 
@@ -1547,14 +1446,23 @@
             closeCourseAccess(courseKey, courseName);
             statusMessage.classList.add("timer-text");
             statusMessage.style.color = "#dc3545";
-            statusMessage.innerHTML = `Pengumpulan ditutup karena Waktu habis sejak ${new Date(deadlineTime).toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })}`;
+            statusMessage.innerHTML = `Pengumpulan ditutup karena Waktu habis sejak ${new Date(
+              deadlineTime
+            ).toLocaleDateString("id-ID", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`;
           } else {
             updateCountdownDisplay(courseKey, courseName, deadlineTime);
           }
         } else {
           statusMessage.classList.add("timer-text");
           statusMessage.style.color = "#28a745";
-          statusMessage.innerHTML = "Akses terbuka silakan Pilih dokumen untuk diunggah.";
+          statusMessage.innerHTML =
+            "Akses terbuka silakan Pilih dokumen untuk diunggah.";
         }
       }
 
@@ -1649,12 +1557,11 @@
           const isOpen = snapshot.val();
 
           if (isOpen === true) {
-            // Diubah: Tidak langsung tampilkan mainContent di sini,
-            // tetapi biarkan onAuthStateChanged yang menentukan tampilan
-            // saat user login.
             mainAccessClosedOverlay.style.display = "none";
+            // Jika akses utama terbuka, biarkan onAuthStateChanged mengurus tampilan
           } else {
-            mainContent.style.display = "none";
+            mainLayout.style.display = "none";
+            loginScreen.style.display = "none"; // Sembunyikan login jika akses utama tertutup
             mainAccessClosedOverlay.style.display = "flex";
             if (Notification.permission === "granted") {
               new Notification("Pengumpulan Tugas Ditutup", {
@@ -1665,7 +1572,8 @@
           }
         } catch (error) {
           console.error("Gagal memeriksa status akses:", error);
-          mainContent.style.display = "none";
+          mainLayout.style.display = "none";
+          loginScreen.style.display = "none";
           mainAccessClosedOverlay.style.display = "flex";
           const message = mainAccessClosedOverlay.querySelector("p");
           message.textContent = `Gagal memuat status akses: ${error.message}`;
