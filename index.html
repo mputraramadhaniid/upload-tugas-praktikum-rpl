@@ -4,15 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portal Tugas TI UM-Palembang (Login & Riwayat)</title>
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
+    <link rel="icon" type="image/x-icon" href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
     <style>
       /* ========================== CSS DARK MODE ELEGAN ========================== */
@@ -618,34 +611,19 @@
     <div class="running-text-container">
       <div class="text-wrapper">
         <span>
-          Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi
-          UM-Palembang! Mendownload StarUml Gratis
-          <a href="https://www.mediafire.com/file/d7pcu7trst58gfo/StarUML.v5.1.0.x86-x64.kuyhAa.7z/file"
-            >Download Disini</a
-          >. , Untuk bantuan,
-          <a href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
+          Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi UM-Palembang! Mendownload StarUml Gratis
+          <a href="https://www.mediafire.com/file/d7pcu7trst58gfo/StarUML.v5.1.0.x86-x64.kuyhAa.7z/file">Download Disini</a>. , Untuk bantuan, <a href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
         </span>
       </div>
     </div>
 
     <div id="loginScreen" style="display: flex">
       <div class="login-card">
-        <img
-          src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1"
-          alt="Logo"
-          style="width: 100px; margin-bottom: 20px"
-        />
+        <img src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" alt="Logo" style="width: 100px; margin-bottom: 20px" />
         <h2>Selamat Datang di Portal Tugas</h2>
-        <p class="sub-text">
-          Silakan masuk menggunakan akun Google Anda untuk mengakses fitur unggah
-          dan riwayat tugas.
-        </p>
+        <p class="sub-text">Silakan masuk menggunakan akun Google Anda untuk mengakses fitur unggah dan riwayat tugas.</p>
         <button id="googleSignInBtn" class="google-sign-in-btn">
-          <img
-            class="google-icon"
-            src="https://img.icons8.com/color/48/000000/google-logo.png"
-            alt="Google Icon"
-          />
+          <img class="google-icon" src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Icon" />
           Masuk dengan Google
         </button>
       </div>
@@ -653,12 +631,8 @@
 
     <div class="main-layout" id="mainLayout" style="display: none">
       <div class="sidebar">
-        <a href="#" id="navHome" class="sidebar-item active"
-          ><i class="fas fa-home"></i> Unggah Tugas</a
-        >
-        <a href="#" id="navHistory" class="sidebar-item"
-          ><i class="fas fa-history"></i> Riwayat Upload</a
-        >
+        <a href="#" id="navHome" class="sidebar-item active"><i class="fas fa-home"></i> Unggah Tugas</a>
+        <a href="#" id="navHistory" class="sidebar-item"><i class="fas fa-history"></i> Riwayat Upload</a>
       </div>
 
       <div class="content-area">
@@ -668,33 +642,22 @@
               <span id="userName" class="user-name"></span>
               <span id="userEmail" class="user-email"></span>
             </div>
-            <img
-              id="profilePicture"
-              class="user-avatar"
-              src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png"
-              alt="Profile"
-            />
+            <img id="profilePicture" class="user-avatar" src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png" alt="Profile" />
             <div class="dropdown-content">
-              <a href="#" id="logoutBtn"
-                ><i class="fas fa-sign-out-alt"></i> Keluar</a
-              >
+              <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a>
             </div>
           </div>
         </div>
 
         <div id="uploadView" class="upload-view">
           <div class="info-card main-card">
-            <h2>
-              PENGUMPULAN TUGAS TEKNOLOGI INFORMASI UM-PALEMBANG
-            </h2>
+            <h2>PENGUMPULAN TUGAS TEKNOLOGI INFORMASI UM-PALEMBANG</h2>
             <p>Dibuat oleh M. Putra Ramadhani</p>
           </div>
 
           <div class="upload-card main-card">
             <h3>Unggah Dokumen</h3>
-            <p class="sub-text">
-              Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.
-            </p>
+            <p class="sub-text">Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.</p>
 
             <div class="form-group">
               <label for="courseSelect">Pilih Mata Kuliah:</label>
@@ -704,12 +667,7 @@
             </div>
 
             <div class="drop-area-wrap">
-              <input
-                type="file"
-                id="fileInput"
-                accept=".pdf, .doc, .docx, .zip, .rar, .7z"
-                hidden
-              />
+              <input type="file" id="fileInput" accept=".pdf, .doc, .docx, .zip, .rar, .7z" hidden />
               <label for="fileInput" id="dropArea" class="drop-area upload-area">
                 <i class="fas fa-cloud-upload-alt upload-icon"></i>
                 <p>Pilih Dokumen<br />atau Seret dan Lepas di Sini</p>
@@ -718,37 +676,24 @@
             </div>
 
             <div id="scanAnimation" class="scan-container" style="display: none">
-              <p style="color: var(--accent-blue); font-weight: 500">
-                Memindai file...
-              </p>
+              <p style="color: var(--accent-blue); font-weight: 500">Memindai file...</p>
             </div>
-            <div
-              id="rocketAnimation"
-              class="rocket-container"
-              style="display: none"
-            >
-              <p style="color: var(--accent-blue); font-weight: 500">
-                Mengunggah...
-              </p>
+            <div id="rocketAnimation" class="rocket-container" style="display: none">
+              <p style="color: var(--accent-blue); font-weight: 500">Mengunggah...</p>
             </div>
 
             <div id="progressContainer" class="progress-container">
               <div id="progressBar" class="progress-bar"></div>
             </div>
 
-            <p id="statusMessage" class="status-message">
-              Pilih Mata Kuliah untuk melihat status akses dan deadline.
-            </p>
+            <p id="statusMessage" class="status-message">Pilih Mata Kuliah untuk melihat status akses dan deadline.</p>
           </div>
         </div>
 
         <div id="uploadHistoryContainer" style="display: none">
           <div class="info-card main-card">
             <h2>RIWAYAT UNGGAH TUGAS ANDA</h2>
-            <p>
-              Anda dapat menghapus file yang salah unggah. Mohon gunakan dengan
-              bijak.
-            </p>
+            <p>Anda dapat menghapus file yang salah unggah. Mohon gunakan dengan bijak.</p>
           </div>
           <div class="main-card" style="padding: 20px">
             <ul id="historyList" class="history-list">
@@ -762,50 +707,38 @@
     <div id="syaratDialogOverlay" class="access-overlay" style="display: none">
       <div class="access-card">
         <h3>Syarat & Ketentuan Pengumpulan</h3>
-        <p style="text-align: left; color: var(--text-light)">
-          1. File harus dalam format: **PDF, DOC, DOCX, ZIP, RAR, atau 7Z**.<br />
-          2. Ukuran file maksimal **12MB**.<br />
-          3. **Nama File** wajib mengikuti format:
-          **[Nama Lengkap]\_[NIM]\_[Mata Kuliah]\_[Nomor Pertemuan]** (Contoh:
-          **Putra\_1955201011\_PBO\_P1**).<br />
-          4. Kesalahan format nama file **bisa mengakibatkan tugas tidak
-          tercatat/dinilai**.<br />
-          5. Setelah diunggah, Anda **masih bisa menghapus** di menu Riwayat.
-        </p>
-        <button id="confirmSyaratBtn" class="dialog-button">Saya Mengerti</button>
+        <div style="text-align: left; color: var(--text-light); margin-bottom: 20px">
+          <p style="margin-top: 0; margin-bottom: 10px; font-weight: 500">Mohon perhatikan ketentuan berikut sebelum mengunggah tugas Anda:</p>
+          <ul style="padding-left: 20px; margin: 0; list-style-type: decimal">
+            <li style="margin-bottom: 8px">Format file yang diizinkan: <strong>PDF, DOC, DOCX, ZIP, RAR, atau 7Z</strong>.</li>
+            <li style="margin-bottom: 8px">Ukuran file maksimal yang dapat diunggah adalah <strong>12 MB</strong>.</li>
+            <li style="margin-bottom: 8px">
+              Penamaan file harus mengikuti format yang ditentukan:
+              <br />
+              <strong>[Nama Lengkap]_[NIM]_[Mata Kuliah]_[Nomor Pertemuan]</strong>
+              <br />
+              (Contoh: Putra_1955201011_PBO_P1)
+            </li>
+            <li style="margin-bottom: 8px">Kesalahan dalam format nama file <strong>dapat mengakibatkan tugas tidak tercatat atau dinilai</strong>.</li>
+            <li style="margin-bottom: 0">Anda memiliki opsi untuk menghapus file yang salah unggah melalui menu <strong>Riwayat Upload</strong>.</li>
+          </ul>
         </div>
-    </div>
-
-    <div
-      id="mainAccessClosedOverlay"
-      class="access-overlay"
-      style="display: none"
-    >
-      <div class="access-card">
-        <h3>Akses Pengumpulan Ditutup</h3>
-        <p>
-          Portal pengumpulan tugas telah ditutup untuk saat ini oleh Administrator
-          (Putra). Silakan hubungi admin untuk informasi lebih lanjut.
-        </p>
+        <button id="confirmSyaratBtn" class="dialog-button">Saya Mengerti</button>
       </div>
     </div>
 
-    <div
-      id="courseAccessClosedOverlay"
-      class="access-overlay"
-      style="display: none"
-    >
+    <div id="mainAccessClosedOverlay" class="access-overlay" style="display: none">
+      <div class="access-card">
+        <h3>Akses Pengumpulan Ditutup</h3>
+        <p>Portal pengumpulan tugas telah ditutup untuk saat ini oleh Administrator (Putra). Silakan hubungi admin untuk informasi lebih lanjut.</p>
+      </div>
+    </div>
+
+    <div id="courseAccessClosedOverlay" class="access-overlay" style="display: none">
       <div class="access-card">
         <h3 id="courseAccessTitle">Pengumpulan Tugas Ditutup</h3>
-        <p id="courseAccessMessage">
-          Waktu pengumpulan untuk mata kuliah ini telah habis.
-        </p>
-        <button
-          onclick="document.getElementById('courseAccessClosedOverlay').style.display = 'none'"
-          class="dialog-button"
-        >
-          Tutup
-        </button>
+        <p id="courseAccessMessage">Waktu pengumpulan untuk mata kuliah ini telah habis.</p>
+        <button onclick="document.getElementById('courseAccessClosedOverlay').style.display = 'none'" class="dialog-button">Tutup</button>
       </div>
     </div>
 
@@ -813,9 +746,7 @@
       <div class="upload-status-card">
         <h3>Unggah Berhasil!</h3>
         <p class="status-text" id="successMessage"></p>
-        <button onclick="closeSuccessDialog()" class="dialog-button">
-          Tutup
-        </button>
+        <button onclick="closeSuccessDialog()" class="dialog-button">Tutup</button>
       </div>
     </div>
 
@@ -850,9 +781,7 @@
       const loginScreen = document.getElementById("loginScreen");
       const mainLayout = document.getElementById("mainLayout"); // Mengganti mainContent
       const uploadView = document.getElementById("uploadView"); // Elemen view upload
-      const uploadHistoryContainer = document.getElementById(
-        "uploadHistoryContainer"
-      );
+      const uploadHistoryContainer = document.getElementById("uploadHistoryContainer");
       const googleSignInBtn = document.getElementById("googleSignInBtn");
       const logoutBtn = document.getElementById("logoutBtn"); // Tombol logout di dropdown
 
@@ -883,14 +812,10 @@
       const confirmSyaratBtn = document.getElementById("confirmSyaratBtn");
 
       // Menambahkan elemen dialog yang TIDAK ADA di HTML asli Anda
-      const courseAccessClosedOverlay = document.getElementById(
-        "courseAccessClosedOverlay"
-      );
+      const courseAccessClosedOverlay = document.getElementById("courseAccessClosedOverlay");
       const courseAccessTitle = document.getElementById("courseAccessTitle");
       const courseAccessMessage = document.getElementById("courseAccessMessage");
-      const mainAccessClosedOverlay = document.getElementById(
-        "mainAccessClosedOverlay"
-      );
+      const mainAccessClosedOverlay = document.getElementById("mainAccessClosedOverlay");
 
       // ========================== VARIABEL GLOBAL & KONSTANTA ==========================
       const MAX_FILE_SIZE_MB = 12;
@@ -908,8 +833,7 @@
         checkMainAccessStatus(); // Cek status akses utama
         showSyaratDialogAtStart();
         listenForManualNotifications();
-        statusMessage.textContent =
-          "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
+        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
       });
 
       // Google Sign-In button on the login screen
@@ -971,9 +895,7 @@
 
           userNameDisplay.textContent = user.displayName;
           userEmailDisplay.textContent = user.email;
-          profilePicture.src =
-            user.photoURL ||
-            "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
+          profilePicture.src = user.photoURL || "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
           // Tampilkan view upload secara default
           showView("home");
         } else {
@@ -1033,9 +955,7 @@
         noHistoryMessage.style.display = "block";
 
         try {
-          const snapshot = await database
-            .ref(`riwayat_unggah/${userUid}`)
-            .once("value");
+          const snapshot = await database.ref(`riwayat_unggah/${userUid}`).once("value");
           const history = snapshot.val();
 
           if (!history) {
@@ -1060,32 +980,24 @@
             fileDetails.className = "file-details";
 
             // Tampilkan hanya nama file asli yang bersih (tanpa timestamp)
-            const cleanFileName =
-              item.originalFileName.substring(
-                0,
-                item.originalFileName.lastIndexOf(".")
-              ) || item.originalFileName;
+            const cleanFileName = item.originalFileName.substring(0, item.originalFileName.lastIndexOf(".")) || item.originalFileName;
 
             fileDetails.innerHTML = `
             <strong>${item.courseName}</strong>
             <span>Nama File: ${cleanFileName} (${item.fileSizeMB} MB)</span>
-            <span>Diunggah: ${new Date(item.timestamp).toLocaleDateString(
-              "id-ID",
-              {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              }
-            )}</span>
+            <span>Diunggah: ${new Date(item.timestamp).toLocaleDateString("id-ID", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}</span>
           `;
 
             const deleteButton = document.createElement("button");
             deleteButton.className = "delete-btn";
             deleteButton.textContent = "Hapus";
-            deleteButton.onclick = () =>
-              deleteUploadedFile(userUid, item.id, item.storagePath);
+            deleteButton.onclick = () => deleteUploadedFile(userUid, item.id, item.storagePath);
 
             listItem.appendChild(fileDetails);
             listItem.appendChild(deleteButton);
@@ -1098,11 +1010,7 @@
       }
 
       async function deleteUploadedFile(userUid, uploadId, storagePath) {
-        if (
-          !confirm(
-            "Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat dibatalkan."
-          )
-        ) {
+        if (!confirm("Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat dibatalkan.")) {
           return;
         }
 
@@ -1134,8 +1042,7 @@
         }
 
         const selectedCourse = courseSelect.value;
-        const courseName =
-          courseSelect.options[courseSelect.selectedIndex].text;
+        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
 
         if (!selectedCourse) {
           showFailDialog("❗ Mohon pilih mata kuliah terlebih dahulu.");
@@ -1144,20 +1051,14 @@
         }
 
         if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-          showFailDialog(
-            `❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`
-          );
+          showFailDialog(`❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`);
           fileInput.value = "";
           return;
         }
 
         const fileExtension = "." + file.name.split(".").pop().toLowerCase();
         if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
-          showFailDialog(
-            `❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(
-              ", "
-            )} yang diizinkan.`
-          );
+          showFailDialog(`❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`);
           fileInput.value = "";
           return;
         }
@@ -1165,8 +1066,7 @@
         dropArea.style.display = "none"; // Sembunyikan drop area
         scanAnimation.style.display = "flex";
         fileNameSpan.textContent = `File terpilih: ${file.name}`;
-        statusMessage.textContent =
-          "Sedang memindai file untuk memastikan keamanan...";
+        statusMessage.textContent = "Sedang memindai file untuk memastikan keamanan...";
 
         setTimeout(() => {
           scanAnimation.style.display = "none";
@@ -1183,27 +1083,17 @@
       function uploadFile(file, courseKey, courseName) {
         const now = new Date();
         const timestampMs = now.getTime();
-        const timestampFormat = `${now.getFullYear()}-${String(
-          now.getMonth() + 1
-        ).padStart(2, "0")}-${String(now.getDate()).padStart(
-          2,
-          "0"
-        )}_${String(now.getHours()).padStart(2, "0")}-${String(
-          now.getMinutes()
-        ).padStart(2, "0")}-${String(now.getSeconds()).padStart(2, "0")}`;
+        const timestampFormat = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
+          now.getSeconds()
+        ).padStart(2, "0")}`;
 
         // Gunakan nama file yang di-upload oleh user, tambahkan timestamp untuk unik
-        const fileNameWithoutExt = file.name
-          .split(".")
-          .slice(0, -1)
-          .join(".");
+        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".");
         const fileExtension = file.name.split(".").pop();
         const storageFileName = `${fileNameWithoutExt}_${timestampFormat}.${fileExtension}`;
 
         // Folder Storage di Firebase
-        const folderNameForStorage = courseKey
-          .replace(/[^a-zA-Z0-9]/g, "")
-          .toLowerCase();
+        const folderNameForStorage = courseKey.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
         const folderPath = `dokumen/${folderNameForStorage}/`;
         const storagePath = folderPath + storageFileName; // Path lengkap untuk Storage
         const fileRef = storage.ref(storagePath);
@@ -1220,8 +1110,7 @@
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             progressBar.style.width = `${progress}%`;
           },
           (error) => {
@@ -1244,9 +1133,7 @@
               const fileCount = result.items.length;
 
               // 1. Simpan Log Upload ke Realtime Database
-              const uploadLogRef = database
-                .ref(`riwayat_unggah/${currentUser.uid}`)
-                .push();
+              const uploadLogRef = database.ref(`riwayat_unggah/${currentUser.uid}`).push();
               const logData = {
                 uploadId: uploadLogRef.key,
                 userId: currentUser.uid,
@@ -1268,9 +1155,7 @@
               showSuccessDialog("File Anda berhasil diunggah!", fileCount);
             } catch (error) {
               console.error("Gagal memproses setelah unggah:", error);
-              showFailDialog(
-                `Unggah Berhasil, tapi Gagal mencatat riwayat: ${error.message}`
-              );
+              showFailDialog(`Unggah Berhasil, tapi Gagal mencatat riwayat: ${error.message}`);
             }
           }
         );
@@ -1333,8 +1218,7 @@
 
         statusMessage.classList.remove("timer-text");
         statusMessage.style.color = "#555";
-        statusMessage.textContent =
-          "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
+        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
 
         if (courseSelect.value) {
           const courseKey = courseSelect.value;
@@ -1414,9 +1298,7 @@
             clearInterval(countdownInterval);
             closeCourseAccess(courseKey, courseName);
           } else {
-            statusMessage.innerHTML = `Waktu Pengumpulan Tersisa: ${formatTime(
-              distance
-            )}`;
+            statusMessage.innerHTML = `Waktu Pengumpulan Tersisa: ${formatTime(distance)}`;
           }
         };
 
@@ -1446,9 +1328,7 @@
             closeCourseAccess(courseKey, courseName);
             statusMessage.classList.add("timer-text");
             statusMessage.style.color = "#dc3545";
-            statusMessage.innerHTML = `Pengumpulan ditutup karena Waktu habis sejak ${new Date(
-              deadlineTime
-            ).toLocaleDateString("id-ID", {
+            statusMessage.innerHTML = `Pengumpulan ditutup karena Waktu habis sejak ${new Date(deadlineTime).toLocaleDateString("id-ID", {
               year: "numeric",
               month: "long",
               day: "numeric",
@@ -1461,8 +1341,7 @@
         } else {
           statusMessage.classList.add("timer-text");
           statusMessage.style.color = "#28a745";
-          statusMessage.innerHTML =
-            "Akses terbuka silakan Pilih dokumen untuk diunggah.";
+          statusMessage.innerHTML = "Akses terbuka silakan Pilih dokumen untuk diunggah.";
         }
       }
 
