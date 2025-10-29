@@ -91,17 +91,13 @@
         width: 100%;
       }
 
-      /* Sidebar Navigation - DITINGKATKAN */
+      /* Sidebar Navigation */
       .sidebar {
         width: 200px;
         background-color: var(--sidebar-bg);
         padding-top: 20px;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
         flex-shrink: 0;
-        /* Tambahkan Flexbox untuk mendorong tombol logout ke bawah */
-        display: flex;
-        flex-direction: column;
-        min-height: 100%;
       }
 
       .sidebar-item {
@@ -120,18 +116,6 @@
         background-color: var(--accent-blue);
         color: white;
       }
-      
-      /* Style khusus untuk tombol Logout di sidebar */
-      #navLogout {
-        background-color: var(--delete-red); /* Warna merah untuk Logout */
-        color: white;
-        margin-top: auto; /* Mendorong tombol ke bawah */
-        font-weight: 600;
-      }
-      #navLogout:hover {
-        background-color: #a71d2a; /* Warna hover yang lebih gelap */
-      }
-
 
       /* Content Area */
       .content-area {
@@ -161,12 +145,11 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        cursor: default; /* Ubah cursor karena tidak lagi jadi dropdown utama */
+        cursor: pointer;
       }
 
-      /* Dropdown dihilangkan fungsinya, hanya menampilkan info user */
       .user-info-dropdown:hover .dropdown-content {
-        display: none;
+        display: block;
       }
 
       .user-name-wrapper {
@@ -197,7 +180,31 @@
       }
 
       .dropdown-content {
-        display: none; /* Sembunyikan dropdown karena logout sudah di sidebar */
+        display: none;
+        position: absolute;
+        background-color: var(--card-bg);
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.5);
+        z-index: 100;
+        right: 0;
+        top: 100%;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .dropdown-content a {
+        color: var(--text-light);
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+        transition: background-color 0.2s;
+        font-size: 0.9em;
+      }
+
+      .dropdown-content a:hover {
+        background-color: var(--accent-blue-hover);
       }
 
       /* Card Styling (Upload & History) */
@@ -522,7 +529,8 @@
       .dialog-button:hover {
         background-color: var(--accent-blue-hover);
       }
-      
+      /* Tambahkan lebih banyak style untuk semua elemen yang digunakan dari kode lama */
+
       /* ========================== MEDIA QUERIES (RESPONSIVE) ========================== */
       @media (max-width: 768px) {
         .main-layout {
@@ -545,16 +553,9 @@
 
         .sidebar-item {
           padding: 10px 15px;
+          width: 50%;
           text-align: center;
           justify-content: center;
-          /* Atur ulang lebar item navigasi di mobile */
-          width: calc(100% / 3); 
-        }
-        
-        /* Hapus margin auto untuk mobile */
-        #navLogout {
-            margin-top: 0;
-            width: calc(100% / 3);
         }
 
         .content-area {
@@ -658,10 +659,6 @@
         <a href="#" id="navHistory" class="sidebar-item"
           ><i class="fas fa-history"></i> Riwayat Upload</a
         >
-        
-        <a href="#" id="navLogout" class="sidebar-item">
-          <i class="fas fa-sign-out-alt"></i> Keluar
-        </a>
       </div>
 
       <div class="content-area">
@@ -677,7 +674,12 @@
               src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png"
               alt="Profile"
             />
+            <div class="dropdown-content">
+              <a href="#" id="logoutBtn"
+                ><i class="fas fa-sign-out-alt"></i> Keluar</a
+              >
             </div>
+          </div>
         </div>
 
         <div id="uploadView" class="upload-view">
@@ -771,7 +773,7 @@
           5. Setelah diunggah, Anda **masih bisa menghapus** di menu Riwayat.
         </p>
         <button id="confirmSyaratBtn" class="dialog-button">Saya Mengerti</button>
-      </div>
+        </div>
     </div>
 
     <div
@@ -846,15 +848,13 @@
 
       // ========================== ELEMEN DOM (DIPERBAIKI) ==========================
       const loginScreen = document.getElementById("loginScreen");
-      const mainLayout = document.getElementById("mainLayout");
-      const uploadView = document.getElementById("uploadView");
+      const mainLayout = document.getElementById("mainLayout"); // Mengganti mainContent
+      const uploadView = document.getElementById("uploadView"); // Elemen view upload
       const uploadHistoryContainer = document.getElementById(
         "uploadHistoryContainer"
       );
       const googleSignInBtn = document.getElementById("googleSignInBtn");
-      
-      // NEW: Tombol Logout di Sidebar
-      const navLogout = document.getElementById("navLogout"); 
+      const logoutBtn = document.getElementById("logoutBtn"); // Tombol logout di dropdown
 
       const userNameDisplay = document.getElementById("userName");
       const userEmailDisplay = document.getElementById("userEmail");
@@ -874,7 +874,7 @@
       const statusMessage = document.getElementById("statusMessage");
       const rocketAnimation = document.getElementById("rocketAnimation");
       const scanAnimation = document.getElementById("scanAnimation");
-      const dropArea = document.getElementById("dropArea"); 
+      const dropArea = document.getElementById("dropArea"); // Menggunakan ID elemen label
       const uploadSuccessOverlay = document.getElementById("uploadSuccessOverlay");
       const uploadFailOverlay = document.getElementById("uploadFailOverlay");
       const successMessage = document.getElementById("successMessage");
@@ -882,7 +882,7 @@
       const syaratDialogOverlay = document.getElementById("syaratDialogOverlay");
       const confirmSyaratBtn = document.getElementById("confirmSyaratBtn");
 
-      // Elemen dialog yang dibutuhkan
+      // Menambahkan elemen dialog yang TIDAK ADA di HTML asli Anda
       const courseAccessClosedOverlay = document.getElementById(
         "courseAccessClosedOverlay"
       );
@@ -897,15 +897,15 @@
       const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
       let courseDeadlines = {};
       let countdownInterval = null;
-      let currentUser = null; 
-      let courseMap = {}; 
+      let currentUser = null; // Menyimpan data pengguna yang sedang login
+      let courseMap = {}; // Untuk mapping key mata kuliah ke nama
 
       // ========================== EVENT LISTENERS ==========================
       document.addEventListener("DOMContentLoaded", () => {
         requestNotificationPermission();
         fetchCourseList();
         fetchCourseDeadlines();
-        checkMainAccessStatus();
+        checkMainAccessStatus(); // Cek status akses utama
         showSyaratDialogAtStart();
         listenForManualNotifications();
         statusMessage.textContent =
@@ -914,12 +914,7 @@
 
       // Google Sign-In button on the login screen
       googleSignInBtn.addEventListener("click", handleSignIn);
-      
-      // NEW: Listener untuk Logout di Sidebar
-      navLogout.addEventListener("click", (e) => {
-        e.preventDefault();
-        handleSignOut();
-      });
+      logoutBtn.addEventListener("click", handleSignOut);
 
       // Navigasi
       navHome.addEventListener("click", (e) => {
@@ -947,8 +942,7 @@
           handleFile(file);
         }
       });
-      
-      // Drag & Drop event listeners
+      // Drag & Drop event listeners... (Menggunakan #dropArea)
       dropArea.addEventListener("dragover", (e) => {
         e.preventDefault();
         dropArea.classList.add("dragover");
@@ -970,18 +964,20 @@
       // ========================== FUNGSI OTENTIKASI ==========================
       auth.onAuthStateChanged((user) => {
         if (user) {
+          // User is signed in
           currentUser = user;
           loginScreen.style.display = "none";
-          mainLayout.style.display = "flex"; 
+          mainLayout.style.display = "flex"; // Tampilkan Main Layout
 
           userNameDisplay.textContent = user.displayName;
           userEmailDisplay.textContent = user.email;
           profilePicture.src =
             user.photoURL ||
             "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
-          
+          // Tampilkan view upload secara default
           showView("home");
         } else {
+          // User is signed out
           currentUser = null;
           loginScreen.style.display = "flex";
           mainLayout.style.display = "none";
@@ -1048,12 +1044,13 @@
 
           noHistoryMessage.style.display = "none";
 
+          // Ubah objek menjadi array untuk sorting berdasarkan waktu terbaru
           const historyArray = Object.keys(history)
             .map((key) => ({
               id: key,
               ...history[key],
             }))
-            .sort((a, b) => b.timestamp - a.timestamp); 
+            .sort((a, b) => b.timestamp - a.timestamp); // Terbaru di atas
 
           historyArray.forEach((item) => {
             const listItem = document.createElement("li");
@@ -1062,6 +1059,7 @@
             const fileDetails = document.createElement("div");
             fileDetails.className = "file-details";
 
+            // Tampilkan hanya nama file asli yang bersih (tanpa timestamp)
             const cleanFileName =
               item.originalFileName.substring(
                 0,
@@ -1127,7 +1125,7 @@
         }
       }
 
-      // ========================== FUNGSI UPLOAD DENGAN LOG (DIPERBAIKI) ==========================
+      // ========================== FUNGSI UPLOAD DENGAN LOG ==========================
       async function handleFile(file) {
         if (!currentUser) {
           showFailDialog("❗ Mohon masuk dengan akun Google terlebih dahulu.");
@@ -1164,10 +1162,8 @@
           return;
         }
 
-        // Sembunyikan Drop Area dan tampilkan animasi scan
-        dropArea.style.display = "none"; 
+        dropArea.style.display = "none"; // Sembunyikan drop area
         scanAnimation.style.display = "flex";
-        
         fileNameSpan.textContent = `File terpilih: ${file.name}`;
         statusMessage.textContent =
           "Sedang memindai file untuk memastikan keamanan...";
@@ -1181,7 +1177,7 @@
               resetUploadState();
             }
           });
-        }, 3000); 
+        }, 3000); // Waktu simulasi pemindaian (3 detik)
       }
 
       function uploadFile(file, courseKey, courseName) {
@@ -1196,6 +1192,7 @@
           now.getMinutes()
         ).padStart(2, "0")}-${String(now.getSeconds()).padStart(2, "0")}`;
 
+        // Gunakan nama file yang di-upload oleh user, tambahkan timestamp untuk unik
         const fileNameWithoutExt = file.name
           .split(".")
           .slice(0, -1)
@@ -1203,17 +1200,17 @@
         const fileExtension = file.name.split(".").pop();
         const storageFileName = `${fileNameWithoutExt}_${timestampFormat}.${fileExtension}`;
 
+        // Folder Storage di Firebase
         const folderNameForStorage = courseKey
           .replace(/[^a-zA-Z0-9]/g, "")
           .toLowerCase();
         const folderPath = `dokumen/${folderNameForStorage}/`;
-        const storagePath = folderPath + storageFileName; 
+        const storagePath = folderPath + storageFileName; // Path lengkap untuk Storage
         const fileRef = storage.ref(storagePath);
 
         const uploadTask = fileRef.put(file);
 
-        // Sembunyikan Drop Area dan tampilkan progress
-        dropArea.style.display = "none"; 
+        dropArea.style.display = "none"; // Pastikan tersembunyi
         rocketAnimation.style.display = "flex";
         progressContainer.style.display = "block";
         progressBar.style.width = "0%";
@@ -1230,18 +1227,18 @@
           (error) => {
             console.error("Kesalahan unggah:", error);
             rocketAnimation.style.display = "none";
-            dropArea.style.display = "flex"; // Tampilkan kembali drop area saat GAGAL
+            dropArea.style.display = "flex"; // Tampilkan kembali drop area
             showFailDialog(`Gagal mengunggah file: ${error.message}`);
           },
           async () => {
-            // Tampilkan kembali Drop Area saat BERHASIL
             rocketAnimation.style.display = "none";
-            dropArea.style.display = "flex"; 
+            dropArea.style.display = "flex"; // Tampilkan kembali drop area
 
             try {
               const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
               console.log("File tersedia di:", downloadURL);
 
+              // Hitung jumlah file yang sudah terkumpul di folder ini
               const folderRef = storage.ref(folderPath);
               const result = await folderRef.listAll();
               const fileCount = result.items.length;
@@ -1257,9 +1254,9 @@
                 userEmail: currentUser.email,
                 courseKey: courseKey,
                 courseName: courseName,
-                originalFileName: file.name, 
+                originalFileName: file.name, // Simpan nama file asli
                 storageFileName: storageFileName,
-                storagePath: storagePath, 
+                storagePath: storagePath, // Simpan path lengkap untuk penghapusan
                 downloadURL: downloadURL,
                 timestamp: timestampMs,
                 fileSizeMB: (file.size / (1024 * 1024)).toFixed(2),
@@ -1286,6 +1283,7 @@
         confirmSyaratBtn.onclick = () => {
           syaratDialogOverlay.style.display = "none";
         };
+        // Hapus cancelSyaratBtn jika tidak ada di HTML
       }
 
       function showSuccessDialog(message, fileCount) {
@@ -1330,10 +1328,7 @@
         progressContainer.style.display = "none";
         rocketAnimation.style.display = "none";
         scanAnimation.style.display = "none";
-        
-        // Tampilkan Drop Area kembali
-        dropArea.style.display = "flex"; 
-        
+        dropArea.style.display = "flex"; // Tampilkan kembali drop area
         clearInterval(countdownInterval);
 
         statusMessage.classList.remove("timer-text");
@@ -1349,14 +1344,14 @@
         }
       }
 
-      /* Fungsi timer dan akses */
+      /* Fungsi timer dan akses (Disimpan agar kode tetap berjalan) */
 
       async function fetchCourseList() {
         try {
           const snapshot = await database.ref("mata_kuliah").once("value");
           const courses = snapshot.val();
 
-          courseMap = {}; 
+          courseMap = {}; // Reset map
           while (courseSelect.options.length > 1) {
             courseSelect.remove(1);
           }
@@ -1365,7 +1360,7 @@
             for (const key in courses) {
               if (Object.hasOwnProperty.call(courses, key)) {
                 const courseName = courses[key];
-                courseMap[key] = courseName; 
+                courseMap[key] = courseName; // Simpan ke map
                 const option = document.createElement("option");
                 option.value = key;
                 option.textContent = courseName;
@@ -1563,9 +1558,10 @@
 
           if (isOpen === true) {
             mainAccessClosedOverlay.style.display = "none";
+            // Jika akses utama terbuka, biarkan onAuthStateChanged mengurus tampilan
           } else {
             mainLayout.style.display = "none";
-            loginScreen.style.display = "none"; 
+            loginScreen.style.display = "none"; // Sembunyikan login jika akses utama tertutup
             mainAccessClosedOverlay.style.display = "flex";
             if (Notification.permission === "granted") {
               new Notification("Pengumpulan Tugas Ditutup", {
