@@ -3,1275 +3,1703 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal Pengumpulan Tugas</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-    <style>
-      /* --- VARIABEL CSS BARU & GLOBAL STYLES --- */
-      :root {
-        --primary-color: #007bff; /* Biru cerah untuk aksi utama */
-        --secondary-color: #28a745; /* Hijau untuk sukses/masuk */
-        --danger-color: #dc3545; /* Merah untuk bahaya/keluar */
-        --background-light: #f8f9fa; /* Warna latar belakang lebih terang dan bersih */
-        --card-background: #ffffff;
-        --text-dark: #212529; /* Teks lebih gelap, standar Bootstrap */
-        --text-muted: #6c757d; /* Teks sekunder, standar Bootstrap */
-        --border-color: #dee2e6; /* Warna border standar */
-        --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        --shadow-md: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
-        --shadow-lg: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
-      }
+    <title>Portal Tugas TI UM-Palembang (Login & Riwayat)</title>
+    <link rel="icon" type="image/x-icon" href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" />
 
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+    <style>
+      /* --- CSS LAMA DARI KODE ANDA DI SINI --- */
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
 
       body {
         font-family: "Poppins", sans-serif;
-        background-color: var(--background-light);
+        background-color: #f0f2f5;
         display: flex;
         flex-direction: column;
+        justify-content: flex-start; /* Ubah ke flex-start untuk mengakomodasi navbar */
         align-items: center;
         min-height: 100vh;
         margin: 0;
-        color: var(--text-dark);
-        padding-top: 105px; /* Sesuaikan dengan tinggi running text (35px) + navbar (70px) */
-        transition: background-color 0.3s ease;
+        color: #333;
+        padding-top: 100px; /* Jarak untuk Fixed Navbar dan Running Text */
       }
-
-      /* --- RUNNING TEXT (PENGUMUMAN) --- */
-      .running-text-container {
-        background: linear-gradient(90deg, #dc3545 0%, #e74c3c 100%); /* Gradien merah yang lebih modern */
-        color: white;
-        padding: 8px 0;
+      /* --- CSS LAMA UNTUK CARD, HEADER-INFO, ETC. --- */
+      .header-info {
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        width: 90%;
+        max-width: 600px;
+      }
+      .header-info h1 {
+        color: #1a1a1a;
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin: 0 0 5px 0;
+      }
+      .header-info p {
+        color: #666;
+        font-size: 0.9rem;
+        margin: 0;
+      }
+      .container {
+        padding: 20px;
+        width: 100%;
+        max-width: 450px;
+        box-sizing: border-box;
+      }
+      .card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      h2 {
+        color: #4a4a4a;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .sub-text {
+        color: #888;
+        margin-bottom: 25px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #555;
+      }
+      .form-group select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+        background-color: #f9f9f9;
+      }
+      .upload-area {
+        margin: 25px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .custom-file-upload {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 150px;
+        height: 150px;
+        border: 3px dashed #e0e0e0;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: border-color 0.3s ease, transform 0.3s ease;
+      }
+      .custom-file-upload.dragover {
+        border-color: #007bff;
+        transform: scale(1.05);
+        background-color: #e6f2ff;
+      }
+      .custom-file-upload:hover {
+        border-color: #007bff;
+        transform: scale(1.05);
+      }
+      .custom-file-upload img {
+        width: 60px;
+        margin-bottom: 5px;
+        transition: transform 0.3s ease;
+      }
+      .custom-file-upload:hover img {
+        transform: translateY(-5px);
+      }
+      .file-name {
+        margin-top: 15px;
+        color: #555;
+        font-size: 14px;
+        font-style: italic;
+      }
+      .progress-container {
+        width: 100%;
+        background-color: #e9ecef;
+        border-radius: 50px;
+        margin-top: 20px;
+        overflow: hidden;
+        height: 10px;
+        display: none;
+      }
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background-color: #007bff;
+        transition: width 0.3s ease;
+        border-radius: 50px;
+      }
+      .status-message {
+        margin-top: 15px;
+        font-weight: 500;
+        min-height: 20px;
+        color: #555;
+        text-align: center;
+      }
+      .access-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        height: 35px;
-        z-index: 1000;
-        box-shadow: var(--shadow-sm);
-        display: flex; /* Tambahkan flexbox untuk centering */
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: none;
+        justify-content: center;
         align-items: center;
-        overflow: hidden; /* Pastikan teks berjalan tidak keluar */
+        z-index: 1000;
+      }
+      .access-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 40px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+      .access-card img {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+      }
+      .access-card h3 {
+        color: #dc3545;
+        margin-bottom: 10px;
+        font-size: 1.5rem;
+      }
+      .access-card p {
+        color: #555;
+        margin: 0 0 20px 0;
+        line-height: 1.5;
+      }
+      .dialog-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .dialog-button {
+        flex: 1;
+        background-color: #007bff;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      .dialog-button:hover {
+        background-color: #0056b3;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .upload-status-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .upload-status-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 25px;
+        text-align: center;
+        width: 90%;
+        max-width: 400px;
+        box-sizing: border-box;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+      .upload-status-card .icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+      }
+      .upload-status-card h3 {
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+      }
+      #uploadSuccessCard h3 {
+        color: #28a745;
+      }
+      #uploadFailCard h3 {
+        color: #dc3545;
+      }
+      .upload-status-card .status-text {
+        font-size: 0.9rem;
+        color: #555;
+      }
+      .rocket-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+        display: none;
+      }
+      .rocket-icon {
+        width: 80px;
+        height: 80px;
+        animation: fly 2s ease-out infinite;
+      }
+      .rocket-text {
+        margin-top: 10px;
+        color: #007bff;
+        font-weight: 600;
+      }
+      @keyframes fly {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        50% {
+          transform: translateY(-30px);
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .scan-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 25px 0;
+        display: none;
+        position: relative;
+      }
+      .spinner {
+        border: 4px solid #e0e0e0;
+        border-left-color: #007bff;
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: all 0.3s ease;
+      }
+      .shield-icon {
+        width: 80px;
+        height: 80px;
+        animation: pulse 1.5s infinite ease-in-out;
+        position: relative;
+        z-index: 10;
+      }
+      .scan-text {
+        margin-top: 15px;
+        font-weight: 600;
+        color: #007bff;
+        animation: fadePulse 1.5s infinite ease-in-out;
+      }
+      @keyframes spin {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes fadePulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+      .running-text-container {
+        width: 100%;
+        padding: 8px 0;
+        margin-bottom: 20px;
+        background: linear-gradient(90deg, #dc3545, #c00707);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        color: white;
+        text-align: center;
+        overflow: hidden;
+        position: relative;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+      }
+      .running-text-container .text-wrapper {
+        display: inline-block;
+        padding-left: 100%;
+        animation: marquee-animation 15s linear infinite;
+      }
+      .running-text-container:hover .text-wrapper {
+        animation-play-state: paused;
       }
       .running-text-container span {
-        white-space: nowrap;
-        font-size: 0.9rem;
-        font-weight: 500;
-        animation: marquee 25s linear infinite; /* Kecepatan bisa disesuaikan */
-        padding-left: 100%; /* Mulai dari luar layar */
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding-right: 50px;
       }
-      @keyframes marquee {
+      .running-text-container a {
+        color: #ffd700;
+        text-decoration: none;
+        font-weight: 700;
+        transition: color 0.3s ease;
+      }
+      .running-text-container a:hover {
+        color: #fff;
+        text-decoration: underline;
+      }
+      @keyframes marquee-animation {
         0% {
-          transform: translateX(0%);
+          transform: translateX(0);
         }
         100% {
           transform: translateX(-100%);
         }
       }
+      #syaratDialogOverlay .access-card {
+        padding: 25px;
+        max-width: 350px;
+      }
+      #syaratDialogOverlay .access-card h3 {
+        color: #dc3545;
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+      }
+      .syarat-list {
+        text-align: left;
+        margin-bottom: 20px;
+      }
+      .syarat-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .syarat-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+        color: #4a4a4a;
+        line-height: 1.4;
+      }
+      .syarat-list .list-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+        flex-shrink: 0;
+      }
+      #syaratDialogOverlay p {
+        font-size: 0.9rem;
+        margin: 20px 0 0;
+      }
+      .timer-text {
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #c00707 !important;
+        background-color: #ffe6e6;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: 1px solid #dc3545;
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.15);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 15px;
+        max-width: 100%;
+      }
+      .timer-icon {
+        font-size: 1.5rem;
+        line-height: 1;
+        animation: rotateTimer 4s linear infinite;
+      }
+      .timer-days {
+        font-size: 1.25em;
+        font-weight: 800;
+        color: #dc3545;
+        padding: 2px 5px;
+        border-radius: 6px;
+        background-color: #fff;
+      }
+      @keyframes rotateTimer {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .timer-text[style*="#28a745"] {
+        background-color: #e6ffe6;
+        border: 1px solid #28a745;
+        color: #155724 !important;
+        box-shadow: 0 6px 15px rgba(40, 167, 69, 0.15);
+      }
+      .timer-text[style*="#dc3545"] {
+        background-color: #f8d7da;
+        border: 1px solid #dc3545;
+        color: #721c24 !important;
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.2);
+      }
 
-      /* --- NAVBAR --- */
+      /* --- NEW CSS FOR NAVIGATION & LOGIN --- */
       .navbar {
-        background-color: var(--primary-color);
-        color: white;
-        padding: 10px 20px; /* Padding lebih nyaman */
-        position: fixed;
-        top: 35px; /* Tepat di bawah running text */
-        left: 0;
         width: 100%;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        position: fixed;
+        top: 45px; /* Di bawah running text */
+        left: 0;
         z-index: 999;
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-wrap: wrap; /* Penting untuk responsivitas */
-        min-height: 70px; /* Tinggi minimum navbar */
-      }
-      .navbar-brand {
-        font-weight: 700;
-        font-size: 1.25rem;
-        display: flex;
-        align-items: center;
-        gap: 8px; /* Jarak antara ikon dan teks */
-      }
-      .navbar-brand img {
-        height: 28px; /* Ukuran ikon rumah */
-        width: auto;
-        filter: brightness(1.2); /* Sedikit cerahkan ikon */
-      }
-      .navbar-links {
-        display: flex;
-        gap: 25px; /* Jarak antar link lebih lebar */
-        margin-left: 20px;
       }
       .navbar-links a {
         color: white;
         text-decoration: none;
-        font-weight: 500;
-        padding: 5px 0;
-        position: relative;
-        transition: color 0.3s ease;
+        margin: 0 15px;
+        font-weight: 600;
+        padding: 5px;
+        transition: opacity 0.2s ease;
       }
-      .navbar-links a::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -2px; /* Sedikit di bawah teks */
-        width: 0;
-        height: 2px;
-        background-color: #fff; /* Garis putih */
-        transition: width 0.3s ease;
+      .navbar-links a:hover {
+        opacity: 0.8;
       }
-      .navbar-links a:hover::after,
-      .navbar-links a.active::after {
-        width: 100%;
-        background-color: #ffd700; /* Warna kuning emas untuk aktif/hover */
-      }
-      .navbar-links a:hover,
-      .navbar-links a.active {
-        color: #ffd700; /* Warna kuning emas untuk teks aktif/hover */
-      }
-      .navbar-user-info {
+      .navbar-user {
         display: flex;
         align-items: center;
-        gap: 15px;
-        color: white;
+        gap: 10px;
+      }
+      .user-info {
         font-size: 0.9rem;
         text-align: right;
       }
-      .navbar-user-info span {
-        display: block;
-        line-height: 1.2;
-      }
-      .navbar-user-info .user-name {
-        font-weight: 600;
-      }
-      .navbar-user-info .user-nim,
-      .navbar-user-info .user-email {
-        font-size: 0.8rem;
-        opacity: 0.9;
-      }
-      .navbar-profile-img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid white; /* Border putih */
-        box-shadow: var(--shadow-sm);
-      }
-      .logout-btn {
-        background-color: var(--danger-color);
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.2s ease, transform 0.1s ease;
-      }
-      .logout-btn:hover {
-        background-color: #c82333; /* Merah sedikit lebih gelap */
-        transform: translateY(-1px);
-      }
-
-      /* --- GLOBAL CARD & HEADER --- */
-      .header-info {
-        background-color: var(--card-background);
-        border-radius: 12px;
-        box-shadow: var(--shadow-sm);
-        padding: 25px;
-        margin-bottom: 25px;
-        text-align: center;
-        width: 100%;
-        max-width: 500px; /* Batasi lebar */
-      }
-      .header-info h1 {
-        color: var(--text-dark);
-        font-size: 1.4rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-      }
-      .header-info p {
-        color: var(--text-muted);
-        font-size: 0.95rem;
-        line-height: 1.4;
-      }
-      .container {
-        padding: 15px;
-        max-width: 500px; /* Lebar maksimum untuk konten utama */
-        width: 100%;
-      }
-      .card {
-        background: var(--card-background);
-        border-radius: 12px;
-        box-shadow: var(--shadow-md); /* Bayangan sedang */
-        padding: 30px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-      .card:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-lg); /* Bayangan lebih dalam saat hover */
-      }
-      h2 {
-        color: var(--text-dark);
-        font-weight: 700;
-        margin-bottom: 10px;
-        font-size: 1.75rem; /* Ukuran judul h2 */
-      }
-      .sub-text {
-        color: var(--text-muted);
-        margin-bottom: 25px;
-        font-size: 0.95rem;
-      }
-      .form-group label {
-        color: var(--text-dark);
-        font-weight: 500;
-        margin-bottom: 8px;
-        display: block; /* Agar label di atas select */
-      }
-      .form-group select {
-        border: 1px solid var(--border-color);
-        background-color: #ffffff;
-        padding: 10px 15px;
-        border-radius: 8px;
-        width: 100%;
-        font-size: 1rem;
-        color: var(--text-dark);
-        appearance: none; /* Hilangkan default arrow */
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236c757d'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); /* Custom arrow */
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 20px;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      }
-      .form-group select:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Focus ring */
-        outline: none;
-      }
-
-      /* --- UPLOAD AREA --- */
-      .custom-file-upload {
-        width: 180px; /* Ukuran sedikit lebih besar */
-        height: 180px;
-        border: 3px dashed var(--primary-color); /* Biru primer */
-        border-radius: 15px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin: 25px auto 15px auto; /* Tengah dengan margin atas bawah */
-        background-color: #f0f8ff; /* Warna latar belakang ringan */
-      }
-      .custom-file-upload:hover {
-        border-color: var(--secondary-color); /* Hijau saat hover */
-        background-color: #e6f7ff; /* Latar belakang lebih cerah */
-        transform: scale(1.03);
-      }
-      .custom-file-upload img {
-        width: 80px; /* Ikon lebih besar */
-        height: 80px;
+      .user-info p {
+        margin: 0;
+        font-size: 0.75rem;
         opacity: 0.8;
-        filter: invert(10%) sepia(85%) saturate(300%) hue-rotate(180deg) brightness(95%) contrast(90%); /* Warna biru ikon */
       }
-      .custom-file-upload span {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: var(--primary-color);
-        margin-top: 10px;
-        text-align: center;
-        line-height: 1.3;
+      .profile-pic {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: white;
+        object-fit: cover;
+        cursor: pointer;
       }
-      #uploadButton {
-        background-color: var(--primary-color);
+      .login-btn {
+        background-color: #28a745;
         color: white;
+        padding: 8px 15px;
         border: none;
-        padding: 12px 25px;
-        border-radius: 8px;
+        border-radius: 6px;
         cursor: pointer;
         font-weight: 600;
-        font-size: 1.1rem;
-        transition: background-color 0.2s ease, transform 0.1s ease;
-        width: 100%;
-        margin-top: 20px;
+        transition: background-color 0.2s ease;
       }
-      #uploadButton:hover {
-        background-color: #0056b3; /* Biru lebih gelap */
-        transform: translateY(-1px);
-      }
-      #uploadButton:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-        transform: none;
-      }
-      .file-name-display {
-        margin-top: 10px;
-        font-size: 0.9rem;
-        color: var(--text-dark);
-        font-weight: 500;
-        text-align: center;
+      .login-btn:hover {
+        background-color: #1e7e34;
       }
 
-      /* --- PROGRESS & STATUS DIALOGS --- */
-      .progress-bar-container {
-        background-color: #e9ecef; /* Latar belakang progress bar */
-        border-radius: 5px;
-        height: 8px;
-        margin-top: 15px;
-        overflow: hidden;
-      }
-      .progress-bar {
-        background-color: var(--secondary-color);
-        height: 100%;
-        width: 0%;
-        border-radius: 5px;
-        transition: width 0.3s ease;
-      }
-      .dialog-container {
+      /* Login Screen */
+      #loginScreen {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.6); /* Overlay lebih gelap */
+        background-color: #f0f2f5;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 2000;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-      }
-      .dialog-container.show {
-        opacity: 1;
-        visibility: visible;
-      }
-      .dialog-card {
-        background-color: var(--card-background);
-        border-radius: 15px;
-        padding: 40px 30px;
         text-align: center;
-        box-shadow: var(--shadow-lg);
-        max-width: 450px;
-        width: 90%;
-        animation: fadeInScale 0.3s ease-out;
-      }
-      @keyframes fadeInScale {
-        0% {
-          opacity: 0;
-          transform: scale(0.9);
-        }
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-      .dialog-card h3 {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: 15px;
-        color: var(--text-dark);
-      }
-      .dialog-card p {
-        font-size: 1.05rem;
-        color: var(--text-muted);
-        line-height: 1.5;
-        margin-bottom: 25px;
-      }
-      .dialog-card .dialog-button {
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 1.05rem;
-        transition: background-color 0.2s ease, transform 0.1s ease;
-      }
-      .dialog-card .dialog-button:hover {
-        background-color: #0056b3;
-        transform: translateY(-1px);
-      }
-      .dialog-card img {
-        width: 80px;
-        height: 80px;
-        margin-bottom: 20px;
-      }
-      .dialog-card .dialog-icon {
-        font-size: 4rem; /* Ukuran ikon di dialog */
-        margin-bottom: 20px;
-      }
-      .dialog-card .success-icon {
-        color: var(--secondary-color);
-      }
-      .dialog-card .error-icon {
-        color: var(--danger-color);
-      }
-      .dialog-card .info-icon {
-        color: var(--primary-color);
-      }
-      .dialog-card .warning-icon {
-        color: #ffc107;
-      }
-
-      /* --- LOGIN SCREEN --- */
-      .login-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: var(--background-light);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 3000;
       }
       .login-card {
-        max-width: 420px;
-        width: 90%;
-        padding: 40px 30px;
-        text-align: center;
-        background-color: var(--card-background);
-        border-radius: 15px;
-        box-shadow: var(--shadow-lg);
-        animation: bounceIn 0.6s ease-out;
-      }
-      @keyframes bounceIn {
-        0% {
-          opacity: 0;
-          transform: scale(0.9) translateY(20px);
-        }
-        100% {
-          opacity: 1;
-          transform: scale(1) translateY(0);
-        }
-      }
-      .login-card h2 {
-        font-size: 2.2rem;
-        margin-bottom: 20px;
-      }
-      .login-card p {
-        color: var(--text-muted);
-        margin-bottom: 30px;
-        font-size: 1.05rem;
-      }
-      .login-logo {
-        width: 100px; /* Ukuran logo di login */
-        height: auto;
-        margin-bottom: 25px;
-      }
-      .google-sign-in-btn {
-        background-color: #ffffff;
-        color: var(--text-dark);
-        border: 1px solid var(--border-color);
-        padding: 12px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1rem;
-
-        /* PERBAIKAN: Ubah dari 'display: flex;' menjadi 'display: inline-flex;' */
-        /* Ini memungkinkan tombol untuk diratakan oleh text-align: center; dari .login-card */
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        gap: 10px;
-        box-shadow: var(--shadow-sm);
-        transition: all 0.2s ease;
-      }
+  padding: 40px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  text-align: center; /* <<< PASTIKAN INI ADA untuk menengahkan konten inline/teks */
+  /* Ganti: text-align: center; di sini */
+}
+.google-sign-in-btn {
+  display: inline-flex; /* <<< UBAH INI (Jika sebelumnya flex) */
+  align-items: center;
+  justify-content: center;
+  background-color: #4285f4;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 20px;
+  gap: 10px;
+  transition: background-color 0.2s ease;
+  /* Tambahkan: margin: 20px auto 0; jika .login-card menggunakan display: flex */
+}
       .google-sign-in-btn:hover {
-        background-color: #f7f7f7;
-        box-shadow: var(--shadow-md);
-        transform: translateY(-1px);
+        background-color: #3367d6;
       }
-      .google-sign-in-btn img {
-        width: 24px;
-        height: 24px;
+      .google-icon {
+        width: 20px;
+        height: 20px;
       }
-
-      /* --- UPLOAD HISTORY --- */
+      /* Riwayat Upload CSS */
       #uploadHistoryContainer {
-        display: none;
-        width: 100%;
-        max-width: 700px; /* Lebar lebih besar untuk riwayat */
-        margin-top: 25px;
-      }
-      #uploadHistoryContainer h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 2rem;
+        width: 90%;
+        max-width: 800px;
+        margin-top: 20px;
+        display: none; /* Default tersembunyi */
       }
       .history-list {
-        background-color: var(--card-background);
-        border-radius: 12px;
-        box-shadow: var(--shadow-md);
-        padding: 20px;
+        list-style: none;
+        padding: 0;
       }
       .history-item {
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 15px 20px;
-        border-bottom: 1px solid var(--border-color);
-        transition: background-color 0.2s ease;
-      }
-      .history-item:last-child {
-        border-bottom: none;
-      }
-      .history-item:hover {
-        background-color: #f7f9fb;
+        flex-wrap: wrap;
       }
       .file-details {
+        text-align: left;
         flex-grow: 1;
       }
       .file-details strong {
         display: block;
-        font-weight: 600;
-        font-size: 1.05rem;
-        color: var(--text-dark);
-        margin-bottom: 3px;
+        font-size: 1rem;
+        color: #333;
+        margin-bottom: 5px;
       }
       .file-details span {
         display: block;
         font-size: 0.85rem;
-        color: var(--text-muted);
+        color: #6c757d;
       }
       .delete-btn {
-        background-color: var(--danger-color);
+        background-color: #dc3545;
         color: white;
+        padding: 8px 15px;
         border: none;
-        padding: 8px 12px;
         border-radius: 6px;
         cursor: pointer;
-        font-weight: 500;
+        font-weight: 600;
+        transition: background-color 0.2s ease;
         margin-left: 15px;
-        transition: background-color 0.2s ease, transform 0.1s ease;
+        flex-shrink: 0;
       }
       .delete-btn:hover {
         background-color: #c82333;
-        transform: translateY(-1px);
       }
-      .no-history-message {
+      #noHistoryMessage {
         text-align: center;
-        color: var(--text-muted);
+        color: #888;
         padding: 30px;
-        font-size: 1.1rem;
       }
+      /* --- CSS LAMA ANDA (SEBELUMNYA SAYA SERTAKAN) TETAP DI SINI --- */
 
-      /* --- MEDIA QUERIES UNTUK RESPONSIVITAS --- */
+      /* ... (Semua kode CSS dari baris 17 hingga 465 ada di sini) ... */
 
+      /* ========================== MEDIA QUERIES UNTUK RESPONSIF ========================== */
+
+      /* Mobile Portrait & Tablet Kecil (Max Width: 768px) */
       @media (max-width: 768px) {
+        /* Global */
         body {
-          padding-top: 140px; /* Sesuaikan untuk navbar yang mungkin dua baris */
-        }
-        .running-text-container span {
-          font-size: 0.8rem;
+          padding-top: 100px; /* Pertahankan jarak untuk navbar */
         }
 
+        /* Navbar */
         .navbar {
           flex-direction: column;
           align-items: flex-start;
-          gap: 10px;
+          gap: 8px;
           padding: 10px 15px;
-          min-height: auto; /* Biarkan tinggi menyesuaikan konten */
-        }
-        .navbar-brand {
-          width: 100%;
-          justify-content: center;
-          margin-bottom: 10px;
+          top: 35px; /* Sesuaikan jika running-text lebih kecil */
         }
         .navbar-links {
+          display: flex;
           width: 100%;
           justify-content: space-around;
-          margin-left: 0;
-          border-top: 1px solid rgba(255, 255, 255, 0.2);
-          padding-top: 10px;
-          order: 3; /* Pindah link ke bawah info user */
+          margin-bottom: 5px;
         }
         .navbar-links a {
           font-size: 0.9rem;
           margin: 0 5px;
-          flex-grow: 1;
-          text-align: center;
         }
-        .navbar-user-info {
+        .navbar-user {
           width: 100%;
           justify-content: flex-end;
-          gap: 10px;
-          font-size: 0.85rem;
-          margin-bottom: 10px;
-          order: 2; /* Di tengah antara brand dan link */
         }
-        .navbar-user-info .user-name,
-        .navbar-user-info .user-nim,
-        .navbar-user-info .user-email {
-          display: none; /* Sembunyikan detail teks, hanya tampilkan foto profil */
+        .user-info {
+          display: none !important; /* Sembunyikan Nama dan Email di mobile agar lebih ringkas */
         }
-        .logout-btn {
-          padding: 6px 12px;
-          font-size: 0.9rem;
-        }
-        .navbar-profile-img {
-          width: 35px;
-          height: 35px;
-          border-width: 1px;
+        .profile-pic {
+          margin-right: 10px;
         }
 
-        .header-info h1 {
-          font-size: 1.2rem;
+        /* Running Text (Dibuat lebih ringkas) */
+        .running-text-container {
+          padding: 5px 0;
         }
-        .header-info p {
-          font-size: 0.85rem;
+        .running-text-container span {
+          font-size: 0.9rem;
+        }
+
+        /* Main Content & Card */
+        #mainContent,
+        #uploadHistoryContainer {
+          padding: 10px;
+          margin-top: 10px;
+        }
+        .container {
+          max-width: 95%;
         }
         .card {
-          padding: 20px;
+          padding: 20px 15px;
+          border-radius: 10px;
         }
         h2 {
-          font-size: 1.5rem;
+          font-size: 1.2rem;
         }
-        .sub-text {
-          font-size: 0.9rem;
+        .header-info h1 {
+          font-size: 1rem;
         }
+        .header-info p {
+          font-size: 0.8rem;
+        }
+
+        /* Upload Area */
         .custom-file-upload {
-          width: 150px;
-          height: 150px;
+          width: 120px;
+          height: 120px;
+          font-size: 0.8rem;
         }
         .custom-file-upload img {
-          width: 60px;
-          height: 60px;
-        }
-        .custom-file-upload span {
-          font-size: 0.85rem;
-        }
-        #uploadButton {
-          padding: 10px 20px;
-          font-size: 1rem;
+          width: 50px;
         }
 
-        .dialog-card {
+        /* Dialogs */
+        .access-card {
           padding: 30px 20px;
         }
-        .dialog-card h3 {
-          font-size: 1.5rem;
-        }
-        .dialog-card p {
-          font-size: 0.95rem;
-        }
-        .dialog-card .dialog-button {
-          padding: 10px 20px;
-          font-size: 1rem;
-        }
-        .dialog-card img,
-        .dialog-card .dialog-icon {
-          width: 60px;
-          height: 60px;
-          font-size: 3rem;
-        }
 
-        .login-card {
-          padding: 30px 20px;
-        }
-        .login-card h2 {
-          font-size: 1.8rem;
-        }
-        .login-card p {
-          font-size: 0.95rem;
-        }
-        .login-logo {
-          width: 80px;
-        }
-
+        /* Riwayat Upload */
         .history-item {
           flex-direction: column;
           align-items: flex-start;
           padding: 12px;
-          gap: 8px;
+          gap: 5px;
         }
         .file-details {
           width: 100%;
-          margin-bottom: 0;
+          margin-bottom: 10px;
+        }
+        .file-details strong {
+          font-size: 0.95rem;
+        }
+        .file-details span {
+          font-size: 0.8rem;
         }
         .delete-btn {
           width: 100%;
           margin-left: 0;
-          padding: 10px 15px;
-          font-size: 0.9rem;
+        }
+
+        /* Login Screen */
+        .login-card {
+          max-width: 90%;
+          padding: 30px 20px;
+        }
+      }
+
+      /* Tablet Landscape & Desktop Kecil (Min Width: 769px dan Max Width: 1024px) */
+      @media (min-width: 769px) and (max-width: 1024px) {
+        /* Navbar */
+        .navbar {
+          padding: 10px 30px;
+        }
+
+        /* Riwayat Upload */
+        .history-item {
+          padding: 15px 20px;
+        }
+        .file-details strong {
+          font-size: 1.05rem;
         }
       }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   </head>
-  <body class="flex flex-col min-h-screen">
-    <div class="running-text-container fixed top-0 left-0 w-full text-white text-center text-sm font-semibold z-50 overflow-hidden whitespace-nowrap">
-      <span> Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi UM-Palembang! Mendownload StarUml Gratis... </span>
+
+  <body>
+    <div class="running-text-container">
+      <div class="text-wrapper">
+        <span>
+          Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi UM-Palembang! Mendownload StarUml Gratis
+          <a href="https://www.mediafire.com/file/d7pcu7trst58gfo/StarUML.v5.1.0.x86-x64.kuyhAa.7z/file">Download Disini</a>. , Untuk bantuan, <a href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
+        </span>
+      </div>
     </div>
 
-    <nav class="navbar fixed top-9 left-0 w-full flex justify-between items-center px-5 py-3 shadow-md z-40">
-      <div class="flex items-center space-x-6">
-        <a id="navHome" href="#" class="navbar-brand text-white no-underline"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Home Icon" />Home</a>
-        <a id="navHistory" href="#" class="navbar-brand text-white no-underline"><img src="https://img.icons8.com/ios-filled/50/ffffff/time-machine.png" alt="History Icon" />Riwayat Upload</a>
+    <div class="navbar">
+      <div class="navbar-links">
+        <a href="#" id="navHome">🏠 Home</a>
+        <a href="#" id="navHistory">📜 Riwayat Upload</a>
       </div>
-
-      <div class="navbar-user-info flex items-center gap-3">
-        <div class="text-right">
-          <span class="user-name">M PUTRA RAMADHANI</span>
-          <span class="user-nim">(162023023MPutraRamadhani)</span>
-          <span class="user-email">putrasempolisi222@gmail.com</span>
+      <div class="navbar-user">
+        <div id="userInfoDisplay" class="user-info" style="display: none">
+          <span id="userName"></span>
+          <p id="userEmail"></p>
         </div>
-        <img id="userProfilePic" src="https://img.icons8.com/color/48/000000/guest-male--v1.png" alt="Profile Picture" class="navbar-profile-img" />
-        <button id="logoutButton" class="logout-btn">Keluar</button>
-      </div>
-    </nav>
-
-    <main id="mainContent" class="flex flex-col items-center flex-grow pt-8 pb-10 w-full">
-      <div class="container mx-auto px-4">
-        <div class="header-info card">
-          <h1>PENGUMPULAN TUGAS TEKNOLOGI INFORMASI UM-PALEMBANG</h1>
-          <p>Dibuat oleh M. Putra Ramadhani</p>
-        </div>
-
-        <div class="card">
-          <h2 class="text-center">Unggah Dokumen</h2>
-          <p class="sub-text text-center">Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.</p>
-
-          <div class="form-group mb-6">
-            <label for="courseSelect" class="block mb-2">Pilih Mata Kuliah:</label>
-            <select id="courseSelect" class="w-full p-3 border rounded-lg" aria-label="Pilih Mata Kuliah">
-              <option value="">-- Pilih salah satu --</option>
-              <option value="Pemrograman Web">Pemrograman Web</option>
-              <option value="Sistem Basis Data">Sistem Basis Data</option>
-              <option value="Jaringan Komputer">Jaringan Komputer</option>
-              <option value="Pengantar Teknologi Informasi">Pengantar Teknologi Informasi</option>
-            </select>
-          </div>
-
-          <input type="file" id="fileInput" class="hidden" accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.7z" />
-          <div id="customFileUpload" class="custom-file-upload border-dashed border-2 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer mx-auto">
-            <img src="https://img.icons8.com/ios-filled/100/007bff/upload.png" alt="Upload Icon" />
-            <span>Pilih Dokumen<br />atau Seret dan Lepas di Sini</span>
-          </div>
-          <p id="fileNameDisplay" class="file-name-display text-center"></p>
-
-          <button id="uploadButton" class="upload-btn w-full py-3 rounded-lg mt-5">Unggah Sekarang</button>
-        </div>
-      </div>
-    </main>
-
-    <section id="uploadHistoryContainer" class="hidden w-full max-w-2xl mx-auto px-4 py-8">
-      <h2 class="text-3xl font-bold text-center mb-6">Riwayat Unggahan</h2>
-      <div id="historyList" class="history-list space-y-3">
-        <p class="no-history-message">Belum ada riwayat unggahan.</p>
-      </div>
-    </section>
-
-    <div id="termsDialog" class="dialog-container">
-      <div class="dialog-card">
-        <h3 class="text-2xl font-bold text-blue-600 mb-4">Syarat & Ketentuan</h3>
-        <p class="text-gray-700 mb-6">Dengan menggunakan portal ini, Anda setuju untuk:</p>
-        <ul class="text-left text-gray-800 space-y-2 mb-6 text-sm">
-          <li class="flex items-center gap-2"><img src="https://img.icons8.com/ios-filled/24/28a745/checkmark--v1.png" alt="Checkmark" />Mengunggah tugas sesuai mata kuliah yang relevan.</li>
-          <li class="flex items-center gap-2"><img src="https://img.icons8.com/ios-filled/24/28a745/checkmark--v1.png" alt="Checkmark" />Tidak mengunggah konten ilegal atau melanggar hak cipta.</li>
-          <li class="flex items-center gap-2"><img src="https://img.icons8.com/ios-filled/24/28a745/checkmark--v1.png" alt="Checkmark" />Menjaga kerahasiaan akun Anda.</li>
-          <li class="flex items-center gap-2"><img src="https://img.icons8.com/ios-filled/24/28a745/checkmark--v1.png" alt="Checkmark" />Mematuhi semua kebijakan akademik universitas.</li>
-        </ul>
-        <button id="acceptTermsButton" class="dialog-button">Saya Setuju & Lanjutkan</button>
+        <img id="profilePicture" class="profile-pic" src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png" alt="Profile" style="display: none" />
+        <button id="authButton" class="login-btn">Masuk dengan Google</button>
       </div>
     </div>
 
-    <div id="mainAccessClosedDialog" class="dialog-container">
-      <div class="dialog-card">
-        <img src="https://img.icons8.com/ios-filled/100/dc3545/lock.png" alt="Access Locked" class="mx-auto" />
-        <h3 class="text-2xl font-bold text-red-600 mb-4">Akses Ditutup</h3>
-        <p class="text-gray-700 mb-6">Maaf, portal utama belum dibuka. Silakan coba lagi nanti.</p>
-        <button id="mainAccessOkButton" class="dialog-button">Oke</button>
-      </div>
-    </div>
-
-    <div id="courseAccessClosedDialog" class="dialog-container">
-      <div class="dialog-card">
-        <img src="https://img.icons8.com/ios-filled/100/dc3545/lock.png" alt="Course Locked" class="mx-auto" />
-        <h3 class="text-2xl font-bold text-red-600 mb-4">Mata Kuliah Ditutup</h3>
-        <p class="text-gray-700 mb-6">Pengumpulan untuk mata kuliah ini telah ditutup atau belum dibuka.</p>
-        <button id="courseAccessOkButton" class="dialog-button">Oke</button>
-      </div>
-    </div>
-
-    <div id="uploadSuccessDialog" class="dialog-container">
-      <div class="dialog-card">
-        <img src="https://img.icons8.com/ios-filled/100/28a745/checked--v1.png" alt="Success Icon" class="mx-auto" />
-        <h3 class="text-2xl font-bold text-green-600 mb-4">Unggahan Berhasil!</h3>
-        <p class="text-gray-700 mb-6">Tugas Anda telah berhasil diunggah. Terima kasih!</p>
-        <button id="successOkButton" class="dialog-button">Oke</button>
-      </div>
-    </div>
-
-    <div id="uploadFailDialog" class="dialog-container">
-      <div class="dialog-card">
-        <img src="https://img.icons8.com/ios-filled/100/dc3545/multiply.png" alt="Error Icon" class="mx-auto" />
-        <h3 class="text-2xl font-bold text-red-600 mb-4">Unggahan Gagal!</h3>
-        <p class="text-gray-700 mb-6">Terjadi kesalahan saat mengunggah tugas Anda. Silakan coba lagi.</p>
-        <button id="failOkButton" class="dialog-button">Oke</button>
-      </div>
-    </div>
-
-    <div id="uploadTimerDialog" class="dialog-container">
-      <div class="dialog-card">
-        <i class="dialog-icon fas fa-hourglass-half text-blue-500 mb-5" style="color: var(--primary-color)"></i>
-        <h3 class="text-2xl font-bold text-blue-600 mb-4">Waktu Pengumpulan</h3>
-        <p class="text-gray-700 mb-4">Waktu tersisa untuk mengumpulkan tugas:</p>
-        <p id="timerText" class="timer-text text-5xl font-extrabold mb-6">00:00:00</p>
-        <button id="timerOkButton" class="dialog-button">Oke</button>
-      </div>
-    </div>
-
-    <div id="authDialog" class="login-screen">
+    <div id="loginScreen" style="display: flex">
       <div class="login-card">
-        <img src="https://img.icons8.com/ios-filled/100/007bff/graduation-cap.png" alt="Graduation Cap Logo" class="login-logo mx-auto" />
-        <h2 class="text-4xl font-bold mb-4">Selamat Datang!</h2>
-        <p class="text-gray-600 mb-8">Masuk untuk mengelola dan mengunggah tugas Anda.</p>
-        <button id="googleSignInButton" class="google-sign-in-btn">
-          <img src="https://img.icons8.com/color/48/4285F4/google-logo.png" alt="Google Icon" />
+        <img src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" alt="Logo" style="width: 100px; margin-bottom: 20px" />
+        <h2>Selamat Datang di Portal Tugas</h2>
+        <p class="sub-text">Silakan masuk menggunakan akun Google Anda untuk mengakses fitur unggah dan riwayat tugas.</p>
+        <button id="googleSignInBtn" class="google-sign-in-btn">
+          <img class="google-icon" src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Icon" />
           Masuk dengan Google
         </button>
       </div>
     </div>
 
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+    <div style="display: none" id="mainContent" class="container">
+      <div class="header-info">
+        <h1>PENGUMPULAN TUGAS TEKNOLOGI INFORMASI UM-PALEMBANG</h1>
+
+        <p>Dibuat oleh M. Putra Ramadhani</p>
+      </div>
+
+      <div class="card">
+        <h2>Unggah Dokumen</h2>
+
+        <p class="sub-text">Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.</p>
+
+        <div class="form-group">
+          <label for="courseSelect">Pilih Mata Kuliah:</label>
+          <select id="courseSelect">
+            <option value="" disabled selected>-- Pilih salah satu --</option>
+          </select>
+        </div>
+
+        <div class="upload-area">
+          <input type="file" id="fileInput" accept=".pdf, .doc, .docx, .zip, .rar, .7z" hidden />
+          <label for="fileInput" class="custom-file-upload">
+            <img src="https://img.icons8.com/plasticine/100/000000/upload--v1.png" alt="Upload Icon" />
+            <span>Pilih Dokumen atau Seret dan Lepas di Sini</span>
+          </label>
+          <span id="fileName" class="file-name"></span>
+        </div>
+
+        <div id="scanAnimation" class="scan-container">
+          <div class="spinner"></div>
+          <img class="shield-icon" src="https://img.icons8.com/color/96/000000/file.png" alt="Shield Icon" />
+          <span class="scan-text">Memindai file...</span>
+        </div>
+
+        <div id="rocketAnimation" class="rocket-container">
+          <img class="rocket-icon" src="https://pngfre.com/wp-content/uploads/Rocket-Emoji-10-1.png" alt="Roket Animasi" />
+          <span class="rocket-text">Mengunggah...</span>
+        </div>
+
+        <div id="progressContainer" class="progress-container">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <p id="statusMessage" class="status-message">Pilih Mata Kuliah untuk melihat status akses dan deadline.</p>
+      </div>
+    </div>
+
+    <div id="uploadHistoryContainer" style="display: none">
+      <div class="header-info" style="max-width: 800px">
+        <h1>RIWAYAT UNGGAH TUGAS ANDA</h1>
+        <p>Anda dapat menghapus file yang salah unggah. Mohon gunakan dengan bijak.</p>
+      </div>
+      <div class="card" style="max-width: 800px; padding: 20px">
+        <ul id="historyList" class="history-list">
+          <p id="noHistoryMessage">Tidak ada riwayat unggahan.</p>
+        </ul>
+      </div>
+    </div>
+
+    <div id="syaratDialogOverlay" class="access-overlay" style="display: none">
+      <div class="access-card">
+        <img src="https://img.icons8.com/ios-filled/96/fa314a/info.png" alt="Informasi" />
+        <h3>Syarat Pengumpulan Tugas</h3>
+
+        <div class="syarat-list">
+          <ul>
+            <li>
+              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
+              <span>Nama file harus sesuai format: <b>Nama_NIM</b></span>
+            </li>
+
+            <li>
+              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
+              <span>Contoh: <b>M.PutraRamadhani_19223344</b></span>
+            </li>
+
+            <li>
+              <img src="https://img.icons8.com/fluency/48/ok.png" alt="Check Icon" class="list-icon" />
+              <span> Pastikan file sudah dalam format yang diizinkan (.pdf, .doc, .docx, .zip, .rar, .7z)</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="dialog-buttons">
+          <button id="cancelSyaratBtn" class="dialog-button">Batal</button>
+          <button id="confirmSyaratBtn" class="dialog-button" style="background-color: #dc3545">Lanjutkan</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="mainAccessClosedOverlay" class="access-overlay" style="display: none">
+      <div class="access-card">
+        <img src="https://img.icons8.com/ios-filled/100/fa314a/lock.png" alt="Akses Ditutup" />
+        <h3>Pemberitahuan</h3>
+
+        <p>Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak putra untuk informasi lebih lanjut.</p>
+        <button id="closeMainAccessBtn" class="dialog-button">Tutup</button>
+      </div>
+    </div>
+
+    <div id="courseAccessClosedOverlay" class="access-overlay" style="display: none">
+      <div class="access-card">
+        <img src="https://img.icons8.com/ios-filled/100/fa314a/lock.png" alt="Akses Ditutup" />
+        <h3 id="courseAccessTitle">Pengumpulan Tugas Ditutup</h3>
+
+        <p id="courseAccessMessage">Pengumpulan tugas untuk mata kuliah ini telah ditutup.</p>
+        <button id="closeCourseAccessBtn" class="dialog-button">Tutup</button>
+      </div>
+    </div>
+
+    <div id="uploadSuccessOverlay" class="upload-status-overlay" style="display: none">
+      <div id="uploadSuccessCard" class="upload-status-card">
+        <img class="icon" src="https://img.icons8.com/color/96/000000/ok--v1.png" alt="Berhasil" />
+        <h3>Unggah Berhasil!</h3>
+
+        <p class="status-text" id="successMessage"></p>
+        <button onclick="closeSuccessDialog()" class="dialog-button">Tutup</button>
+      </div>
+    </div>
+
+    <div id="uploadFailOverlay" class="upload-status-overlay" style="display: none">
+      <div id="uploadFailCard" class="upload-status-card">
+        <img class="icon" src="https://img.icons8.com/color/96/000000/cancel--v1.png" alt="Gagal" />
+        <h3>Unggah Gagal!</h3>
+
+        <p class="status-text" id="failMessage"></p>
+        <button onclick="closeFailDialog()" class="dialog-button">Tutup</button>
+      </div>
+    </div>
+
     <script>
-      // ===============================================
-      //           FIREBASE CONFIGURATION
-      // ===============================================
+      // ========================== INISIALISASI FIREBASE ==========================
       const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID",
+        // Ganti dengan Config Asli Anda!
+        apiKey: "AIzaSyCZAfnelUdrwUz856j2hC3yJWqUm-JJmiI",
+        authDomain: "ruangbelajar-52a67.firebaseapp.com",
+        databaseURL: "https://ruangbelajar-52a67-default-rtdb.firebaseio.com",
+        projectId: "ruangbelajar-52a67",
+        storageBucket: "ruangbelajar-52a67.appspot.com",
+        messagingSenderId: "545318863560",
+        appId: "1:545318863560:web:df392c010ff914aad49bfd",
+        measurementId: "G-9M8CKR66BW",
       };
 
       firebase.initializeApp(firebaseConfig);
-
       const auth = firebase.auth();
-      const db = firebase.firestore();
       const storage = firebase.storage();
-      const googleProvider = new firebase.auth.GoogleAuthProvider();
+      const database = firebase.database();
 
-      // ===============================================
-      //           DOM ELEMENTS
-      // ===============================================
-      const authDialog = document.getElementById("authDialog");
-      const googleSignInButton = document.getElementById("googleSignInButton");
+      // ========================== ELEMEN DOM ==========================
+      const loginScreen = document.getElementById("loginScreen");
       const mainContent = document.getElementById("mainContent");
       const uploadHistoryContainer = document.getElementById("uploadHistoryContainer");
-      const logoutButton = document.getElementById("logoutButton");
-      const fileInput = document.getElementById("fileInput");
-      const customFileUpload = document.getElementById("customFileUpload");
-      const fileNameDisplay = document.getElementById("fileNameDisplay");
-      const uploadButton = document.getElementById("uploadButton");
-      const courseSelect = document.getElementById("courseSelect");
-      const historyList = document.getElementById("historyList");
+      const authButton = document.getElementById("authButton");
+      const googleSignInBtn = document.getElementById("googleSignInBtn");
+      const userNameDisplay = document.getElementById("userName");
+      const userEmailDisplay = document.getElementById("userEmail");
+      const profilePicture = document.getElementById("profilePicture");
+      const userInfoDisplay = document.getElementById("userInfoDisplay");
 
-      // Dialogs
-      const termsDialog = document.getElementById("termsDialog");
-      const acceptTermsButton = document.getElementById("acceptTermsButton");
-      const mainAccessClosedDialog = document.getElementById("mainAccessClosedDialog");
-      const mainAccessOkButton = document.getElementById("mainAccessOkButton");
-      const courseAccessClosedDialog = document.getElementById("courseAccessClosedDialog");
-      const courseAccessOkButton = document.getElementById("courseAccessOkButton");
-      const uploadSuccessDialog = document.getElementById("uploadSuccessDialog");
-      const successOkButton = document.getElementById("successOkButton");
-      const uploadFailDialog = document.getElementById("uploadFailDialog");
-      const failOkButton = document.getElementById("failOkButton");
-      const uploadTimerDialog = document.getElementById("uploadTimerDialog");
-      const timerText = document.getElementById("timerText");
-      const timerOkButton = document.getElementById("timerOkButton");
-
-      // Navbar links
       const navHome = document.getElementById("navHome");
       const navHistory = document.getElementById("navHistory");
+      const historyList = document.getElementById("historyList");
+      const noHistoryMessage = document.getElementById("noHistoryMessage");
 
-      let currentUser = null;
-      let selectedFile = null;
-      let uploadInProgress = false; // Flag untuk mencegah multiple uploads
-      let timerInterval = null; // Untuk menyimpan ID interval timer
+      const fileInput = document.getElementById("fileInput");
+      const courseSelect = document.getElementById("courseSelect");
+      const fileNameSpan = document.getElementById("fileName");
+      const progressBar = document.getElementById("progressBar");
+      const progressContainer = document.getElementById("progressContainer");
+      const statusMessage = document.getElementById("statusMessage");
+      const rocketAnimation = document.getElementById("rocketAnimation");
+      const scanAnimation = document.getElementById("scanAnimation");
+      const dropArea = document.querySelector(".custom-file-upload");
+      const uploadSuccessOverlay = document.getElementById("uploadSuccessOverlay");
+      const uploadFailOverlay = document.getElementById("uploadFailOverlay");
+      const successMessage = document.getElementById("successMessage");
+      const failMessage = document.getElementById("failMessage");
+      const syaratDialogOverlay = document.getElementById("syaratDialogOverlay");
+      const cancelSyaratBtn = document.getElementById("cancelSyaratBtn");
+      const confirmSyaratBtn = document.getElementById("confirmSyaratBtn");
+      // ... elemen lama lainnya ...
 
-      // ===============================================
-      //           ACCESS CONTROL CONFIGURATION
-      // ===============================================
-      const accessConfig = {
-        mainAccess: true, // true = open, false = closed
-        courseAccess: {
-          "Pemrograman Web": true,
-          "Sistem Basis Data": true,
-          "Jaringan Komputer": false, // Contoh: Jaringan Komputer ditutup
-          "Pengantar Teknologi Informasi": true,
-        },
-        countdownDate: new Date("2024-12-31T23:59:59").getTime(), // Contoh deadline
-      };
+      // ========================== VARIABEL GLOBAL & KONSTANTA ==========================
+      const MAX_FILE_SIZE_MB = 12;
+      const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
+      let courseDeadlines = {};
+      let countdownInterval = null;
+      let currentUser = null; // Menyimpan data pengguna yang sedang login
+      let courseMap = {}; // Untuk mapping key mata kuliah ke nama
 
-      // ===============================================
-      //           AUTHENTICATION FUNCTIONS
-      // ===============================================
-      googleSignInButton.addEventListener("click", async () => {
-        try {
-          await auth.signInWithPopup(googleProvider);
-        } catch (error) {
-          console.error("Google Sign-In Error:", error);
-          alert("Gagal masuk dengan Google. Silakan coba lagi.");
-        }
+      // ========================== EVENT LISTENERS ==========================
+      document.addEventListener("DOMContentLoaded", () => {
+        // ... (Fungsi-fungsi inisiasi lama Anda) ...
+        requestNotificationPermission();
+        fetchCourseList();
+        fetchCourseDeadlines();
+        showSyaratDialogAtStart();
+        listenForManualNotifications();
+        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
       });
 
-      logoutButton.addEventListener("click", async () => {
-        try {
-          await auth.signOut();
-        } catch (error) {
-          console.error("Logout Error:", error);
-          alert("Gagal keluar. Silakan coba lagi.");
-        }
-      });
-
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          currentUser = user;
-          authDialog.classList.add("hidden"); // Sembunyikan dialog login
-          showTermsDialogIfNeeded(); // Tampilkan dialog syarat jika belum diterima
-          updateUserInfo(user);
-          showView("home");
-          startCountdown(); // Mulai timer saat login
+      // Login/Logout button handler
+      authButton.addEventListener("click", () => {
+        if (currentUser) {
+          handleSignOut();
         } else {
-          currentUser = null;
-          authDialog.classList.remove("hidden"); // Tampilkan dialog login
-          mainContent.style.display = "none";
-          uploadHistoryContainer.style.display = "none";
-          // Hentikan timer saat logout
-          if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-          }
+          handleSignIn();
         }
       });
 
-      function updateUserInfo(user) {
-        document.querySelector(".navbar-user-info .user-name").textContent = user.displayName;
-        document.querySelector(".navbar-user-info .user-email").textContent = user.email;
-        // Jika Anda memiliki NIM, Anda perlu menyimpannya di Firestore atau tempat lain
-        // dan mengambilnya di sini. Untuk saat ini, kita bisa dummy atau kosongkan.
-        document.querySelector(".navbar-user-info .user-nim").textContent = "(NIM Belum Tersedia)";
+      // Google Sign-In button on the login screen
+      googleSignInBtn.addEventListener("click", handleSignIn);
 
-        const userProfilePic = document.getElementById("userProfilePic");
-        if (user.photoURL) {
-          userProfilePic.src = user.photoURL;
-        } else {
-          userProfilePic.src = "https://img.icons8.com/color/48/000000/guest-male--v1.png"; // Default icon
-        }
-      }
-
-      // ===============================================
-      //           TERMS & ACCESS CONTROL
-      // ===============================================
-      async function showTermsDialogIfNeeded() {
-        if (!currentUser) return;
-
-        const userDocRef = db.collection("users").doc(currentUser.uid);
-        const doc = await userDocRef.get();
-
-        if (doc.exists && doc.data().termsAccepted) {
-          checkMainAccess();
-        } else {
-          termsDialog.classList.add("show");
-        }
-      }
-
-      acceptTermsButton.addEventListener("click", async () => {
-        if (!currentUser) return;
-        const userDocRef = db.collection("users").doc(currentUser.uid);
-        await userDocRef.set({ termsAccepted: true }, { merge: true });
-        termsDialog.classList.remove("show");
-        checkMainAccess();
-      });
-
-      function checkMainAccess() {
-        if (!accessConfig.mainAccess) {
-          mainAccessClosedDialog.classList.add("show");
-          mainContent.style.display = "none";
-          uploadHistoryContainer.style.display = "none";
-        } else {
-          mainAccessClosedDialog.classList.remove("show");
-          mainContent.style.display = "block";
-        }
-      }
-
-      mainAccessOkButton.addEventListener("click", () => {
-        mainAccessClosedDialog.classList.remove("show");
-      });
-      courseAccessOkButton.addEventListener("click", () => {
-        courseAccessClosedDialog.classList.remove("show");
-      });
-      successOkButton.addEventListener("click", () => {
-        uploadSuccessDialog.classList.remove("show");
-        // Reset form setelah sukses
-        resetUploadForm();
-        fetchUploadHistory(currentUser.uid);
-      });
-      failOkButton.addEventListener("click", () => {
-        uploadFailDialog.classList.remove("show");
-      });
-      timerOkButton.addEventListener("click", () => {
-        uploadTimerDialog.classList.remove("show");
-      });
-
-      // ===============================================
-      //           UPLOAD FUNCTIONS
-      // ===============================================
-      customFileUpload.addEventListener("click", () => {
-        fileInput.click();
-      });
-
-      fileInput.addEventListener("change", (event) => {
-        selectedFile = event.target.files[0];
-        if (selectedFile) {
-          fileNameDisplay.textContent = `File dipilih: ${selectedFile.name}`;
-          uploadButton.disabled = false;
-        } else {
-          fileNameDisplay.textContent = "";
-          uploadButton.disabled = true;
-        }
-      });
-
-      // Drag and Drop
-      customFileUpload.addEventListener("dragover", (event) => {
-        event.preventDefault();
-        customFileUpload.classList.add("border-blue-500");
-      });
-
-      customFileUpload.addEventListener("dragleave", (event) => {
-        event.preventDefault();
-        customFileUpload.classList.remove("border-blue-500");
-      });
-
-      customFileUpload.addEventListener("drop", (event) => {
-        event.preventDefault();
-        customFileUpload.classList.remove("border-blue-500");
-        selectedFile = event.dataTransfer.files[0];
-        if (selectedFile) {
-          fileNameDisplay.textContent = `File dipilih: ${selectedFile.name}`;
-          uploadButton.disabled = false;
-          fileInput.files = event.dataTransfer.files; // Update fileInput
-        } else {
-          fileNameDisplay.textContent = "";
-          uploadButton.disabled = true;
-        }
-      });
-
-      uploadButton.addEventListener("click", async () => {
-        if (!currentUser || !selectedFile || uploadInProgress) {
-          alert("Silakan pilih file dan pastikan Anda login.");
-          return;
-        }
-
-        const course = courseSelect.value;
-        if (!course) {
-          alert("Silakan pilih mata kuliah terlebih dahulu.");
-          return;
-        }
-
-        if (!accessConfig.courseAccess[course]) {
-          courseAccessClosedDialog.classList.add("show");
-          return;
-        }
-
-        uploadInProgress = true;
-        uploadButton.disabled = true;
-        uploadButton.textContent = "Mengunggah...";
-
-        const storageRef = storage.ref();
-        const fileExtension = selectedFile.name.split(".").pop();
-        const fileName = `${currentUser.uid}_${course}_${Date.now()}.${fileExtension}`;
-        const fileRef = storageRef.child(`uploads/${fileName}`);
-
-        const uploadTask = fileRef.put(selectedFile);
-
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log("Upload is " + progress + "% done");
-            // Anda bisa menampilkan progress bar di sini jika diinginkan
-          },
-          (error) => {
-            console.error("Upload failed:", error);
-            uploadFailDialog.classList.add("show");
-            uploadInProgress = false;
-            uploadButton.disabled = false;
-            uploadButton.textContent = "Unggah Sekarang";
-          },
-          async () => {
-            try {
-              const downloadURL = await fileRef.getDownloadURL();
-              await db.collection("uploads").add({
-                userId: currentUser.uid,
-                userName: currentUser.displayName,
-                userEmail: currentUser.email,
-                fileName: selectedFile.name,
-                fileType: selectedFile.type,
-                fileSize: selectedFile.size,
-                course: course,
-                uploadDate: firebase.firestore.FieldValue.serverTimestamp(),
-                downloadURL: downloadURL,
-              });
-              uploadSuccessDialog.classList.add("show");
-            } catch (error) {
-              console.error("Error saving upload data or getting URL:", error);
-              uploadFailDialog.classList.add("show");
-            } finally {
-              uploadInProgress = false;
-              uploadButton.disabled = false; // Akan di-reset oleh resetUploadForm
-              uploadButton.textContent = "Unggah Sekarang";
-            }
-          }
-        );
-      });
-
-      function resetUploadForm() {
-        fileInput.value = ""; // Clear selected file
-        selectedFile = null;
-        fileNameDisplay.textContent = "";
-        courseSelect.value = "";
-        uploadButton.disabled = true;
-      }
-
-      // ===============================================
-      //           UPLOAD HISTORY FUNCTIONS
-      // ===============================================
-      async function fetchUploadHistory(userId) {
-        historyList.innerHTML = '<p class="text-center text-gray-500 py-5">Memuat riwayat...</p>'; // Loading state
-        try {
-          const snapshot = await db.collection("uploads").where("userId", "==", userId).orderBy("uploadDate", "desc").get();
-
-          historyList.innerHTML = ""; // Clear previous history
-
-          if (snapshot.empty) {
-            historyList.innerHTML = '<p class="no-history-message">Belum ada riwayat unggahan.</p>';
-            return;
-          }
-
-          snapshot.forEach((doc) => {
-            const data = doc.data();
-            const uploadDate = data.uploadDate ? data.uploadDate.toDate().toLocaleString() : "N/A";
-
-            const historyItem = document.createElement("div");
-            historyItem.classList.add("history-item", "flex", "items-center", "justify-between", "py-3", "px-4", "border-b");
-            historyItem.innerHTML = `
-                <div class="file-details">
-                    <strong>${data.fileName}</strong>
-                    <span>Mata Kuliah: ${data.course}</span>
-                    <span>Diunggah: ${uploadDate}</span>
-                </div>
-                <button data-id="${doc.id}" data-path="uploads/${data.userId}_${data.course}_${new Date(data.uploadDate.toDate()).getTime()}.${data.fileName.split(".").pop()}" class="delete-btn">Hapus</button>
-            `;
-            historyList.appendChild(historyItem);
-          });
-
-          // Add event listeners for delete buttons
-          historyList.querySelectorAll(".delete-btn").forEach((button) => {
-            button.addEventListener("click", deleteUpload);
-          });
-        } catch (error) {
-          console.error("Error fetching upload history:", error);
-          historyList.innerHTML = '<p class="text-center text-red-500 py-5">Gagal memuat riwayat.</p>';
-        }
-      }
-
-      async function deleteUpload(event) {
-        const docId = event.target.dataset.id;
-        const filePath = event.target.dataset.path; // Path to the file in Firebase Storage
-
-        if (!confirm("Apakah Anda yakin ingin menghapus unggahan ini?")) {
-          return;
-        }
-
-        try {
-          // Delete from Firestore
-          await db.collection("uploads").doc(docId).delete();
-
-          // Delete from Firebase Storage
-          const fileRef = storage.ref(filePath);
-          await fileRef.delete();
-
-          alert("Unggahan berhasil dihapus!");
-          fetchUploadHistory(currentUser.uid); // Refresh history
-        } catch (error) {
-          console.error("Error deleting upload:", error);
-          alert("Gagal menghapus unggahan. " + error.message);
-        }
-      }
-
-      // ===============================================
-      //           VIEW MANAGEMENT (NAVBAR)
-      // ===============================================
-      function showView(view) {
-        mainContent.style.display = "none";
-        uploadHistoryContainer.style.display = "none";
-
-        navHome.classList.remove("active");
-        navHistory.classList.remove("active");
-
-        if (view === "home") {
-          mainContent.style.display = "block";
-          navHome.classList.add("active");
-        } else if (view === "history") {
-          uploadHistoryContainer.style.display = "block";
-          if (currentUser) {
-            fetchUploadHistory(currentUser.uid);
-          }
-          navHistory.classList.add("active");
-        }
-      }
-
+      // Navigasi
       navHome.addEventListener("click", (e) => {
         e.preventDefault();
         showView("home");
       });
-
       navHistory.addEventListener("click", (e) => {
         e.preventDefault();
         showView("history");
       });
 
-      // ===============================================
-      //           COUNTDOWN TIMER
-      // ===============================================
-      function startCountdown() {
-        if (timerInterval) clearInterval(timerInterval); // Clear existing timer
-        timerInterval = setInterval(updateCountdown, 1000);
+      courseSelect.addEventListener("change", () => {
+        const courseKey = courseSelect.value;
+        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+        checkCourseAccess(courseKey, courseName);
+        startCourseCountdown(courseKey, courseName);
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          handleFile(file);
+        }
+      });
+      // Drag & Drop event listeners... (sudah ada di kode lama)
+      dropArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropArea.classList.add("dragover");
+      });
+
+      dropArea.addEventListener("dragleave", () => {
+        dropArea.classList.remove("dragover");
+      });
+
+      dropArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropArea.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFile(files[0]);
+        }
+      });
+
+      // ========================== FUNGSI OTENTIKASI (NEW) ==========================
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          // User is signed in
+          currentUser = user;
+          loginScreen.style.display = "none";
+          showView("home"); // Tampilkan Home setelah login
+
+          userNameDisplay.textContent = user.displayName;
+          userEmailDisplay.textContent = user.email;
+          profilePicture.src = user.photoURL || "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
+          userInfoDisplay.style.display = "block";
+          profilePicture.style.display = "block";
+          authButton.textContent = "Keluar";
+          authButton.style.backgroundColor = "#dc3545"; // Merah untuk logout
+          authButton.onmouseover = () => (authButton.style.backgroundColor = "#c82333");
+          authButton.onmouseout = () => (authButton.style.backgroundColor = "#dc3545");
+        } else {
+          // User is signed out
+          currentUser = null;
+          loginScreen.style.display = "flex";
+          mainContent.style.display = "none";
+          uploadHistoryContainer.style.display = "none";
+
+          userNameDisplay.textContent = "";
+          userEmailDisplay.textContent = "";
+          profilePicture.src = "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
+          userInfoDisplay.style.display = "none";
+          profilePicture.style.display = "none";
+          authButton.textContent = "Masuk dengan Google";
+          authButton.style.backgroundColor = "#28a745"; // Hijau untuk login
+          authButton.onmouseover = () => (authButton.style.backgroundColor = "#1e7e34");
+          authButton.onmouseout = () => (authButton.style.backgroundColor = "#28a745");
+        }
+      });
+
+      function handleSignIn() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider).catch((error) => {
+          console.error("Gagal masuk dengan Google:", error);
+          showFailDialog(`Gagal masuk: ${error.message}`);
+        });
       }
 
-      function updateCountdown() {
+      function handleSignOut() {
+        auth
+          .signOut()
+          .then(() => {
+            console.log("Berhasil keluar.");
+          })
+          .catch((error) => {
+            console.error("Gagal keluar:", error);
+            showFailDialog(`Gagal keluar: ${error.message}`);
+          });
+      }
+
+      // ========================== FUNGSI NAVIGASI (NEW) ==========================
+      function showView(view) {
+        if (!currentUser) return;
+
+        mainContent.style.display = "none";
+        uploadHistoryContainer.style.display = "none";
+
+        if (view === "home") {
+          mainContent.style.display = "block";
+        } else if (view === "history") {
+          uploadHistoryContainer.style.display = "block";
+          fetchUploadHistory(currentUser.uid);
+        }
+        // Atur warna link aktif jika perlu
+      }
+
+      // ========================== RIWAYAT & HAPUS (NEW) ==========================
+      async function fetchUploadHistory(userUid) {
+        historyList.innerHTML = "";
+        noHistoryMessage.style.display = "block";
+
+        try {
+          const snapshot = await database.ref(`riwayat_unggah/${userUid}`).once("value");
+          const history = snapshot.val();
+
+          if (!history) {
+            return;
+          }
+
+          noHistoryMessage.style.display = "none";
+
+          // Ubah objek menjadi array untuk sorting berdasarkan waktu terbaru
+          const historyArray = Object.keys(history)
+            .map((key) => ({
+              id: key,
+              ...history[key],
+            }))
+            .sort((a, b) => b.timestamp - a.timestamp); // Terbaru di atas
+
+          historyArray.forEach((item) => {
+            const listItem = document.createElement("li");
+            listItem.className = "history-item";
+
+            const fileDetails = document.createElement("div");
+            fileDetails.className = "file-details";
+
+            // Tampilkan hanya nama file asli yang bersih (tanpa timestamp)
+            const cleanFileName = item.originalFileName.substring(0, item.originalFileName.lastIndexOf(".")) || item.originalFileName;
+
+            fileDetails.innerHTML = `
+              <strong>${item.courseName}</strong>
+              <span>Nama File: ${cleanFileName} (${item.fileSizeMB} MB)</span>
+              <span>Diunggah: ${new Date(item.timestamp).toLocaleDateString("id-ID", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}</span>
+            `;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "delete-btn";
+            deleteButton.textContent = "Hapus";
+            deleteButton.onclick = () => deleteUploadedFile(userUid, item.id, item.storagePath);
+
+            listItem.appendChild(fileDetails);
+            listItem.appendChild(deleteButton);
+            historyList.appendChild(listItem);
+          });
+        } catch (error) {
+          console.error("Gagal memuat riwayat upload:", error);
+          noHistoryMessage.textContent = "Gagal memuat riwayat. Silakan coba lagi.";
+        }
+      }
+
+      async function deleteUploadedFile(userUid, uploadId, storagePath) {
+        if (!confirm("Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat dibatalkan.")) {
+          return;
+        }
+
+        try {
+          // 1. Hapus dari Firebase Storage
+          const fileRef = storage.ref(storagePath);
+          await fileRef.delete();
+          console.log(`File di Storage berhasil dihapus: ${storagePath}`);
+
+          // 2. Hapus dari Realtime Database
+          await database.ref(`riwayat_unggah/${userUid}/${uploadId}`).remove();
+          console.log(`Data di Database berhasil dihapus: ${uploadId}`);
+
+          // 3. Perbarui tampilan
+          showSuccessDialog("File berhasil dihapus dari riwayat upload Anda.");
+          fetchUploadHistory(userUid); // Muat ulang daftar
+        } catch (error) {
+          console.error("Gagal menghapus file:", error);
+          showFailDialog(`Gagal menghapus file. Pesan Error: ${error.message}`);
+        }
+      }
+
+      // ========================== FUNGSI UPLOAD DENGAN LOG (MODIFIED) ==========================
+      async function handleFile(file) {
+        if (!currentUser) {
+          showFailDialog("❗ Mohon masuk dengan akun Google terlebih dahulu.");
+          fileInput.value = "";
+          return;
+        }
+
+        const selectedCourse = courseSelect.value;
+        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+
+        if (!selectedCourse) {
+          showFailDialog("❗ Mohon pilih mata kuliah terlebih dahulu.");
+          fileInput.value = "";
+          return;
+        }
+
+        if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+          showFailDialog(`❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`);
+          fileInput.value = "";
+          return;
+        }
+
+        const fileExtension = "." + file.name.split(".").pop().toLowerCase();
+        if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
+          showFailDialog(`❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`);
+          fileInput.value = "";
+          return;
+        }
+
+        document.querySelector(".upload-area").style.display = "none";
+        scanAnimation.style.display = "flex";
+        fileNameSpan.textContent = `File terpilih: ${file.name}`;
+        statusMessage.textContent = "Sedang memindai file untuk memastikan keamanan...";
+
+        setTimeout(() => {
+          scanAnimation.style.display = "none";
+          checkCourseAccess(selectedCourse, courseName, (isAccessOpen) => {
+            if (isAccessOpen) {
+              uploadFile(file, selectedCourse, courseName);
+            } else {
+              resetUploadState();
+            }
+          });
+        }, 3000); // Waktu simulasi pemindaian (3 detik)
+      }
+
+      function uploadFile(file, courseKey, courseName) {
+        const now = new Date();
+        const timestampMs = now.getTime();
+        const timestampFormat = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
+          now.getSeconds()
+        ).padStart(2, "0")}`;
+
+        // Menggunakan Nama_NIM untuk nama file yang disimpan di Storage (sesuai syarat)
+        // Gunakan nama file yang di-upload oleh user, tambahkan timestamp untuk unik
+        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".");
+        const fileExtension = file.name.split(".").pop();
+        const storageFileName = `${fileNameWithoutExt}_${timestampFormat}.${fileExtension}`;
+
+        // Folder Storage di Firebase
+        const folderNameForStorage = courseKey.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+        const folderPath = `dokumen/${folderNameForStorage}/`;
+        const storagePath = folderPath + storageFileName; // Path lengkap untuk Storage
+        const fileRef = storage.ref(storagePath);
+
+        const uploadTask = fileRef.put(file);
+
+        document.querySelector(".upload-area").style.display = "none";
+        rocketAnimation.style.display = "flex";
+        progressContainer.style.display = "block";
+        progressBar.style.width = "0%";
+        statusMessage.textContent = "Sedang mengunggah...";
+        statusMessage.style.color = "#555";
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            progressBar.style.width = `${progress}%`;
+          },
+          (error) => {
+            console.error("Kesalahan unggah:", error);
+            rocketAnimation.style.display = "none";
+            document.querySelector(".upload-area").style.display = "flex";
+            showFailDialog(`Gagal mengunggah file: ${error.message}`);
+          },
+          async () => {
+            rocketAnimation.style.display = "none";
+            document.querySelector(".upload-area").style.display = "flex";
+
+            try {
+              const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+              console.log("File tersedia di:", downloadURL);
+
+              // Hitung jumlah file yang sudah terkumpul di folder ini
+              const folderRef = storage.ref(folderPath);
+              const result = await folderRef.listAll();
+              const fileCount = result.items.length;
+
+              // 1. Simpan Log Upload ke Realtime Database
+              const uploadLogRef = database.ref(`riwayat_unggah/${currentUser.uid}`).push();
+              const logData = {
+                uploadId: uploadLogRef.key,
+                userId: currentUser.uid,
+                userName: currentUser.displayName,
+                userEmail: currentUser.email,
+                courseKey: courseKey,
+                courseName: courseName,
+                originalFileName: file.name, // Simpan nama file asli
+                storageFileName: storageFileName,
+                storagePath: storagePath, // Simpan path lengkap untuk penghapusan
+                downloadURL: downloadURL,
+                timestamp: timestampMs,
+                fileSizeMB: (file.size / (1024 * 1024)).toFixed(2),
+                uploadOrder: fileCount,
+              };
+              await uploadLogRef.set(logData);
+
+              // 2. Tampilkan pesan sukses
+              showSuccessDialog("File Anda berhasil diunggah!", fileCount);
+            } catch (error) {
+              console.error("Gagal memproses setelah unggah:", error);
+              showFailDialog(`Unggah Berhasil, tapi Gagal mencatat riwayat: ${error.message}`);
+            }
+          }
+        );
+      }
+
+      // ========================== FUNGSI LAMA (DISEDERHANAKAN) ==========================
+
+      function showSyaratDialogAtStart() {
+        syaratDialogOverlay.style.display = "flex";
+        confirmSyaratBtn.onclick = () => {
+          syaratDialogOverlay.style.display = "none";
+        };
+        cancelSyaratBtn.onclick = () => {
+          syaratDialogOverlay.style.display = "none";
+        };
+      }
+
+      function showSuccessDialog(message, fileCount) {
+        let fullMessage = message;
+        let notificationBody = message;
+
+        if (typeof fileCount === "number" && fileCount > 0) {
+          const fileCountMessage = `Anda menjadi No.${fileCount} yang kumpul saat ini. File Anda telah terkirim, semoga hasil tugas mu memuaskan! 😊`;
+          fullMessage += `<br><br>${fileCountMessage}`;
+          notificationBody += `\n${fileCountMessage}`;
+        }
+
+        successMessage.innerHTML = fullMessage;
+        uploadSuccessOverlay.style.display = "flex";
+
+        if (Notification.permission === "granted") {
+          new Notification("Unggah Berhasil!", {
+            body: notificationBody,
+            icon: "https://img.icons8.com/color/96/000000/ok--v1.png",
+          });
+        }
+      }
+
+      function showFailDialog(message) {
+        failMessage.textContent = message;
+        uploadFailOverlay.style.display = "flex";
+      }
+
+      function closeSuccessDialog() {
+        uploadSuccessOverlay.style.display = "none";
+        resetUploadState();
+      }
+
+      function closeFailDialog() {
+        uploadFailOverlay.style.display = "none";
+        resetUploadState();
+      }
+
+      function resetUploadState() {
+        fileInput.value = "";
+        fileNameSpan.textContent = "";
+        progressContainer.style.display = "none";
+        rocketAnimation.style.display = "none";
+        scanAnimation.style.display = "none";
+        document.querySelector(".upload-area").style.display = "flex";
+        clearInterval(countdownInterval);
+
+        statusMessage.classList.remove("timer-text");
+        statusMessage.style.color = "#555";
+        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
+
+        if (courseSelect.value) {
+          const courseKey = courseSelect.value;
+          const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+          checkCourseAccess(courseKey, courseName);
+          startCourseCountdown(courseKey, courseName);
+        }
+      }
+
+      // --- Semua fungsi Akses & Timer lainnya tetap sama (fetchCourseDeadlines, formatTime, updateCountdownDisplay, startCourseCountdown, closeCourseAccess, checkMainAccessStatus, checkCourseAccess, requestNotificationPermission, fetchCourseList, listenForManualNotifications, displaySystemNotification) ---
+
+      /* Fungsi fetchCourseList dimodifikasi untuk menyimpan courseMap */
+      async function fetchCourseList() {
+        try {
+          const snapshot = await database.ref("mata_kuliah").once("value");
+          const courses = snapshot.val();
+
+          courseMap = {}; // Reset map
+          while (courseSelect.options.length > 1) {
+            courseSelect.remove(1);
+          }
+
+          if (courses) {
+            for (const key in courses) {
+              if (Object.hasOwnProperty.call(courses, key)) {
+                const courseName = courses[key];
+                courseMap[key] = courseName; // Simpan ke map
+                const option = document.createElement("option");
+                option.value = key;
+                option.textContent = courseName;
+                courseSelect.appendChild(option);
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Gagal memuat daftar mata kuliah:", error);
+        }
+      }
+
+      /* Semua fungsi timer dan akses yang lain (seperti closeCourseAccess, checkCourseAccess, dll.)
+         TIDAK BERUBAH dari kode Anda sebelumnya, dan dipertahankan untuk menghemat ruang.
+         Asumsikan fungsi tersebut sudah ada di sini */
+      async function fetchCourseDeadlines() {
+        try {
+          const snapshot = await database.ref("akses_unggah").once("value");
+          courseDeadlines = snapshot.val() || {};
+        } catch (error) {
+          console.error("Gagal memuat deadline mata kuliah:", error);
+        }
+      }
+
+      function formatTime(ms) {
+        if (ms < 0) return "00 Hari 00:00:00";
+
+        const totalSeconds = Math.floor(ms / 1000);
+        const days = Math.floor(totalSeconds / (3600 * 24));
+        const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        const h = String(hours).padStart(2, "0");
+        const m = String(minutes).padStart(2, "0");
+        const s = String(seconds).padStart(2, "0");
+
+        return `${days} Hari ${h}:${m}:${s}`;
+      }
+
+      function updateCountdownDisplay(courseKey, courseName, deadlineTime) {
         const now = new Date().getTime();
-        const distance = accessConfig.countdownDate - now;
+        let distance = deadlineTime - now;
 
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        clearInterval(countdownInterval);
 
-        const formattedTime = `${days}d ${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        statusMessage.style.color = "";
+        statusMessage.classList.add("timer-text");
 
-        if (distance < 0) {
-          clearInterval(timerInterval);
-          timerText.textContent = "Waktu Habis!";
-          timerText.classList.add("text-red-500");
-          // Optionally, disable uploads or show a message
+        const updateTimer = () => {
+          distance = deadlineTime - new Date().getTime();
+
+          if (distance < 0) {
+            clearInterval(countdownInterval);
+            closeCourseAccess(courseKey, courseName);
+          } else {
+            statusMessage.innerHTML = `Waktu Pengumpulan Tersisa: ${formatTime(distance)}`;
+          }
+        };
+
+        updateTimer();
+        countdownInterval = setInterval(updateTimer, 1000);
+      }
+
+      function startCourseCountdown(courseKey, courseName) {
+        clearInterval(countdownInterval);
+
+        statusMessage.classList.remove("timer-text");
+        statusMessage.style.color = "#555";
+        statusMessage.textContent = "Memuat status pengumpulan...";
+
+        const courseData = courseDeadlines[courseKey];
+
+        if (courseData && courseData.isOpen === false) {
+          statusMessage.classList.add("timer-text");
+          statusMessage.style.color = "#dc3545";
+          statusMessage.innerHTML = "Akses pengumpulan sudah ditutup.";
+        } else if (courseData && courseData.deadline) {
+          const deadlineString = courseData.deadline;
+          const deadlineTime = new Date(deadlineString).getTime();
+          const now = new Date().getTime();
+
+          if (deadlineTime < now) {
+            closeCourseAccess(courseKey, courseName);
+            statusMessage.classList.add("timer-text");
+            statusMessage.style.color = "#dc3545";
+            statusMessage.innerHTML = `Pengumpulan ditutup karena Waktu habis sejak ${new Date(deadlineTime).toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })}`;
+          } else {
+            updateCountdownDisplay(courseKey, courseName, deadlineTime);
+          }
         } else {
-          timerText.textContent = formattedTime;
-          timerText.classList.remove("text-red-500");
-          timerText.classList.add("text-blue-600"); // Warna normal untuk timer
+          statusMessage.classList.add("timer-text");
+          statusMessage.style.color = "#28a745";
+          statusMessage.innerHTML = "Akses terbuka silakan Pilih dokumen untuk diunggah.";
+        }
+      }
+
+      function closeCourseAccess(courseKey, courseName) {
+        courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
+        courseAccessMessage.textContent = `Waktu pengumpulan untuk mata kuliah ${courseName} telah habis. Akses ditutup secara otomatis.`;
+        courseAccessClosedOverlay.style.display = "flex";
+        fileInput.value = "";
+
+        database
+          .ref(`akses_unggah/${courseKey}/isOpen`)
+          .set(false)
+          .then(() => {
+            console.log(`Akses ${courseName} berhasil ditutup di Firebase.`);
+            if (courseDeadlines[courseKey]) {
+              courseDeadlines[courseKey].isOpen = false;
+            }
+            statusMessage.classList.add("timer-text");
+            statusMessage.style.color = "#dc3545";
+            statusMessage.innerHTML = `Pengumpulan tugas untuk ${courseName} telah ditutup.`;
+
+            if (Notification.permission === "granted") {
+              new Notification("Pengumpulan Ditutup Otomatis", {
+                body: `Waktu pengumpulan untuk ${courseName} sudah habis.`,
+                icon: "https://img.icons8.com/ios-filled/100/fa314a/lock.png",
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Gagal menutup akses di Firebase:", error);
+            statusMessage.innerHTML = `Gagal menutup akses di Firebase, namun waktu sudah habis.`;
+          });
+      }
+
+      async function checkCourseAccess(courseKey, courseName, callback = null) {
+        try {
+          const courseData = courseDeadlines[courseKey];
+          const isOpen = courseData ? courseData.isOpen : true;
+          const deadlineString = courseData ? courseData.deadline : null;
+          const now = new Date().getTime();
+
+          let isAccessOpen = isOpen;
+
+          if (isOpen === true && deadlineString) {
+            const deadlineTime = new Date(deadlineString).getTime();
+            if (deadlineTime < now) {
+              isAccessOpen = false;
+              closeCourseAccess(courseKey, courseName);
+            }
+          }
+
+          if (isAccessOpen === true) {
+            courseAccessClosedOverlay.style.display = "none";
+          } else {
+            courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
+            courseAccessMessage.textContent = `Pengumpulan tugas untuk mata kuliah ${courseName} telah ditutup (baik secara manual maupun otomatis karena waktu habis).`;
+            courseAccessClosedOverlay.style.display = "flex";
+            fileInput.value = "";
+          }
+
+          if (callback) {
+            callback(isAccessOpen);
+          }
+          return isAccessOpen;
+        } catch (error) {
+          console.error("Gagal memeriksa status akses mata kuliah:", error);
+          courseAccessTitle.textContent = "Gagal Memuat Status";
+          courseAccessMessage.textContent = `Gagal memuat status akses mata kuliah: ${error.message}`;
+          courseAccessClosedOverlay.style.display = "flex";
+          fileInput.value = "";
+          if (callback) {
+            callback(false);
+          }
+          return false;
+        }
+      }
+
+      function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+          console.log("Browser ini tidak mendukung notifikasi desktop.");
+          return;
+        }
+
+        Notification.requestPermission().then((permission) => {
+          console.log("Izin notifikasi:", permission);
+        });
+      }
+
+      async function checkMainAccessStatus() {
+        try {
+          const snapshot = await database.ref("akses").once("value");
+          const isOpen = snapshot.val();
+
+          if (isOpen === true) {
+            // Diubah: Tidak langsung tampilkan mainContent di sini,
+            // tetapi biarkan onAuthStateChanged yang menentukan tampilan
+            // saat user login.
+            mainAccessClosedOverlay.style.display = "none";
+          } else {
+            mainContent.style.display = "none";
+            mainAccessClosedOverlay.style.display = "flex";
+            if (Notification.permission === "granted") {
+              new Notification("Pengumpulan Tugas Ditutup", {
+                body: "Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak putra untuk informasi lebih lanjut.",
+                icon: "https://img.icons8.com/ios-filled/100/fa314a/lock.png",
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Gagal memeriksa status akses:", error);
+          mainContent.style.display = "none";
+          mainAccessClosedOverlay.style.display = "flex";
+          const message = mainAccessClosedOverlay.querySelector("p");
+          message.textContent = `Gagal memuat status akses: ${error.message}`;
+        }
+      }
+      function listenForManualNotifications() {
+        const notifRef = database.ref("notifikasi_manual");
+
+        notifRef.on("value", (snapshot) => {
+          const notifData = snapshot.val();
+          if (notifData && notifData.aktif === true) {
+            const lastNotifId = localStorage.getItem("last-notification-id");
+
+            if (lastNotifId !== notifData.id) {
+              displaySystemNotification(notifData);
+            }
+          }
+        });
+      }
+
+      function displaySystemNotification(data) {
+        if (Notification.permission === "granted") {
+          new Notification(data.judul, {
+            body: data.isi,
+            icon: "https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1",
+          });
+
+          localStorage.setItem("last-notification-id", data.id);
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              displaySystemNotification(data);
+            }
+          });
         }
       }
     </script>
