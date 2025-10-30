@@ -10,6 +10,8 @@
     <style>
       /* ========================== CSS DARK MODE ELEGAN ========================== */
 
+      /* ========================== CSS DARK MODE ELEGAN ========================== */
+
       :root {
         /* Palet Warna Dark Mode */
         --bg-dark: #1e1e2d; /* Latar belakang utama */
@@ -17,7 +19,7 @@
         --sidebar-bg: #222533; /* Latar belakang sidebar */
         --text-light: #e0e0e0; /* Teks umum */
         --text-muted: #aaaaaa; /* Teks sekunder/deskripsi */
-        --accent-blue: #dc3545; /* Warna aksen biru */
+        --accent-blue: #dc3545; /* Warna aksen biru (Dibuat merah agar sesuai logo) */
         --accent-blue-hover: rgb(179, 0, 0);
         --delete-red: #dc3545; /* Warna tombol hapus */
         --border-dark: #3a3a5a; /* Warna border di dark mode */
@@ -44,7 +46,7 @@
         color: white;
         text-align: center;
         overflow: hidden;
-        position: fixed; /* Dijadikan fixed agar tidak bergerak */
+        position: fixed;
         top: 0;
         left: 0;
         z-index: 1000;
@@ -114,7 +116,7 @@
       .content-area {
         flex-grow: 1;
         padding: 20px;
-        max-width: calc(100% - 200px); /* Membatasi lebar agar kartu tidak terlalu lebar */
+        max-width: calc(100% - 200px);
       }
 
       /* Navbar (Header Biru) */
@@ -124,7 +126,7 @@
         padding: 15px 20px;
         border-radius: 10px;
         display: flex;
-        justify-content: flex-end; /* Dorong ke kanan */
+        justify-content: flex-end;
         align-items: center;
         margin-bottom: 30px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -242,6 +244,10 @@
         font-weight: 500;
       }
 
+      /* Styling untuk semua input text/email/password */
+      input[type="email"],
+      input[type="password"],
+      input[type="text"],
       select {
         width: 100%;
         padding: 12px;
@@ -250,16 +256,22 @@
         background-color: #333647;
         color: var(--text-light);
         font-size: 1em;
+        box-sizing: border-box; /* Penting untuk input di dalam form */
+      }
+      input[type="email"]:focus,
+      input[type="password"]:focus,
+      input[type="text"]:focus,
+      select:focus {
+        border-color: var(--accent-blue);
+        outline: none;
+      }
+      select {
         appearance: none;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23e0e0e0' d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.757 7.586 5.343 9z'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 10px center;
         background-size: 1.2em;
         transition: border-color 0.3s;
-      }
-      select:focus {
-        border-color: var(--accent-blue);
-        outline: none;
       }
 
       /* Drop Area for File Upload */
@@ -277,13 +289,16 @@
         cursor: pointer;
         transition: background-color 0.3s ease, border-color 0.3s ease;
         margin-bottom: 30px;
-        background-color: rgba(0, 123, 255, 0.05);
+        background-color: rgba(220, 53, 69, 0.05); /* Menggunakan aksen biru (merah) */
         width: 100%;
         box-sizing: border-box;
+        display: flex; /* Pastikan selalu flex */
+        flex-direction: column;
+        align-items: center;
       }
 
       .drop-area.dragover {
-        background-color: rgba(0, 123, 255, 0.2);
+        background-color: rgba(220, 53, 69, 0.2);
         border-color: white;
       }
 
@@ -291,7 +306,7 @@
         font-size: 4em;
         color: var(--accent-blue);
         margin-bottom: 15px;
-        animation: none; /* Nonaktifkan animasi untuk saat ini */
+        animation: none;
       }
 
       .drop-area p {
@@ -320,7 +335,7 @@
       .progress-bar {
         height: 100%;
         width: 0%;
-        background-color: #28a745; /* Hijau untuk progress */
+        background-color: #28a745;
         transition: width 0.3s ease;
         border-radius: 50px;
       }
@@ -331,26 +346,6 @@
         min-height: 20px;
         color: var(--text-muted);
         text-align: center;
-      }
-
-      /* Upload Button (Hidden in this version, using drop-area) */
-      .upload-button {
-        background-color: var(--accent-blue);
-        color: white;
-        padding: 15px 30px;
-        border: none;
-        border-radius: 5px;
-        font-size: 1.1em;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        display: block;
-        width: 100%;
-      }
-
-      .upload-button:hover {
-        background-color: var(--accent-blue-hover);
-        transform: translateY(-2px);
       }
 
       /* History List */
@@ -417,14 +412,14 @@
         padding: 30px;
       }
 
-      /* Login Screen (Didesain ulang agar modern) */
+      /* Login Screen */
       #loginScreen {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: var(--bg-dark); /* Latar gelap penuh */
+        background-color: var(--bg-dark);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -465,6 +460,7 @@
         gap: 10px;
         transition: background-color 0.2s ease;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        border: none; /* Tambahkan border none untuk button */
       }
 
       .google-sign-in-btn:hover {
@@ -476,6 +472,27 @@
         height: 20px;
         background: white;
         border-radius: 50%;
+      }
+
+      /* Custom button untuk Register (warna hijau) */
+      #registerForm .google-sign-in-btn {
+        background-color: #28a745 !important;
+      }
+      #registerForm .google-sign-in-btn:hover {
+        background-color: #1e7e34 !important;
+      }
+
+      /* Custom button untuk Login Email (warna aksen) */
+      #loginForm .google-sign-in-btn {
+        background-color: var(--accent-blue) !important;
+      }
+      #loginForm .google-sign-in-btn:hover {
+        background-color: var(--accent-blue-hover) !important;
+      }
+
+      /* Garis ATAU */
+      .login-card > div[style] {
+        position: relative;
       }
 
       /* --- GENERAL UTILS & DIALOGS (Modified for Dark Mode) --- */
@@ -522,7 +539,6 @@
       .dialog-button:hover {
         background-color: var(--accent-blue-hover);
       }
-      /* Tambahkan lebih banyak style untuk semua elemen yang digunakan dari kode lama */
 
       /* ========================== MEDIA QUERIES (RESPONSIVE) ========================== */
       @media (max-width: 768px) {
@@ -531,12 +547,21 @@
           padding-top: 50px;
         }
 
+        .navbar {
+          flex-direction: row; /* Kembali ke baris */
+          justify-content: space-between; /* Menyebar konten */
+          align-items: center;
+          padding: 10px;
+          position: static;
+          margin-bottom: 20px;
+        }
+
         .sidebar {
           width: 100%;
           height: auto;
           padding-top: 0;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-          flex-direction: row; /* Sidebar jadi horizontal di mobile */
+          flex-direction: row;
           justify-content: space-around;
           position: fixed;
           top: 40px;
@@ -554,7 +579,7 @@
         .content-area {
           padding: 10px;
           max-width: 100%;
-          margin-top: 50px; /* Jarak untuk sidebar horizontal */
+          margin-top: 50px;
         }
 
         .navbar {
@@ -599,6 +624,61 @@
           width: 100%;
         }
       }
+      /* ... Di sekitar baris 260 ... */
+
+      /* Menghilangkan fungsi dropdown dari info pengguna */
+      .user-info-display-only {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      /* Menyembunyikan elemen dropdown content yang tidak terpakai */
+      .dropdown-content {
+        display: none !important; /* Pastikan dropdown benar-benar hilang */
+      }
+
+      /* Tombol Keluar Permanen (Baru) */
+      .logout-permanent-btn {
+        background-color: var(--card-bg); /* Warna latar belakang gelap untuk kontras */
+        color: var(--text-light); /* Warna teks terang */
+        padding: 8px 15px;
+        border-radius: 5px;
+        margin-left: 20px; /* Jarak dari avatar */
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: background-color 0.2s;
+      }
+
+      .logout-permanent-btn:hover {
+        background-color: #333647; /* Sedikit lebih gelap saat hover */
+      }
+
+      /* Perbaikan Navbar di Mobile agar tombolnya muncul */
+      @media (max-width: 768px) {
+        /* ... (CSS mobile lain) ... */
+
+        .navbar {
+          /* ... (properti navbar sebelumnya) ... */
+          justify-content: space-between; /* Agar elemen menyebar di mobile */
+        }
+
+        .user-info-display-only {
+          /* Memastikan info pengguna muncul di kiri/tengah */
+          flex-grow: 1;
+          justify-content: flex-start;
+        }
+
+        .logout-permanent-btn {
+          margin-left: 10px;
+          padding: 5px 10px;
+          font-size: 0.85em;
+          background-color: var(--card-bg); /* Tetap di kanan */
+        }
+      }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -620,12 +700,72 @@
     <div id="loginScreen" style="display: flex">
       <div class="login-card">
         <img src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" alt="Logo" style="width: 100px; margin-bottom: 20px" />
-        <h2>Selamat Datang di Portal Tugas</h2>
-        <p class="sub-text">Silakan masuk menggunakan akun Google Anda untuk mengakses fitur unggah dan riwayat tugas.</p>
-        <button id="googleSignInBtn" class="google-sign-in-btn">
+        <h2 id="authTitle">Masuk ke Portal Tugas</h2>
+        <p class="sub-text" id="authSubText">Pilih metode masuk yang Anda inginkan.</p>
+
+        <button id="googleSignInBtn" class="google-sign-in-btn" style="width: 100%; margin-bottom: 20px">
           <img class="google-icon" src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Icon" />
           Masuk dengan Google
         </button>
+
+        <div style="margin: 20px 0; color: var(--text-muted); font-size: 0.9em; position: relative; text-align: center">
+          <span style="background: var(--card-bg); padding: 0 10px; z-index: 1">ATAU</span>
+          <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid var(--border-dark); z-index: 0"></div>
+        </div>
+
+        <form id="loginForm" style="display: block">
+          <div class="form-group" style="text-align: left">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" placeholder="Masukkan Email" required style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)" />
+          </div>
+          <div class="form-group" style="text-align: left">
+            <label for="loginPassword">Password:</label>
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="Masukkan Password"
+              required
+              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
+            />
+          </div>
+          <button type="submit" class="google-sign-in-btn" style="width: 100%; margin-top: 20px; background-color: var(--accent-blue)">Masuk dengan Email</button>
+          <p style="margin-top: 20px; color: var(--text-muted); text-align: center">Belum punya akun? <a href="#" id="showRegisterLink" style="color: white; font-weight: 600">Daftar di sini</a></p>
+        </form>
+
+        <form id="registerForm" style="display: none">
+          <div class="form-group" style="text-align: left">
+            <label for="registerUsername">Nama Lengkap:</label>
+            <input
+              type="text"
+              id="registerUsername"
+              placeholder="Contoh: M. Putra Ramadhani"
+              required
+              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
+            />
+          </div>
+          <div class="form-group" style="text-align: left">
+            <label for="registerEmail">Email:</label>
+            <input
+              type="email"
+              id="registerEmail"
+              placeholder="Masukkan Email Aktif"
+              required
+              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
+            />
+          </div>
+          <div class="form-group" style="text-align: left">
+            <label for="registerPassword">Password:</label>
+            <input
+              type="password"
+              id="registerPassword"
+              placeholder="Min. 6 Karakter"
+              required
+              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
+            />
+          </div>
+          <button type="submit" class="google-sign-in-btn" style="width: 100%; margin-top: 20px; background-color: #28a745">Daftar Akun</button>
+          <p style="margin-top: 20px; color: var(--text-muted); text-align: center">Sudah punya akun? <a href="#" id="showLoginLink" style="color: white; font-weight: 600">Masuk di sini</a></p>
+        </form>
       </div>
     </div>
 
@@ -637,16 +777,16 @@
 
       <div class="content-area">
         <div class="navbar">
-          <div id="userInfoDisplay" class="user-info-dropdown">
+          <div style="flex-grow: 1"></div>
+          <div id="userInfoDisplay" class="user-info-display-only">
             <div class="user-name-wrapper">
               <span id="userName" class="user-name"></span>
               <span id="userEmail" class="user-email"></span>
             </div>
             <img id="profilePicture" class="user-avatar" src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png" alt="Profile" />
-            <div class="dropdown-content">
-              <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a>
-            </div>
           </div>
+
+          <a href="#" id="logoutBtn" class="logout-permanent-btn"><i class="fas fa-sign-out-alt"></i> Keluar</a>
         </div>
 
         <div id="uploadView" class="upload-view">
@@ -760,6 +900,7 @@
 
     <script>
       // ========================== INISIALISASI FIREBASE ==========================
+      // ========================== INISIALISASI FIREBASE ==========================
       const firebaseConfig = {
         // Ganti dengan Config Asli Anda!
         apiKey: "AIzaSyCZAfnelUdrwUz856j2hC3yJWqUm-JJmiI",
@@ -777,13 +918,26 @@
       const storage = firebase.storage();
       const database = firebase.database();
 
-      // ========================== ELEMEN DOM (DIPERBAIKI) ==========================
+      // ========================== ELEMEN DOM ==========================
       const loginScreen = document.getElementById("loginScreen");
-      const mainLayout = document.getElementById("mainLayout"); // Mengganti mainContent
-      const uploadView = document.getElementById("uploadView"); // Elemen view upload
+      const mainLayout = document.getElementById("mainLayout");
+      const uploadView = document.getElementById("uploadView");
       const uploadHistoryContainer = document.getElementById("uploadHistoryContainer");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      // Elemen Otentikasi
+      const authTitle = document.getElementById("authTitle");
+      const authSubText = document.getElementById("authSubText");
       const googleSignInBtn = document.getElementById("googleSignInBtn");
-      const logoutBtn = document.getElementById("logoutBtn"); // Tombol logout di dropdown
+      const loginForm = document.getElementById("loginForm");
+      const registerForm = document.getElementById("registerForm");
+      const loginEmail = document.getElementById("loginEmail");
+      const loginPassword = document.getElementById("loginPassword");
+      const registerUsername = document.getElementById("registerUsername");
+      const registerEmail = document.getElementById("registerEmail");
+      const registerPassword = document.getElementById("registerPassword");
+      const showRegisterLink = document.getElementById("showRegisterLink");
+      const showLoginLink = document.getElementById("showLoginLink");
 
       const userNameDisplay = document.getElementById("userName");
       const userEmailDisplay = document.getElementById("userEmail");
@@ -803,7 +957,7 @@
       const statusMessage = document.getElementById("statusMessage");
       const rocketAnimation = document.getElementById("rocketAnimation");
       const scanAnimation = document.getElementById("scanAnimation");
-      const dropArea = document.getElementById("dropArea"); // Menggunakan ID elemen label
+      const dropArea = document.getElementById("dropArea");
       const uploadSuccessOverlay = document.getElementById("uploadSuccessOverlay");
       const uploadFailOverlay = document.getElementById("uploadFailOverlay");
       const successMessage = document.getElementById("successMessage");
@@ -811,7 +965,6 @@
       const syaratDialogOverlay = document.getElementById("syaratDialogOverlay");
       const confirmSyaratBtn = document.getElementById("confirmSyaratBtn");
 
-      // Menambahkan elemen dialog yang TIDAK ADA di HTML asli Anda
       const courseAccessClosedOverlay = document.getElementById("courseAccessClosedOverlay");
       const courseAccessTitle = document.getElementById("courseAccessTitle");
       const courseAccessMessage = document.getElementById("courseAccessMessage");
@@ -822,23 +975,39 @@
       const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
       let courseDeadlines = {};
       let countdownInterval = null;
-      let currentUser = null; // Menyimpan data pengguna yang sedang login
-      let courseMap = {}; // Untuk mapping key mata kuliah ke nama
+      let currentUser = null;
+      let courseMap = {};
 
       // ========================== EVENT LISTENERS ==========================
       document.addEventListener("DOMContentLoaded", () => {
         requestNotificationPermission();
         fetchCourseList();
         fetchCourseDeadlines();
-        checkMainAccessStatus(); // Cek status akses utama
+        checkMainAccessStatus();
         showSyaratDialogAtStart();
         listenForManualNotifications();
         statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
+        toggleAuthView("login"); // Default view is login
       });
 
-      // Google Sign-In button on the login screen
-      googleSignInBtn.addEventListener("click", handleSignIn);
-      logoutBtn.addEventListener("click", handleSignOut);
+      // Otentikasi Listeners
+      googleSignInBtn.addEventListener("click", handleGoogleSignIn);
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleEmailSignIn(loginEmail.value, loginPassword.value);
+      });
+      registerForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleRegister(registerUsername.value, registerEmail.value, registerPassword.value);
+      });
+      showRegisterLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleAuthView("register");
+      });
+      showLoginLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleAuthView("login");
+      });
 
       // Navigasi
       navHome.addEventListener("click", (e) => {
@@ -850,12 +1019,13 @@
         showView("history");
       });
 
+      logoutBtn.addEventListener("click", handleSignOut);
+
       courseSelect.addEventListener("change", () => {
         const courseKey = courseSelect.value;
         const courseName = courseSelect.options[courseSelect.selectedIndex].text;
         checkCourseAccess(courseKey, courseName);
         startCourseCountdown(courseKey, courseName);
-        // Reset file input saat ganti mata kuliah
         fileInput.value = "";
         fileNameSpan.textContent = "";
       });
@@ -866,7 +1036,8 @@
           handleFile(file);
         }
       });
-      // Drag & Drop event listeners... (Menggunakan #dropArea)
+
+      // Drag & Drop event listeners...
       dropArea.addEventListener("dragover", (e) => {
         e.preventDefault();
         dropArea.classList.add("dragover");
@@ -885,33 +1056,149 @@
         }
       });
 
-      // ========================== FUNGSI OTENTIKASI ==========================
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          // User is signed in
-          currentUser = user;
-          loginScreen.style.display = "none";
-          mainLayout.style.display = "flex"; // Tampilkan Main Layout
+      // ========================== FUNGSI OTENTIKASI (LOGIN/REGISTER) ==========================
 
-          userNameDisplay.textContent = user.displayName;
+      function toggleAuthView(view) {
+        if (view === "login") {
+          loginForm.style.display = "block";
+          registerForm.style.display = "none";
+          authTitle.textContent = "Masuk ke Portal Tugas";
+          authSubText.textContent = "Pilih metode masuk yang Anda inginkan.";
+          googleSignInBtn.style.display = "flex";
+        } else {
+          loginForm.style.display = "none";
+          registerForm.style.display = "block";
+          authTitle.textContent = "Daftar Akun Baru";
+          authSubText.textContent = "Masukkan data Anda untuk membuat akun portal tugas.";
+          googleSignInBtn.style.display = "none";
+        }
+      }
+
+      async function fetchUserName(user) {
+        // Prioritaskan nama dari Google atau display name
+        if (user.displayName && user.displayName !== user.email) {
+          return user.displayName;
+        }
+
+        // Coba ambil dari Realtime Database (khusus untuk yang daftar Email/Password)
+        try {
+          const snapshot = await database.ref(`users/${user.uid}/username`).once("value");
+          return snapshot.val() || user.email; // Jika tidak ada username, gunakan email
+        } catch (error) {
+          console.error("Gagal mengambil username:", error);
+          return user.email;
+        }
+      }
+
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          currentUser = user;
+          const displayName = await fetchUserName(user);
+
+          // Tambahkan record ke DB untuk pengguna Google/Email jika belum ada
+          database
+            .ref(`users/${user.uid}`)
+            .once("value")
+            .then((snapshot) => {
+              if (!snapshot.exists()) {
+                database.ref(`users/${user.uid}`).set({
+                  username: displayName,
+                  email: user.email,
+                  created_at: firebase.database.ServerValue.TIMESTAMP,
+                  provider: user.providerData[0] ? user.providerData[0].providerId : "email",
+                });
+              }
+            });
+
+          loginScreen.style.display = "none";
+          mainLayout.style.display = "flex";
+
+          userNameDisplay.textContent = displayName;
           userEmailDisplay.textContent = user.email;
           profilePicture.src = user.photoURL || "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
-          // Tampilkan view upload secara default
+
           showView("home");
         } else {
-          // User is signed out
           currentUser = null;
           loginScreen.style.display = "flex";
           mainLayout.style.display = "none";
+          toggleAuthView("login");
         }
       });
 
-      function handleSignIn() {
+      // --- FUNGSI GOOGLE SIGN IN ---
+      function handleGoogleSignIn() {
         const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider).catch((error) => {
-          console.error("Gagal masuk dengan Google:", error);
-          showFailDialog(`Gagal masuk: ${error.message}`);
-        });
+        auth
+          .signInWithPopup(provider)
+          .then(() => {
+            console.log("Berhasil masuk dengan Google!");
+          })
+          .catch((error) => {
+            console.error("Gagal masuk dengan Google:", error);
+            showFailDialog(`Masuk Google Gagal: ${error.message}`);
+          });
+      }
+
+      // --- FUNGSI EMAIL/PASSWORD SIGN IN ---
+      function handleEmailSignIn(email, password) {
+        auth
+          .signInWithEmailAndPassword(email, password)
+          .then(() => {
+            console.log("Berhasil masuk dengan Email!");
+          })
+          .catch((error) => {
+            console.error("Gagal masuk:", error);
+            let errorMessage = "Gagal masuk. Cek email/password Anda.";
+            if (error.code === "auth/user-not-found") {
+              errorMessage = "Email tidak terdaftar.";
+            } else if (error.code === "auth/wrong-password") {
+              errorMessage = "Password salah.";
+            } else if (error.code === "auth/invalid-email") {
+              errorMessage = "Format email tidak valid.";
+            }
+            showFailDialog(`Masuk Gagal: ${errorMessage}`);
+          });
+      }
+
+      // --- FUNGSI REGISTER EMAIL/PASSWORD ---
+      function handleRegister(username, email, password) {
+        if (password.length < 6) {
+          showFailDialog("Daftar Gagal: Password minimal 6 karakter.");
+          return;
+        }
+
+        auth
+          .createUserWithEmailAndPassword(email, password)
+          .then(async (userCredential) => {
+            const user = userCredential.user;
+
+            // 1. Simpan username ke Realtime Database
+            await database.ref(`users/${user.uid}`).set({
+              username: username,
+              email: email,
+              created_at: firebase.database.ServerValue.TIMESTAMP,
+              provider: "email",
+            });
+
+            // 2. Update profile (Display name)
+            await user.updateProfile({
+              displayName: username,
+            });
+
+            console.log("Berhasil mendaftar dan menyimpan data!");
+            showSuccessDialog("Registrasi Berhasil! Anda sudah masuk.");
+          })
+          .catch((error) => {
+            console.error("Gagal mendaftar:", error);
+            let errorMessage = "Gagal mendaftar. Coba lagi.";
+            if (error.code === "auth/email-already-in-use") {
+              errorMessage = "Email ini sudah terdaftar.";
+            } else if (error.code === "auth/weak-password") {
+              errorMessage = "Password terlalu lemah (minimal 6 karakter).";
+            }
+            showFailDialog(`Daftar Gagal: ${errorMessage}`);
+          });
       }
 
       function handleSignOut() {
@@ -930,15 +1217,12 @@
       function showView(view) {
         if (!currentUser) return;
 
-        // Reset status active sidebar
         navHome.classList.remove("active");
         navHistory.classList.remove("active");
 
-        // Sembunyikan semua view
         uploadView.style.display = "none";
         uploadHistoryContainer.style.display = "none";
 
-        // Tampilkan view yang dipilih
         if (view === "home") {
           uploadView.style.display = "block";
           navHome.classList.add("active");
@@ -964,13 +1248,12 @@
 
           noHistoryMessage.style.display = "none";
 
-          // Ubah objek menjadi array untuk sorting berdasarkan waktu terbaru
           const historyArray = Object.keys(history)
             .map((key) => ({
               id: key,
               ...history[key],
             }))
-            .sort((a, b) => b.timestamp - a.timestamp); // Terbaru di atas
+            .sort((a, b) => b.timestamp - a.timestamp);
 
           historyArray.forEach((item) => {
             const listItem = document.createElement("li");
@@ -979,7 +1262,6 @@
             const fileDetails = document.createElement("div");
             fileDetails.className = "file-details";
 
-            // Tampilkan hanya nama file asli yang bersih (tanpa timestamp)
             const cleanFileName = item.originalFileName.substring(0, item.originalFileName.lastIndexOf(".")) || item.originalFileName;
 
             fileDetails.innerHTML = `
@@ -1015,18 +1297,15 @@
         }
 
         try {
-          // 1. Hapus dari Firebase Storage
           const fileRef = storage.ref(storagePath);
           await fileRef.delete();
           console.log(`File di Storage berhasil dihapus: ${storagePath}`);
 
-          // 2. Hapus dari Realtime Database
           await database.ref(`riwayat_unggah/${userUid}/${uploadId}`).remove();
           console.log(`Data di Database berhasil dihapus: ${uploadId}`);
 
-          // 3. Perbarui tampilan
           showSuccessDialog("File berhasil dihapus dari riwayat upload Anda.");
-          fetchUploadHistory(userUid); // Muat ulang daftar
+          fetchUploadHistory(userUid);
         } catch (error) {
           console.error("Gagal menghapus file:", error);
           showFailDialog(`Gagal menghapus file. Pesan Error: ${error.message}`);
@@ -1036,7 +1315,7 @@
       // ========================== FUNGSI UPLOAD DENGAN LOG ==========================
       async function handleFile(file) {
         if (!currentUser) {
-          showFailDialog("❗ Mohon masuk dengan akun Google terlebih dahulu.");
+          showFailDialog("❗ Mohon masuk dengan akun Anda terlebih dahulu.");
           fileInput.value = "";
           return;
         }
@@ -1063,7 +1342,7 @@
           return;
         }
 
-        dropArea.style.display = "none"; // Sembunyikan drop area
+        dropArea.style.display = "none";
         scanAnimation.style.display = "flex";
         fileNameSpan.textContent = `File terpilih: ${file.name}`;
         statusMessage.textContent = "Sedang memindai file untuk memastikan keamanan...";
@@ -1077,7 +1356,7 @@
               resetUploadState();
             }
           });
-        }, 3000); // Waktu simulasi pemindaian (3 detik)
+        }, 3000);
       }
 
       function uploadFile(file, courseKey, courseName) {
@@ -1087,20 +1366,18 @@
           now.getSeconds()
         ).padStart(2, "0")}`;
 
-        // Gunakan nama file yang di-upload oleh user, tambahkan timestamp untuk unik
         const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".");
         const fileExtension = file.name.split(".").pop();
         const storageFileName = `${fileNameWithoutExt}_${timestampFormat}.${fileExtension}`;
 
-        // Folder Storage di Firebase
         const folderNameForStorage = courseKey.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
         const folderPath = `dokumen/${folderNameForStorage}/`;
-        const storagePath = folderPath + storageFileName; // Path lengkap untuk Storage
+        const storagePath = folderPath + storageFileName;
         const fileRef = storage.ref(storagePath);
 
         const uploadTask = fileRef.put(file);
 
-        dropArea.style.display = "none"; // Pastikan tersembunyi
+        dropArea.style.display = "none";
         rocketAnimation.style.display = "flex";
         progressContainer.style.display = "block";
         progressBar.style.width = "0%";
@@ -1116,34 +1393,32 @@
           (error) => {
             console.error("Kesalahan unggah:", error);
             rocketAnimation.style.display = "none";
-            dropArea.style.display = "flex"; // Tampilkan kembali drop area
+            dropArea.style.display = "flex";
             showFailDialog(`Gagal mengunggah file: ${error.message}`);
           },
           async () => {
             rocketAnimation.style.display = "none";
-            dropArea.style.display = "flex"; // Tampilkan kembali drop area
+            dropArea.style.display = "flex";
 
             try {
               const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
               console.log("File tersedia di:", downloadURL);
 
-              // Hitung jumlah file yang sudah terkumpul di folder ini
               const folderRef = storage.ref(folderPath);
               const result = await folderRef.listAll();
               const fileCount = result.items.length;
 
-              // 1. Simpan Log Upload ke Realtime Database
               const uploadLogRef = database.ref(`riwayat_unggah/${currentUser.uid}`).push();
               const logData = {
                 uploadId: uploadLogRef.key,
                 userId: currentUser.uid,
-                userName: currentUser.displayName,
+                userName: currentUser.displayName || (await fetchUserName(currentUser)),
                 userEmail: currentUser.email,
                 courseKey: courseKey,
                 courseName: courseName,
-                originalFileName: file.name, // Simpan nama file asli
+                originalFileName: file.name,
                 storageFileName: storageFileName,
-                storagePath: storagePath, // Simpan path lengkap untuk penghapusan
+                storagePath: storagePath,
                 downloadURL: downloadURL,
                 timestamp: timestampMs,
                 fileSizeMB: (file.size / (1024 * 1024)).toFixed(2),
@@ -1151,7 +1426,6 @@
               };
               await uploadLogRef.set(logData);
 
-              // 2. Tampilkan pesan sukses
               showSuccessDialog("File Anda berhasil diunggah!", fileCount);
             } catch (error) {
               console.error("Gagal memproses setelah unggah:", error);
@@ -1168,7 +1442,6 @@
         confirmSyaratBtn.onclick = () => {
           syaratDialogOverlay.style.display = "none";
         };
-        // Hapus cancelSyaratBtn jika tidak ada di HTML
       }
 
       function showSuccessDialog(message, fileCount) {
@@ -1213,7 +1486,7 @@
         progressContainer.style.display = "none";
         rocketAnimation.style.display = "none";
         scanAnimation.style.display = "none";
-        dropArea.style.display = "flex"; // Tampilkan kembali drop area
+        dropArea.style.display = "flex";
         clearInterval(countdownInterval);
 
         statusMessage.classList.remove("timer-text");
@@ -1228,14 +1501,12 @@
         }
       }
 
-      /* Fungsi timer dan akses (Disimpan agar kode tetap berjalan) */
-
       async function fetchCourseList() {
         try {
           const snapshot = await database.ref("mata_kuliah").once("value");
           const courses = snapshot.val();
 
-          courseMap = {}; // Reset map
+          courseMap = {};
           while (courseSelect.options.length > 1) {
             courseSelect.remove(1);
           }
@@ -1244,7 +1515,7 @@
             for (const key in courses) {
               if (Object.hasOwnProperty.call(courses, key)) {
                 const courseName = courses[key];
-                courseMap[key] = courseName; // Simpan ke map
+                courseMap[key] = courseName;
                 const option = document.createElement("option");
                 option.value = key;
                 option.textContent = courseName;
@@ -1437,10 +1708,9 @@
 
           if (isOpen === true) {
             mainAccessClosedOverlay.style.display = "none";
-            // Jika akses utama terbuka, biarkan onAuthStateChanged mengurus tampilan
           } else {
             mainLayout.style.display = "none";
-            loginScreen.style.display = "none"; // Sembunyikan login jika akses utama tertutup
+            loginScreen.style.display = "none";
             mainAccessClosedOverlay.style.display = "flex";
             if (Notification.permission === "granted") {
               new Notification("Pengumpulan Tugas Ditutup", {
@@ -1458,6 +1728,7 @@
           message.textContent = `Gagal memuat status akses: ${error.message}`;
         }
       }
+
       function listenForManualNotifications() {
         const notifRef = database.ref("notifikasi_manual");
 
@@ -1492,4 +1763,3 @@
     </script>
   </body>
 </html>
-
