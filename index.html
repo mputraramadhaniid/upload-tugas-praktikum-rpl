@@ -3,556 +3,680 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Akses Dokumen Tugas Mahasiswa Teknologi Informasi UM-Palembang</title>
+    <title>Portal Tugas TI UM-Palembang (Login & Riwayat)</title>
     <link rel="icon" type="image/x-icon" href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+      /* ========================== CSS DARK MODE ELEGAN ========================== */
+
+      /* ========================== CSS DARK MODE ELEGAN ========================== */
+
+      :root {
+        /* Palet Warna Dark Mode */
+        --bg-dark: #1e1e2d; /* Latar belakang utama */
+        --card-bg: #27293d; /* Latar belakang kartu/elemen */
+        --sidebar-bg: #222533; /* Latar belakang sidebar */
+        --text-light: #e0e0e0; /* Teks umum */
+        --text-muted: #aaaaaa; /* Teks sekunder/deskripsi */
+        --accent-blue: #dc3545; /* Warna aksen biru (Dibuat merah agar sesuai logo) */
+        --accent-blue-hover: rgb(179, 0, 0);
+        --delete-red: #dc3545; /* Warna tombol hapus */
+        --border-dark: #3a3a5a; /* Warna border di dark mode */
+        --red-header: #c0392b; /* Warna header merah paling atas */
+      }
 
       body {
         font-family: "Poppins", sans-serif;
-        background-color: #f0f2f5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
         margin: 0;
-        color: #333;
+        padding: 0;
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
       }
 
-      .container {
-        padding: 20px;
+      /* Running Text (Header Paling Atas) */
+      .running-text-container {
         width: 100%;
-        max-width: 600px;
-        box-sizing: border-box;
+        padding: 8px 0;
+        background: var(--red-header);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        color: white;
+        text-align: center;
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+      }
+      .running-text-container .text-wrapper {
+        display: inline-block;
+        padding-left: 100%;
+        animation: marquee-animation 15s linear infinite;
+      }
+      .running-text-container span {
+        font-weight: 500;
+        font-size: 0.9rem;
+        padding-right: 50px;
+      }
+      .running-text-container a {
+        color: #ffd700;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      @keyframes marquee-animation {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
       }
 
-      .card {
-        background: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      /* Main Layout */
+      .main-layout {
+        display: flex;
+        flex: 1;
+        padding-top: 40px; /* Jarak untuk running text */
+        width: 100%;
+      }
+
+      /* Sidebar Navigation */
+      .sidebar {
+        width: 200px;
+        background-color: var(--sidebar-bg);
+        padding-top: 20px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        flex-shrink: 0;
+      }
+
+      .sidebar-item {
+        color: var(--text-light);
+        padding: 15px 20px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+      }
+
+      .sidebar-item:hover,
+      .sidebar-item.active {
+        background-color: var(--accent-blue);
+        color: white;
+      }
+
+      /* Content Area */
+      .content-area {
+        flex-grow: 1;
+        padding: 20px;
+        max-width: calc(100% - 200px);
+      }
+
+      /* Navbar (Header Biru) */
+      .navbar {
+        background-color: var(--accent-blue);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        position: sticky;
+        top: 40px;
+        z-index: 900;
+      }
+
+      .user-info-dropdown {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+      }
+
+      .user-info-dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      .user-name-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        line-height: 1.2;
+      }
+
+      .user-name {
+        font-weight: 600;
+        font-size: 0.95em;
+        color: white;
+      }
+
+      .user-email {
+        font-size: 0.8em;
+        color: #e0e0e0;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid white;
+        margin-left: 10px;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: var(--card-bg);
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.5);
+        z-index: 100;
+        right: 0;
+        top: 100%;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .dropdown-content a {
+        color: var(--text-light);
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+        transition: background-color 0.2s;
+        font-size: 0.9em;
+      }
+
+      .dropdown-content a:hover {
+        background-color: var(--accent-blue-hover);
+      }
+
+      /* Card Styling (Upload & History) */
+      .main-card {
+        background-color: var(--card-bg);
         padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        margin-bottom: 20px;
+      }
+
+      .upload-view .main-card {
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .main-card h2,
+      .main-card h3 {
+        color: var(--text-light);
+        margin-bottom: 10px;
+        font-weight: 600;
         text-align: center;
       }
 
-      h2 {
-        color: #4a4a4a;
-        font-weight: 600;
+      .main-card p {
+        color: var(--text-muted);
         margin-bottom: 20px;
+        text-align: center;
       }
 
+      /* Form Group & Select */
       .form-group {
-        margin-bottom: 20px;
-        text-align: left;
-      }
-
-      .form-group textarea {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-family: "Poppins", sans-serif;
-        font-size: 1rem;
-        background-color: #f9f9f9;
-        resize: vertical;
-      }
-
-      .search-group {
-        margin-bottom: 20px;
+        margin-bottom: 25px;
         text-align: left;
       }
 
       .form-group label {
         display: block;
-        margin-bottom: 5px;
-        font-weight: 600;
-        color: #555;
-      }
-
-      .form-group input {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 1rem;
-        background-color: #f9f9f9;
-        transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-      }
-
-      .form-group input:focus {
-        outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-      }
-
-      .form-group select {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 1rem;
-        background-color: #f9f9f9;
-      }
-
-      #fileList {
-        list-style-type: none;
-        padding: 0;
-        text-align: left;
-      }
-
-      #fileList li {
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: background-color 0.2s ease;
-      }
-
-      #fileList li:hover {
-        background-color: #e2e6ea;
-      }
-
-      #fileList li .file-name-text {
-        color: #007bff;
+        margin-bottom: 8px;
+        color: var(--text-light);
         font-weight: 500;
-        word-break: break-word;
-        flex-grow: 1;
       }
 
-      #fileList li .file-number {
-        font-weight: 600;
-        color: #6c757d;
-        margin-right: 15px;
+      /* Styling untuk semua input text/email/password */
+      input[type="email"],
+      input[type="password"],
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-dark);
+        border-radius: 5px;
+        background-color: #333647;
+        color: var(--text-light);
+        font-size: 1em;
+        box-sizing: border-box; /* Penting untuk input di dalam form */
+      }
+      input[type="email"]:focus,
+      input[type="password"]:focus,
+      input[type="text"]:focus,
+      select:focus {
+        border-color: var(--accent-blue);
+        outline: none;
+      }
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23e0e0e0' d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.757 7.586 5.343 9z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 1.2em;
+        transition: border-color 0.3s;
       }
 
-      .action-buttons {
+      /* Drop Area for File Upload */
+      .drop-area-wrap {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 10px;
       }
 
-      .preview-btn,
-      .download-btn,
-      .delete-btn {
-        background: none;
-        border: none;
+      .drop-area {
+        border: 2px dashed var(--accent-blue);
+        border-radius: 10px;
+        padding: 40px 20px;
+        text-align: center;
         cursor: pointer;
-        padding: 0;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        margin-bottom: 30px;
+        background-color: rgba(220, 53, 69, 0.05); /* Menggunakan aksen biru (merah) */
+        width: 100%;
+        box-sizing: border-box;
+        display: flex; /* Pastikan selalu flex */
+        flex-direction: column;
+        align-items: center;
       }
 
-      .preview-btn img,
-      .download-btn img,
-      .delete-btn img {
-        width: 24px;
-        height: 24px;
+      .drop-area.dragover {
+        background-color: rgba(220, 53, 69, 0.2);
+        border-color: white;
+      }
+
+      .upload-icon {
+        font-size: 4em;
+        color: var(--accent-blue);
+        margin-bottom: 15px;
+        animation: none;
+      }
+
+      .drop-area p {
+        color: var(--text-muted);
+        font-size: 1.1em;
+        line-height: 1.5;
+        margin: 0;
+      }
+      .file-name {
+        color: var(--text-light);
+        margin-bottom: 15px;
+        font-size: 0.9em;
+      }
+
+      /* Status & Progress */
+      .progress-container {
+        width: 100%;
+        background-color: #333;
+        border-radius: 50px;
+        margin-top: 20px;
+        overflow: hidden;
+        height: 10px;
+        display: none;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background-color: #28a745;
+        transition: width 0.3s ease;
+        border-radius: 50px;
       }
 
       .status-message {
-        margin-top: 20px;
-        color: #555;
-      }
-
-      .empty-message {
-        color: #888;
-        font-style: italic;
-      }
-
-      /* --- Dialog PIN --- */
-      .pin-dialog-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
-
-      .pin-dialog-card {
-        background: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        padding: 40px;
-        text-align: center;
-        max-width: 400px;
-        width: 90%;
-        animation: fadeIn 0.3s ease-in-out;
-      }
-
-      .pin-dialog-card h3 {
-        color: #4a4a4a;
-        margin-bottom: 20px;
-      }
-
-      .pin-dialog-card input {
-        width: 80%;
-        padding: 12px;
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 1rem;
-        text-align: center;
-      }
-
-      .pin-dialog-card .dialog-actions {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
         margin-top: 15px;
-      }
-
-      .pin-dialog-card .dialog-actions button {
-        width: 40%;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-      }
-
-      .pin-dialog-card .dialog-actions #accessBtn {
-        background-color: #007bff;
-        color: #fff;
-      }
-
-      .pin-dialog-card .dialog-actions #accessBtn:hover {
-        background-color: #0056b3;
-      }
-
-      .pin-dialog-card .dialog-actions #cancelBtn {
-        background-color: #6c757d;
-        color: #fff;
-      }
-
-      .pin-dialog-card .dialog-actions #cancelBtn:hover {
-        background-color: #5a6268;
-      }
-
-      .error-message {
-        color: #dc3545;
-        margin-top: 10px;
-        font-size: 0.9rem;
-        min-height: 20px;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: scale(0.95);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      /* --- Dialog Login --- */
-      .login-dialog-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
-
-      .login-dialog-card {
-        background: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        padding: 40px;
-        text-align: center;
-        max-width: 400px;
-        width: 90%;
-        animation: fadeIn 0.3s ease-in-out;
-      }
-
-      .login-dialog-card h3 {
-        color: #4a4a4a;
-        margin-bottom: 20px;
-      }
-
-      .login-dialog-card input {
-        width: 100%;
-        padding: 12px;
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 1rem;
-        box-sizing: border-box;
-      }
-
-      .login-dialog-card .dialog-actions {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 15px;
-      }
-
-      .login-dialog-card .dialog-actions button {
-        width: 40%;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-      }
-
-      .login-dialog-card .dialog-actions #loginBtn {
-        background-color: #007bff;
-        color: #fff;
-      }
-
-      .login-dialog-card .dialog-actions #loginBtn:hover {
-        background-color: #0056b3;
-      }
-
-      .login-dialog-card .dialog-actions #closeLoginBtn:hover {
-        background-color: #5a6268;
-      }
-
-      /* Tombol Akses */
-      .access-button {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        margin-bottom: 20px;
-      }
-
-      .access-open {
-        background-color: #28a745;
-        color: white;
-      }
-
-      .access-closed {
-        background-color: #dc3545;
-        color: white;
-      }
-
-      .toggle-section {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-top: 20px;
-        text-align: left;
-      }
-
-      .toggle-section button {
-        width: 100%;
-      }
-
-      .notification-section {
-        text-align: left;
-        margin-bottom: 20px;
-      }
-
-      .notification-section textarea {
-        min-height: 100px;
-      }
-
-      /* CSS for drag-and-drop feature */
-      .drop-area-container {
-        text-align: center;
-        margin-bottom: 20px;
-        display: none;
-      }
-
-      #dynamicDropArea {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 150px;
-        padding: 20px;
-        border: 2px dashed #ccc;
-        border-radius: 15px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-      }
-
-      #dynamicDropArea.highlight {
-        background-color: #e6f7ff;
-        border-color: #007bff;
-      }
-
-      #dynamicDropArea p {
-        margin: 0;
-        color: #777;
         font-weight: 500;
+        min-height: 20px;
+        color: var(--text-muted);
+        text-align: center;
       }
 
-      .folder-list-container {
-        text-align: left;
-        margin-bottom: 20px;
-      }
-
-      .folder-list {
-        list-style-type: none;
+      /* History List */
+      #historyList {
+        list-style: none;
         padding: 0;
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: flex-start;
       }
 
-      .folder-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        cursor: pointer;
-        background-color: #f0f4f7;
+      .history-item {
+        background-color: #333647;
         padding: 15px;
-        border-radius: 10px;
-        transition: background-color 0.2s ease, transform 0.2s ease;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        transition: background-color 0.3s;
+      }
+
+      .history-item:hover {
+        background-color: #3a3d50;
+      }
+
+      .file-details {
+        text-align: left;
+        flex-grow: 1;
+        padding-right: 15px;
+      }
+
+      .file-details strong {
+        display: block;
+        font-size: 1rem;
+        color: var(--text-light);
+        margin-bottom: 3px;
+      }
+
+      .file-details span {
+        display: block;
+        font-size: 0.8em;
+        color: var(--text-muted);
+      }
+
+      .delete-btn {
+        background-color: var(--delete-red);
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .delete-btn:hover {
+        background-color: #a71d2a;
+      }
+
+      #noHistoryMessage {
+        text-align: center;
+        color: var(--text-muted);
+        padding: 30px;
+      }
+
+      /* Login Screen */
+      #loginScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--bg-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        text-align: center;
+      }
+
+      .login-card {
+        padding: 50px 40px;
+        background: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        max-width: 450px;
+        width: 90%;
+      }
+
+      .login-card h2 {
+        font-size: 2em;
+        margin-bottom: 10px;
+        color: white;
+      }
+
+      .login-card .sub-text {
+        color: var(--text-muted);
+        margin-bottom: 30px;
+      }
+
+      .google-sign-in-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #4285f4; /* Warna Google */
+        color: white;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        gap: 10px;
+        transition: background-color 0.2s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        border: none; /* Tambahkan border none untuk button */
+      }
+
+      .google-sign-in-btn:hover {
+        background-color: #3367d6;
+      }
+
+      .google-icon {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+      }
+
+      /* Custom button untuk Register (warna hijau) */
+      #registerForm .google-sign-in-btn {
+        background-color: #28a745 !important;
+      }
+      #registerForm .google-sign-in-btn:hover {
+        background-color: #1e7e34 !important;
+      }
+
+      /* Custom button untuk Login Email (warna aksen) */
+      #loginForm .google-sign-in-btn {
+        background-color: var(--accent-blue) !important;
+      }
+      #loginForm .google-sign-in-btn:hover {
+        background-color: var(--accent-blue-hover) !important;
+      }
+
+      /* Garis ATAU */
+      .login-card > div[style] {
         position: relative;
       }
 
-      .folder-item:hover {
-        background-color: #e2e6ea;
-        transform: translateY(-2px);
-      }
-
-      .folder-item img.folder-icon {
-        width: 40px;
-        height: 40px;
-        margin-bottom: 5px;
-      }
-
-      .folder-item span {
-        font-size: 0.9em;
-        text-align: center;
-        word-break: break-all;
-      }
-
-      .folder-delete-btn {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 5px;
-        border-radius: 50%;
-        transition: background-color 0.2s ease;
-      }
-      .folder-delete-btn:hover {
-        background-color: rgba(220, 53, 69, 0.1);
-      }
-      .folder-delete-btn img {
-        width: 18px;
-        height: 18px;
-        filter: invert(100%) sepia(50%) saturate(1500%) hue-rotate(330deg) brightness(95%) contrast(100%);
-      }
-
-      /* Kelas baru untuk folder yang sedang aktif */
-      .active-folder {
-        background-color: #cce5ff !important;
-        border-color: #007bff !important;
-      }
-
-      /* CSS for move-file feature */
-      .move-file-section {
-        display: none;
-      }
-
-      .create-folder-section {
-        text-align: left;
-        margin-bottom: 20px;
-      }
-
-      .create-folder-section .access-button {
+      /* --- GENERAL UTILS & DIALOGS (Modified for Dark Mode) --- */
+      .access-overlay,
+      .upload-status-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
       }
-
-      #login-button {
-        background-color: #007bff;
+      .access-card,
+      .upload-status-card {
+        background-color: var(--card-bg);
+        color: var(--text-light);
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      }
+      .access-card h3,
+      .upload-status-card h3 {
+        color: var(--text-light);
+        margin-bottom: 15px;
+      }
+      .dialog-button {
+        background-color: var(--accent-blue);
         color: white;
         border: none;
         padding: 10px 20px;
-        border-radius: 8px;
+        border-radius: 5px;
         cursor: pointer;
         font-weight: 600;
-        transition: background-color 0.3s ease;
-        float: right;
+        margin-top: 15px;
+        transition: background-color 0.2s;
+      }
+      .dialog-button:hover {
+        background-color: var(--accent-blue-hover);
       }
 
-      #login-button:hover {
-        background-color: #0056b3;
-      }
-
-      /* Media queries for desktop view */
-      @media (min-width: 768px) {
-        /* MENGEMBALIKAN LEBAR CONTAINER KE NORMAL */
-        .container {
-          max-width: 1000px;
+      /* ========================== MEDIA QUERIES (RESPONSIVE) ========================== */
+      @media (max-width: 768px) {
+        .main-layout {
+          flex-direction: column;
+          padding-top: 50px;
         }
 
-        .admin-flex-container {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 20px;
-          justify-content: space-between;
-          align-items: flex-start;
-        }
-
-        .admin-flex-item {
-          flex: 1 1 calc(50% - 10px);
+        .navbar {
+          flex-direction: row; /* Kembali ke baris */
+          justify-content: space-between; /* Menyebar konten */
+          align-items: center;
+          padding: 10px;
+          position: static;
           margin-bottom: 20px;
         }
 
-        .admin-flex-item:first-child {
-          flex-basis: 100%;
+        .sidebar {
+          width: 100%;
+          height: auto;
+          padding-top: 0;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+          flex-direction: row;
+          justify-content: space-around;
+          position: fixed;
+          top: 40px;
+          z-index: 950;
+          display: flex;
         }
 
-        .admin-flex-item .form-group,
-        .admin-flex-item .access-button {
-          max-width: 400px;
+        .sidebar-item {
+          padding: 10px 15px;
+          width: 50%;
+          text-align: center;
+          justify-content: center;
         }
 
-        .folder-list-container,
-        #fileList {
+        .content-area {
+          padding: 10px;
           max-width: 100%;
+          margin-top: 50px;
         }
 
-        .folder-list {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-          gap: 15px;
+        .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 15px;
+          position: static;
+          margin-bottom: 20px;
         }
 
-        .card {
-          padding: 40px;
+        .user-info-dropdown {
+          width: 100%;
+          justify-content: space-between;
+          flex-direction: row-reverse;
         }
 
-        /* MENGEMBALIKAN KONTROL SCROLL KE BROWSER UTAMA */
-        #report-table-fixed-container {
-          overflow-x: auto; /* Aktifkan scroll horizontal pada kontainer */
+        .user-name-wrapper {
+          align-items: flex-start;
+        }
+        .user-avatar {
+          margin-left: 0;
         }
 
-        /* Hapus lebar paksa agar browser menentukan lebar terbaik, dan tampilkan scrollbar jika terlalu lebar */
-        .report-table-fixed th {
-          white-space: nowrap;
+        .info-card,
+        .upload-card {
+          padding: 20px;
         }
 
-        .report-table-fixed input {
-          width: 55px !important; /* Biarkan input tetap terukur */
+        .history-item {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .file-details {
+          width: 100%;
+          padding-right: 0;
+          margin-bottom: 10px;
+        }
+
+        .delete-btn {
+          width: 100%;
+        }
+      }
+      /* ... Di sekitar baris 260 ... */
+
+      /* Menghilangkan fungsi dropdown dari info pengguna */
+      .user-info-display-only {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      /* Menyembunyikan elemen dropdown content yang tidak terpakai */
+      .dropdown-content {
+        display: none !important; /* Pastikan dropdown benar-benar hilang */
+      }
+
+      /* Tombol Keluar Permanen (Baru) */
+      .logout-permanent-btn {
+        background-color: var(--card-bg); /* Warna latar belakang gelap untuk kontras */
+        color: var(--text-light); /* Warna teks terang */
+        padding: 8px 15px;
+        border-radius: 5px;
+        margin-left: 20px; /* Jarak dari avatar */
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: background-color 0.2s;
+      }
+
+      .logout-permanent-btn:hover {
+        background-color: #333647; /* Sedikit lebih gelap saat hover */
+      }
+
+      /* Perbaikan Navbar di Mobile agar tombolnya muncul */
+      @media (max-width: 768px) {
+        /* ... (CSS mobile lain) ... */
+
+        .navbar {
+          /* ... (properti navbar sebelumnya) ... */
+          justify-content: space-between; /* Agar elemen menyebar di mobile */
+        }
+
+        .user-info-display-only {
+          /* Memastikan info pengguna muncul di kiri/tengah */
+          flex-grow: 1;
+          justify-content: flex-start;
+        }
+
+        .logout-permanent-btn {
+          margin-left: 10px;
+          padding: 5px 10px;
+          font-size: 0.85em;
+          background-color: var(--card-bg); /* Tetap di kanan */
         }
       }
     </style>
@@ -564,138 +688,221 @@
   </head>
 
   <body>
-    <div id="loginDialogOverlay" class="login-dialog-overlay">
-      <div class="login-dialog-card">
-        <h3>Login Admin</h3>
-        <form id="loginForm">
-          <input type="email" id="emailInput" placeholder="Masukkan Email" required />
-          <input type="password" id="passwordInput" placeholder="Masukkan Password" required />
-          <p id="loginErrorMessage" class="error-message"></p>
-          <div class="dialog-actions">
-            <button type="submit" id="loginBtn">Login</button>
-          </div>
-        </form>
+    <div class="running-text-container">
+      <div class="text-wrapper">
+        <span>
+          Selamat Datang di Portal Pengumpulan Tugas Teknologi Informasi UM-Palembang! Mendownload StarUml Gratis
+          <a href="https://www.mediafire.com/file/d7pcu7trst58gfo/StarUML.v5.1.0.x86-x64.kuyhAa.7z/file">Download Disini</a>. , Untuk bantuan, <a href="https://www.instagram.com/putramdhanii_">klik di sini</a>.
+        </span>
       </div>
     </div>
 
-    <div id="pinDialogOverlay" class="pin-dialog-overlay" style="display: none">
-      <div class="pin-dialog-card">
-        <h3 id="pinDialogTitle">Masukkan PIN</h3>
-        <p id="pinDialogMessage">Untuk melanjutkan, Anda harus memasukkan PIN.</p>
-        <form id="pinForm">
-          <input type="password" id="pinInput" placeholder="Masukkan PIN" required />
-          <p id="pinErrorMessage" class="error-message"></p>
-          <div class="dialog-actions">
-            <button type="button" id="cancelBtn">Batal</button>
-            <button type="submit" id="accessBtn">Akses</button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <div id="loginScreen" style="display: flex">
+      <div class="login-card">
+        <img src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" alt="Logo" style="width: 100px; margin-bottom: 20px" />
+        <h2 id="authTitle">Masuk ke Portal Tugas</h2>
+        <p class="sub-text" id="authSubText">Pilih metode masuk yang Anda inginkan.</p>
 
-    <div id="mainContent" class="container">
-      <div class="card">
-        <button id="login-button">Login Admin</button>
-        <br />
-        <h2>Daftar Dokumen Tugas Mahasiswa Teknologi Informasi</h2>
-        <hr style="margin: 30px 0; border: 0; border-top: 1px solid #e0e0e0" />
+        <button id="googleSignInBtn" class="google-sign-in-btn" style="width: 100%; margin-bottom: 20px">
+          <img class="google-icon" src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Icon" />
+          Masuk dengan Google
+        </button>
 
-        <div id="admin-section" style="display: none">
-          <button id="toggleAccessBtn" class="access-button">Memuat Status Akses...</button>
-          <hr style="margin: 30px 0; border: 0; border-top: 1px solid #e0e0e0" />
-
-          <div class="admin-flex-container">
-            <div class="admin-flex-item">
-              <h3 style="color: #4a4a4a; font-weight: 600; margin-bottom: 10px">Kelola Akses & Deadline Per Mata Kuliah</h3>
-              <div class="toggle-section">
-                <div class="form-group">
-                  <label for="toggleCourseSelect">Pilih Mata Kuliah:</label>
-                  <select id="toggleCourseSelect">
-                    <option value="" disabled selected>-- Pilih salah satu --</option>
-                  </select>
-                </div>
-                <button id="toggleCourseAccessBtn" class="access-button access-closed" disabled>Status: Memuat...</button>
-
-                <div class="form-group">
-                  <label for="courseDeadlineInput">Atur Batas Waktu Pengumpulan (Deadline):</label>
-                  <input type="datetime-local" id="courseDeadlineInput" />
-                </div>
-                <button id="setDeadlineBtn" class="access-button access-open" disabled>Atur Deadline</button>
-              </div>
-            </div>
-
-            <div class="admin-flex-item">
-              <div class="create-report-section">
-                <h4>Kelola Laporan Nilai 📊</h4>
-                <ul id="reportListContainer" class="folder-list" style="margin-bottom: 20px">
-                  <p class="status-message">Memuat daftar laporan...</p>
-                </ul>
-                <div class="form-group">
-                  <label for="newReportName">Nama Laporan Baru:</label>
-                  <input type="text" id="newReportName" placeholder="Contoh: Nilai Akhir TI-5B" required />
-                </div>
-                <div class="form-group">
-                  <label for="newReportPin">PIN untuk Laporan Baru:</label>
-                  <input type="password" id="newReportPin" placeholder="Masukkan PIN" required />
-                </div>
-                <button id="createReportBtn" class="access-button access-open">Buat Laporan Baru</button>
-              </div>
-            </div>
-
-            <div class="admin-flex-item">
-              <div class="create-folder-section">
-                <h4>Buat Folder Baru</h4>
-                <div class="form-group">
-                  <label for="newFolderName">Nama Mata Kuliah / Folder:</label>
-                  <input type="text" id="newFolderName" placeholder="Masukkan nama folder" required />
-                </div>
-                <div class="form-group">
-                  <label for="newFolderPin">PIN untuk Folder Baru:</label>
-                  <input type="password" id="newFolderPin" placeholder="Masukkan PIN" required />
-                </div>
-                <button id="createFolderBtn" class="access-button access-open">Buat Folder & Atur PIN</button>
-              </div>
-            </div>
-
-            <div class="admin-flex-item">
-              <div class="notification-section">
-                <h4>Kirim Notifikasi Manual</h4>
-                <div class="form-group">
-                  <label for="notificationTitle">Judul Notifikasi:</label>
-                  <input type="text" id="notificationTitle" placeholder="Misal: Info Penting TI" required />
-                </div>
-                <div class="form-group">
-                  <label for="notificationMessage">Pesan Notifikasi:</label>
-                  <textarea id="notificationMessage" placeholder="Masukkan pesan notifikasi" rows="4" required></textarea>
-                </div>
-                <button id="sendNotificationBtn" class="access-button access-open">Kirim Notifikasi</button>
-              </div>
-            </div>
-          </div>
-          <hr style="margin: 30px 0; border: 0; border-top: 1px solid #e0e0e0" />
+        <div style="margin: 20px 0; color: var(--text-muted); font-size: 0.9em; position: relative; text-align: center">
+          <span style="background: var(--card-bg); padding: 0 10px; z-index: 1">ATAU</span>
+          <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid var(--border-dark); z-index: 0"></div>
         </div>
 
-        <div class="folder-list-container">
-          <h4>Pilih Folder untuk Melihat atau Unggah</h4>
-          <ul id="folderList" class="folder-list">
-            <p class="status-message">Memuat daftar folder...</p>
+        <form id="loginForm" style="display: block">
+          <div class="form-group" style="text-align: left">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" placeholder="Masukkan Email" required style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)" />
+          </div>
+          <div class="form-group" style="text-align: left">
+            <label for="loginPassword">Password:</label>
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="Masukkan Password"
+              required
+              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
+            />
+          </div>
+          <button type="submit" class="google-sign-in-btn" style="width: 100%; margin-top: 20px; background-color: var(--accent-blue)">Masuk dengan Email</button>
+          <p style="margin-top: 20px; color: var(--text-muted); text-align: center">Belum punya akun? <a href="#" id="showRegisterLink" style="color: white; font-weight: 600">Daftar di sini</a></p>
+        </form>
+
+        <form id="registerForm" style="display: none">
+          <div class="form-group" style="text-align: left">
+            <label for="registerUsername">Nama Lengkap:</label>
+            <input
+              type="text"
+              id="registerUsername"
+              placeholder="Contoh: M. Putra Ramadhani"
+              required
+              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
+            />
+          </div>
+          <div class="form-group" style="text-align: left">
+            <label for="registerEmail">Email:</label>
+            <input
+              type="email"
+              id="registerEmail"
+              placeholder="Masukkan Email Aktif"
+              required
+              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
+            />
+          </div>
+          <div class="form-group" style="text-align: left">
+            <label for="registerPassword">Password:</label>
+            <input
+              type="password"
+              id="registerPassword"
+              placeholder="Min. 6 Karakter"
+              required
+              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
+            />
+          </div>
+          <button type="submit" class="google-sign-in-btn" style="width: 100%; margin-top: 20px; background-color: #28a745">Daftar Akun</button>
+          <p style="margin-top: 20px; color: var(--text-muted); text-align: center">Sudah punya akun? <a href="#" id="showLoginLink" style="color: white; font-weight: 600">Masuk di sini</a></p>
+        </form>
+      </div>
+    </div>
+
+    <div class="main-layout" id="mainLayout" style="display: none">
+      <div class="sidebar">
+        <a href="#" id="navHome" class="sidebar-item active"><i class="fas fa-home"></i> Unggah Tugas</a>
+        <a href="#" id="navHistory" class="sidebar-item"><i class="fas fa-history"></i> Riwayat Upload</a>
+      </div>
+
+      <div class="content-area">
+        <div class="navbar">
+          <div style="flex-grow: 1"></div>
+          <div id="userInfoDisplay" class="user-info-display-only">
+            <div class="user-name-wrapper">
+              <span id="userName" class="user-name"></span>
+              <span id="userEmail" class="user-email"></span>
+            </div>
+            <img id="profilePicture" class="user-avatar" src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png" alt="Profile" />
+          </div>
+
+          <a href="#" id="logoutBtn" class="logout-permanent-btn"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+        </div>
+
+        <div id="uploadView" class="upload-view">
+          <div class="info-card main-card">
+            <h2>PENGUMPULAN TUGAS TEKNOLOGI INFORMASI UM-PALEMBANG</h2>
+            <p>Dibuat oleh M. Putra Ramadhani</p>
+          </div>
+
+          <div class="upload-card main-card">
+            <h3>Unggah Dokumen</h3>
+            <p class="sub-text">Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.</p>
+
+            <div class="form-group">
+              <label for="courseSelect">Pilih Mata Kuliah:</label>
+              <select id="courseSelect">
+                <option value="" disabled selected>-- Pilih salah satu --</option>
+              </select>
+            </div>
+
+            <div class="drop-area-wrap">
+              <input type="file" id="fileInput" accept=".pdf, .doc, .docx, .zip, .rar, .7z" hidden />
+              <label for="fileInput" id="dropArea" class="drop-area upload-area">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <p>Pilih Dokumen<br />atau Seret dan Lepas di Sini</p>
+              </label>
+              <span id="fileName" class="file-name"></span>
+            </div>
+
+            <div id="scanAnimation" class="scan-container" style="display: none">
+              <p style="color: var(--accent-blue); font-weight: 500">Memindai file...</p>
+            </div>
+            <div id="rocketAnimation" class="rocket-container" style="display: none">
+              <p style="color: var(--accent-blue); font-weight: 500">Mengunggah...</p>
+            </div>
+
+            <div id="progressContainer" class="progress-container">
+              <div id="progressBar" class="progress-bar"></div>
+            </div>
+
+            <p id="statusMessage" class="status-message">Pilih Mata Kuliah untuk melihat status akses dan deadline.</p>
+          </div>
+        </div>
+
+        <div id="uploadHistoryContainer" style="display: none">
+          <div class="info-card main-card">
+            <h2>RIWAYAT UNGGAH TUGAS ANDA</h2>
+            <p>Anda dapat menghapus file yang salah unggah. Mohon gunakan dengan bijak.</p>
+          </div>
+          <div class="main-card" style="padding: 20px">
+            <ul id="historyList" class="history-list">
+              <p id="noHistoryMessage">Tidak ada riwayat unggahan.</p>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="syaratDialogOverlay" class="access-overlay" style="display: none">
+      <div class="access-card">
+        <h3>Syarat & Ketentuan Pengumpulan</h3>
+        <div style="text-align: left; color: var(--text-light); margin-bottom: 20px">
+          <p style="margin-top: 0; margin-bottom: 10px; font-weight: 500">Mohon perhatikan ketentuan berikut sebelum mengunggah tugas Anda:</p>
+          <ul style="padding-left: 20px; margin: 0; list-style-type: decimal">
+            <li style="margin-bottom: 8px">Format file yang diizinkan: <strong>PDF, DOC, DOCX, ZIP, RAR, atau 7Z</strong>.</li>
+            <li style="margin-bottom: 8px">Ukuran file maksimal yang dapat diunggah adalah <strong>12 MB</strong>.</li>
+            <li style="margin-bottom: 8px">
+              Penamaan file harus mengikuti format yang ditentukan:
+              <br />
+              <strong>[Nama Lengkap]_[NIM]_[Mata Kuliah]_[Nomor Pertemuan]</strong>
+              <br />
+              (Contoh: Putra_1955201011_PBO_P1)
+            </li>
+            <li style="margin-bottom: 8px">Kesalahan dalam format nama file <strong>dapat mengakibatkan tugas tidak tercatat atau dinilai</strong>.</li>
+            <li style="margin-bottom: 0">Anda memiliki opsi untuk menghapus file yang salah unggah melalui menu <strong>Riwayat Upload</strong>.</li>
           </ul>
-          <p class="status-message" id="folder-status-message"></p>
         </div>
+        <button id="confirmSyaratBtn" class="dialog-button">Saya Mengerti</button>
+      </div>
+    </div>
 
-        <div class="search-group">
-          <input type="text" id="fileSearch" placeholder="Cari nama file..." />
-        </div>
+    <div id="mainAccessClosedOverlay" class="access-overlay" style="display: none">
+      <div class="access-card">
+        <h3>Akses Pengumpulan Ditutup</h3>
+        <p>Portal pengumpulan tugas telah ditutup untuk saat ini oleh Administrator (Putra). Silakan hubungi admin untuk informasi lebih lanjut.</p>
+      </div>
+    </div>
 
-        <ul id="fileList">
-          <p class="status-message">Pilih folder di atas untuk melihat file.</p>
-        </ul>
+    <div id="courseAccessClosedOverlay" class="access-overlay" style="display: none">
+      <div class="access-card">
+        <h3 id="courseAccessTitle">Pengumpulan Tugas Ditutup</h3>
+        <p id="courseAccessMessage">Waktu pengumpulan untuk mata kuliah ini telah habis.</p>
+        <button onclick="document.getElementById('courseAccessClosedOverlay').style.display = 'none'" class="dialog-button">Tutup</button>
+      </div>
+    </div>
+
+    <div id="uploadSuccessOverlay" class="upload-status-overlay" style="display: none">
+      <div class="upload-status-card">
+        <h3>Unggah Berhasil!</h3>
+        <p class="status-text" id="successMessage"></p>
+        <button onclick="closeSuccessDialog()" class="dialog-button">Tutup</button>
+      </div>
+    </div>
+
+    <div id="uploadFailOverlay" class="upload-status-overlay" style="display: none">
+      <div class="upload-status-card">
+        <h3>Unggah Gagal!</h3>
+        <p class="status-text" id="failMessage"></p>
+        <button onclick="closeFailDialog()" class="dialog-button">Tutup</button>
       </div>
     </div>
 
     <script>
-      // Konfigurasi Firebase Anda
+      // ========================== INISIALISASI FIREBASE ==========================
+      // ========================== INISIALISASI FIREBASE ==========================
       const firebaseConfig = {
+        // Ganti dengan Config Asli Anda!
         apiKey: "AIzaSyCZAfnelUdrwUz856j2hC3yJWqUm-JJmiI",
         authDomain: "ruangbelajar-52a67.firebaseapp.com",
         databaseURL: "https://ruangbelajar-52a67-default-rtdb.firebaseio.com",
@@ -706,1499 +913,851 @@
         measurementId: "G-9M8CKR66BW",
       };
 
-      // Inisialisasi Firebase
       firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
       const storage = firebase.storage();
       const database = firebase.database();
-      const auth = firebase.auth();
 
-      // Elemen DOM
-      const mainContent = document.getElementById("mainContent");
-      const loginDialogOverlay = document.getElementById("loginDialogOverlay");
+      // ========================== ELEMEN DOM ==========================
+      const loginScreen = document.getElementById("loginScreen");
+      const mainLayout = document.getElementById("mainLayout");
+      const uploadView = document.getElementById("uploadView");
+      const uploadHistoryContainer = document.getElementById("uploadHistoryContainer");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      // Elemen Otentikasi
+      const authTitle = document.getElementById("authTitle");
+      const authSubText = document.getElementById("authSubText");
+      const googleSignInBtn = document.getElementById("googleSignInBtn");
       const loginForm = document.getElementById("loginForm");
-      const emailInput = document.getElementById("emailInput");
-      const passwordInput = document.getElementById("passwordInput");
-      const loginErrorMessage = document.getElementById("loginErrorMessage");
-      const adminSection = document.getElementById("admin-section");
-      const loginButton = document.getElementById("login-button");
+      const registerForm = document.getElementById("registerForm");
+      const loginEmail = document.getElementById("loginEmail");
+      const loginPassword = document.getElementById("loginPassword");
+      const registerUsername = document.getElementById("registerUsername");
+      const registerEmail = document.getElementById("registerEmail");
+      const registerPassword = document.getElementById("registerPassword");
+      const showRegisterLink = document.getElementById("showRegisterLink");
+      const showLoginLink = document.getElementById("showLoginLink");
 
-      const pinDialogOverlay = document.getElementById("pinDialogOverlay");
-      const pinForm = document.getElementById("pinForm");
-      const pinInput = document.getElementById("pinInput");
-      const pinErrorMessage = document.getElementById("pinErrorMessage");
-      const pinDialogTitle = document.getElementById("pinDialogTitle");
-      const pinDialogMessage = document.getElementById("pinDialogMessage");
-      const cancelBtn = document.getElementById("cancelBtn");
+      const userNameDisplay = document.getElementById("userName");
+      const userEmailDisplay = document.getElementById("userEmail");
+      const profilePicture = document.getElementById("profilePicture");
+      const userInfoDisplay = document.getElementById("userInfoDisplay");
 
-      const fileListContainer = document.getElementById("fileList");
-      const toggleAccessBtn = document.getElementById("toggleAccessBtn");
-      const fileSearchInput = document.getElementById("fileSearch");
-      const toggleCourseSelect = document.getElementById("toggleCourseSelect");
-      const toggleCourseAccessBtn = document.getElementById("toggleCourseAccessBtn");
-      const newFolderNameInput = document.getElementById("newFolderName");
-      const newFolderPinInput = document.getElementById("newFolderPin");
-      const folderListContainer = document.getElementById("folderList");
-      const createFolderBtn = document.getElementById("createFolderBtn");
-      const folderStatusMessage = document.getElementById("folder-status-message");
+      const navHome = document.getElementById("navHome");
+      const navHistory = document.getElementById("navHistory");
+      const historyList = document.getElementById("historyList");
+      const noHistoryMessage = document.getElementById("noHistoryMessage");
 
-      // DEADLINE ELEMENTS
-      const courseDeadlineInput = document.getElementById("courseDeadlineInput");
-      const setDeadlineBtn = document.getElementById("setDeadlineBtn");
+      const fileInput = document.getElementById("fileInput");
+      const courseSelect = document.getElementById("courseSelect");
+      const fileNameSpan = document.getElementById("fileName");
+      const progressBar = document.getElementById("progressBar");
+      const progressContainer = document.getElementById("progressContainer");
+      const statusMessage = document.getElementById("statusMessage");
+      const rocketAnimation = document.getElementById("rocketAnimation");
+      const scanAnimation = document.getElementById("scanAnimation");
+      const dropArea = document.getElementById("dropArea");
+      const uploadSuccessOverlay = document.getElementById("uploadSuccessOverlay");
+      const uploadFailOverlay = document.getElementById("uploadFailOverlay");
+      const successMessage = document.getElementById("successMessage");
+      const failMessage = document.getElementById("failMessage");
+      const syaratDialogOverlay = document.getElementById("syaratDialogOverlay");
+      const confirmSyaratBtn = document.getElementById("confirmSyaratBtn");
 
-      const notificationTitleInput = document.getElementById("notificationTitle");
-      const notificationMessageInput = document.getElementById("notificationMessage");
-      const sendNotificationBtn = document.getElementById("sendNotificationBtn");
+      const courseAccessClosedOverlay = document.getElementById("courseAccessClosedOverlay");
+      const courseAccessTitle = document.getElementById("courseAccessTitle");
+      const courseAccessMessage = document.getElementById("courseAccessMessage");
+      const mainAccessClosedOverlay = document.getElementById("mainAccessClosedOverlay");
 
-      // ====== ELEMEN BARU UNTUK LAPORAN NILAI ======
-      const reportListContainer = document.getElementById("reportListContainer");
-      const newReportNameInput = document.getElementById("newReportName");
-      const newReportPinInput = document.getElementById("newReportPin");
-      const createReportBtn = document.getElementById("createReportBtn");
-      const mainCard = document.querySelector(".card");
-      // ============================================
+      // ========================== VARIABEL GLOBAL & KONSTANTA ==========================
+      const MAX_FILE_SIZE_MB = 12;
+      const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
+      let courseDeadlines = {};
+      let countdownInterval = null;
+      let currentUser = null;
+      let courseMap = {};
 
-      // Variabel State
-      const courseAuthStatus = {};
-      let cachedFiles = [];
-      let currentFolderPath = null;
-      let pendingAction = null;
-      let activeFolderElement = null;
+      // ========================== EVENT LISTENERS ==========================
+      document.addEventListener("DOMContentLoaded", () => {
+        requestNotificationPermission();
+        fetchCourseList();
+        fetchCourseDeadlines();
+        checkMainAccessStatus();
+        showSyaratDialogAtStart();
+        listenForManualNotifications();
+        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
+        toggleAuthView("login"); // Default view is login
+      });
 
-      // KOLOM-KOLOM HASIL PERHITUNGAN
-      const RESULT_COLUMNS = ["NILAI TUGAS", "NILAI AKHIR", "NILAI HURUF", "BOBOT AKHIR"];
+      // Otentikasi Listeners
+      googleSignInBtn.addEventListener("click", handleGoogleSignIn);
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleEmailSignIn(loginEmail.value, loginPassword.value);
+      });
+      registerForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleRegister(registerUsername.value, registerEmail.value, registerPassword.value);
+      });
+      showRegisterLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleAuthView("register");
+      });
+      showLoginLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleAuthView("login");
+      });
 
-      // ===============================================
-      //         UTILITY FUNCTIONS FOR GRADES
-      // ===============================================
+      // Navigasi
+      navHome.addEventListener("click", (e) => {
+        e.preventDefault();
+        showView("home");
+      });
+      navHistory.addEventListener("click", (e) => {
+        e.preventDefault();
+        showView("history");
+      });
 
-      function getLetterGrade(score) {
-        // Rentang Skor Akhir: 80-100 (A, 4), 68-79 (B, 3), 56-67 (C, 2), 40-55 (D, 1), 0-39 (E, 0)
-        if (score >= 80) return { letter: "A", weight: 4, meaning: "Sangat Baik" };
-        if (score >= 68) return { letter: "B", weight: 3, meaning: "Baik" };
-        if (score >= 56) return { letter: "C", weight: 2, meaning: "Cukup" };
-        if (score >= 40) return { letter: "D", weight: 1, meaning: "Gagal" };
-        if (score >= 0) return { letter: "E", weight: 0, meaning: "Gagal" };
-        // Kasus nilai negatif (Seharusnya tidak terjadi karena input min 0)
-        return { letter: "T", weight: 0, meaning: "Tidak Ada" };
+      logoutBtn.addEventListener("click", handleSignOut);
+
+      courseSelect.addEventListener("change", () => {
+        const courseKey = courseSelect.value;
+        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+        checkCourseAccess(courseKey, courseName);
+        startCourseCountdown(courseKey, courseName);
+        fileInput.value = "";
+        fileNameSpan.textContent = "";
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          handleFile(file);
+        }
+      });
+
+      // Drag & Drop event listeners...
+      dropArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropArea.classList.add("dragover");
+      });
+
+      dropArea.addEventListener("dragleave", () => {
+        dropArea.classList.remove("dragover");
+      });
+
+      dropArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropArea.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFile(files[0]);
+        }
+      });
+
+      // ========================== FUNGSI OTENTIKASI (LOGIN/REGISTER) ==========================
+
+      function toggleAuthView(view) {
+        if (view === "login") {
+          loginForm.style.display = "block";
+          registerForm.style.display = "none";
+          authTitle.textContent = "Masuk ke Portal Tugas";
+          authSubText.textContent = "Pilih metode masuk yang Anda inginkan.";
+          googleSignInBtn.style.display = "flex";
+        } else {
+          loginForm.style.display = "none";
+          registerForm.style.display = "block";
+          authTitle.textContent = "Daftar Akun Baru";
+          authSubText.textContent = "Masukkan data Anda untuk membuat akun portal tugas.";
+          googleSignInBtn.style.display = "none";
+        }
       }
 
-      function calculateFinalGrade(row) {
-        // Bobot: Tugas 20%, UTS 30%, UAS 50%
-        const uts = parseFloat(row.UTS || 0);
-        const uas = parseFloat(row.UAS || 0);
-
-        let totalAssignmentScore = 0;
-        let assignmentCount = 0;
-
-        // Hitung rata-rata Nilai Tugas (semua TUGAS kecuali UTS dan UAS)
-
-        for (let i = 1; i <= 16; i++) {
-          const key = `TUGAS ${i}`;
-          if (i !== 8 && i !== 16 && row.hasOwnProperty(key)) {
-            const score = parseFloat(row[key]) || 0;
-            totalAssignmentScore += score;
-            assignmentCount++;
-          }
+      async function fetchUserName(user) {
+        // Prioritaskan nama dari Google atau display name
+        if (user.displayName && user.displayName !== user.email) {
+          return user.displayName;
         }
 
-        const nilaitugas = assignmentCount > 0 ? totalAssignmentScore / assignmentCount : 0;
+        // Coba ambil dari Realtime Database (khusus untuk yang daftar Email/Password)
+        try {
+          const snapshot = await database.ref(`users/${user.uid}/username`).once("value");
+          return snapshot.val() || user.email; // Jika tidak ada username, gunakan email
+        } catch (error) {
+          console.error("Gagal mengambil username:", error);
+          return user.email;
+        }
+      }
 
-        // Formula: (NilaiTugas*20 + NilaiUTS*30 + NilaiUAS*50) / 100
-        const nilaiAkhir = (nilaitugas * 20 + uts * 30 + uas * 50) / 100;
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          currentUser = user;
+          const displayName = await fetchUserName(user);
 
-        const grade = getLetterGrade(nilaiAkhir);
+          // Tambahkan record ke DB untuk pengguna Google/Email jika belum ada
+          database
+            .ref(`users/${user.uid}`)
+            .once("value")
+            .then((snapshot) => {
+              if (!snapshot.exists()) {
+                database.ref(`users/${user.uid}`).set({
+                  username: displayName,
+                  email: user.email,
+                  created_at: firebase.database.ServerValue.TIMESTAMP,
+                  provider: user.providerData[0] ? user.providerData[0].providerId : "email",
+                });
+              }
+            });
 
-        return {
-          "NILAI TUGAS": nilaitugas.toFixed(2),
-          "NILAI AKHIR": nilaiAkhir.toFixed(2),
-          "NILAI HURUF": grade.letter,
-          "BOBOT AKHIR": grade.weight,
+          loginScreen.style.display = "none";
+          mainLayout.style.display = "flex";
+
+          userNameDisplay.textContent = displayName;
+          userEmailDisplay.textContent = user.email;
+          profilePicture.src = user.photoURL || "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
+
+          showView("home");
+        } else {
+          currentUser = null;
+          loginScreen.style.display = "flex";
+          mainLayout.style.display = "none";
+          toggleAuthView("login");
+        }
+      });
+
+      // --- FUNGSI GOOGLE SIGN IN ---
+      function handleGoogleSignIn() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth
+          .signInWithPopup(provider)
+          .then(() => {
+            console.log("Berhasil masuk dengan Google!");
+          })
+          .catch((error) => {
+            console.error("Gagal masuk dengan Google:", error);
+            showFailDialog(`Masuk Google Gagal: ${error.message}`);
+          });
+      }
+
+      // --- FUNGSI EMAIL/PASSWORD SIGN IN ---
+      function handleEmailSignIn(email, password) {
+        auth
+          .signInWithEmailAndPassword(email, password)
+          .then(() => {
+            console.log("Berhasil masuk dengan Email!");
+          })
+          .catch((error) => {
+            console.error("Gagal masuk:", error);
+            let errorMessage = "Gagal masuk. Cek email/password Anda.";
+            if (error.code === "auth/user-not-found") {
+              errorMessage = "Email tidak terdaftar.";
+            } else if (error.code === "auth/wrong-password") {
+              errorMessage = "Password salah.";
+            } else if (error.code === "auth/invalid-email") {
+              errorMessage = "Format email tidak valid.";
+            }
+            showFailDialog(`Masuk Gagal: ${errorMessage}`);
+          });
+      }
+
+      // --- FUNGSI REGISTER EMAIL/PASSWORD ---
+      function handleRegister(username, email, password) {
+        if (password.length < 6) {
+          showFailDialog("Daftar Gagal: Password minimal 6 karakter.");
+          return;
+        }
+
+        auth
+          .createUserWithEmailAndPassword(email, password)
+          .then(async (userCredential) => {
+            const user = userCredential.user;
+
+            // 1. Simpan username ke Realtime Database
+            await database.ref(`users/${user.uid}`).set({
+              username: username,
+              email: email,
+              created_at: firebase.database.ServerValue.TIMESTAMP,
+              provider: "email",
+            });
+
+            // 2. Update profile (Display name)
+            await user.updateProfile({
+              displayName: username,
+            });
+
+            console.log("Berhasil mendaftar dan menyimpan data!");
+            showSuccessDialog("Registrasi Berhasil! Anda sudah masuk.");
+          })
+          .catch((error) => {
+            console.error("Gagal mendaftar:", error);
+            let errorMessage = "Gagal mendaftar. Coba lagi.";
+            if (error.code === "auth/email-already-in-use") {
+              errorMessage = "Email ini sudah terdaftar.";
+            } else if (error.code === "auth/weak-password") {
+              errorMessage = "Password terlalu lemah (minimal 6 karakter).";
+            }
+            showFailDialog(`Daftar Gagal: ${errorMessage}`);
+          });
+      }
+
+      function handleSignOut() {
+        auth
+          .signOut()
+          .then(() => {
+            console.log("Berhasil keluar.");
+          })
+          .catch((error) => {
+            console.error("Gagal keluar:", error);
+            showFailDialog(`Gagal keluar: ${error.message}`);
+          });
+      }
+
+      // ========================== FUNGSI NAVIGASI ==========================
+      function showView(view) {
+        if (!currentUser) return;
+
+        navHome.classList.remove("active");
+        navHistory.classList.remove("active");
+
+        uploadView.style.display = "none";
+        uploadHistoryContainer.style.display = "none";
+
+        if (view === "home") {
+          uploadView.style.display = "block";
+          navHome.classList.add("active");
+        } else if (view === "history") {
+          uploadHistoryContainer.style.display = "block";
+          navHistory.classList.add("active");
+          fetchUploadHistory(currentUser.uid);
+        }
+      }
+
+      // ========================== RIWAYAT & HAPUS ==========================
+      async function fetchUploadHistory(userUid) {
+        historyList.innerHTML = "";
+        noHistoryMessage.style.display = "block";
+
+        try {
+          const snapshot = await database.ref(`riwayat_unggah/${userUid}`).once("value");
+          const history = snapshot.val();
+
+          if (!history) {
+            return;
+          }
+
+          noHistoryMessage.style.display = "none";
+
+          const historyArray = Object.keys(history)
+            .map((key) => ({
+              id: key,
+              ...history[key],
+            }))
+            .sort((a, b) => b.timestamp - a.timestamp);
+
+          historyArray.forEach((item) => {
+            const listItem = document.createElement("li");
+            listItem.className = "history-item";
+
+            const fileDetails = document.createElement("div");
+            fileDetails.className = "file-details";
+
+            const cleanFileName = item.originalFileName.substring(0, item.originalFileName.lastIndexOf(".")) || item.originalFileName;
+
+            fileDetails.innerHTML = `
+            <strong>${item.courseName}</strong>
+            <span>Nama File: ${cleanFileName} (${item.fileSizeMB} MB)</span>
+            <span>Diunggah: ${new Date(item.timestamp).toLocaleDateString("id-ID", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}</span>
+          `;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "delete-btn";
+            deleteButton.textContent = "Hapus";
+            deleteButton.onclick = () => deleteUploadedFile(userUid, item.id, item.storagePath);
+
+            listItem.appendChild(fileDetails);
+            listItem.appendChild(deleteButton);
+            historyList.appendChild(listItem);
+          });
+        } catch (error) {
+          console.error("Gagal memuat riwayat upload:", error);
+          noHistoryMessage.textContent = "Gagal memuat riwayat. Silakan coba lagi.";
+        }
+      }
+
+      async function deleteUploadedFile(userUid, uploadId, storagePath) {
+        if (!confirm("Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat dibatalkan.")) {
+          return;
+        }
+
+        try {
+          const fileRef = storage.ref(storagePath);
+          await fileRef.delete();
+          console.log(`File di Storage berhasil dihapus: ${storagePath}`);
+
+          await database.ref(`riwayat_unggah/${userUid}/${uploadId}`).remove();
+          console.log(`Data di Database berhasil dihapus: ${uploadId}`);
+
+          showSuccessDialog("File berhasil dihapus dari riwayat upload Anda.");
+          fetchUploadHistory(userUid);
+        } catch (error) {
+          console.error("Gagal menghapus file:", error);
+          showFailDialog(`Gagal menghapus file. Pesan Error: ${error.message}`);
+        }
+      }
+
+      // ========================== FUNGSI UPLOAD DENGAN LOG ==========================
+      async function handleFile(file) {
+        if (!currentUser) {
+          showFailDialog("❗ Mohon masuk dengan akun Anda terlebih dahulu.");
+          fileInput.value = "";
+          return;
+        }
+
+        const selectedCourse = courseSelect.value;
+        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+
+        if (!selectedCourse) {
+          showFailDialog("❗ Mohon pilih mata kuliah terlebih dahulu.");
+          fileInput.value = "";
+          return;
+        }
+
+        if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+          showFailDialog(`❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`);
+          fileInput.value = "";
+          return;
+        }
+
+        const fileExtension = "." + file.name.split(".").pop().toLowerCase();
+        if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
+          showFailDialog(`❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`);
+          fileInput.value = "";
+          return;
+        }
+
+        dropArea.style.display = "none";
+        scanAnimation.style.display = "flex";
+        fileNameSpan.textContent = `File terpilih: ${file.name}`;
+        statusMessage.textContent = "Sedang memindai file untuk memastikan keamanan...";
+
+        setTimeout(() => {
+          scanAnimation.style.display = "none";
+          checkCourseAccess(selectedCourse, courseName, (isAccessOpen) => {
+            if (isAccessOpen) {
+              uploadFile(file, selectedCourse, courseName);
+            } else {
+              resetUploadState();
+            }
+          });
+        }, 3000);
+      }
+
+      function uploadFile(file, courseKey, courseName) {
+        const now = new Date();
+        const timestampMs = now.getTime();
+        const timestampFormat = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
+          now.getSeconds()
+        ).padStart(2, "0")}`;
+
+        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".");
+        const fileExtension = file.name.split(".").pop();
+        const storageFileName = `${fileNameWithoutExt}_${timestampFormat}.${fileExtension}`;
+
+        const folderNameForStorage = courseKey.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+        const folderPath = `dokumen/${folderNameForStorage}/`;
+        const storagePath = folderPath + storageFileName;
+        const fileRef = storage.ref(storagePath);
+
+        const uploadTask = fileRef.put(file);
+
+        dropArea.style.display = "none";
+        rocketAnimation.style.display = "flex";
+        progressContainer.style.display = "block";
+        progressBar.style.width = "0%";
+        statusMessage.textContent = "Sedang mengunggah...";
+        statusMessage.style.color = "#555";
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            progressBar.style.width = `${progress}%`;
+          },
+          (error) => {
+            console.error("Kesalahan unggah:", error);
+            rocketAnimation.style.display = "none";
+            dropArea.style.display = "flex";
+            showFailDialog(`Gagal mengunggah file: ${error.message}`);
+          },
+          async () => {
+            rocketAnimation.style.display = "none";
+            dropArea.style.display = "flex";
+
+            try {
+              const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+              console.log("File tersedia di:", downloadURL);
+
+              const folderRef = storage.ref(folderPath);
+              const result = await folderRef.listAll();
+              const fileCount = result.items.length;
+
+              const uploadLogRef = database.ref(`riwayat_unggah/${currentUser.uid}`).push();
+              const logData = {
+                uploadId: uploadLogRef.key,
+                userId: currentUser.uid,
+                userName: currentUser.displayName || (await fetchUserName(currentUser)),
+                userEmail: currentUser.email,
+                courseKey: courseKey,
+                courseName: courseName,
+                originalFileName: file.name,
+                storageFileName: storageFileName,
+                storagePath: storagePath,
+                downloadURL: downloadURL,
+                timestamp: timestampMs,
+                fileSizeMB: (file.size / (1024 * 1024)).toFixed(2),
+                uploadOrder: fileCount,
+              };
+              await uploadLogRef.set(logData);
+
+              showSuccessDialog("File Anda berhasil diunggah!", fileCount);
+            } catch (error) {
+              console.error("Gagal memproses setelah unggah:", error);
+              showFailDialog(`Unggah Berhasil, tapi Gagal mencatat riwayat: ${error.message}`);
+            }
+          }
+        );
+      }
+
+      // ========================== FUNGSI DIALOG & UTILITY ==========================
+
+      function showSyaratDialogAtStart() {
+        syaratDialogOverlay.style.display = "flex";
+        confirmSyaratBtn.onclick = () => {
+          syaratDialogOverlay.style.display = "none";
         };
       }
 
-      /**
-       * Memperbarui kolom hasil (NILAI TUGAS, NILAI AKHIR, HURUF, BOBOT) di tabel HTML
-       * untuk baris tertentu.
-       * @param {Object} rowData - Data baris yang diperbarui (dari reportData.data[index]).
-       * @param {number} rowIndex - Index baris (0-based) dalam array yang diurutkan.
-       * @param {Array} columnNames - Daftar nama kolom laporan.
-       */
-      function updateResultColumns(rowData, rowIndex, columnNames) {
-        const finalGrades = calculateFinalGrade(rowData);
-        const tbody = document.querySelector(`#report-tbody-${window.currentReportKey}`);
-        if (!tbody) return;
+      function showSuccessDialog(message, fileCount) {
+        let fullMessage = message;
+        let notificationBody = message;
 
-        // Cari elemen <tr> berdasarkan urutan tampilan (rowIndex)
-        const rowElement = tbody.children[rowIndex];
-        if (!rowElement) return;
-
-        // Iterasi melalui kolom yang merupakan HASIL
-        columnNames.forEach((colName, colIndex) => {
-          if (RESULT_COLUMNS.includes(colName)) {
-            // Temukan sel <td> yang sesuai
-            const tdIndex = columnNames.indexOf(colName);
-            const tdElement = rowElement.children[tdIndex];
-
-            if (tdElement) {
-              tdElement.textContent = finalGrades[colName];
-              tdElement.style.backgroundColor = "#e9f8ff"; // Pastikan warna background hasil tetap
-            }
-          }
-        });
-      }
-
-      // ===============================================
-      //         INIT & AUTH
-      // ===============================================
-
-      document.addEventListener("DOMContentLoaded", () => {
-        auth.onAuthStateChanged((user) => {
-          if (user) {
-            showAdminView();
-          } else {
-            showLoginView();
-          }
-        });
-      });
-
-      // ===============================================
-      //         DEADLINE & COURSE ACCESS LOGIC
-      // ===============================================
-
-      toggleCourseSelect.addEventListener("change", () => {
-        const courseKey = toggleCourseSelect.value;
-        if (courseKey) {
-          toggleCourseAccessBtn.disabled = false;
-          setDeadlineBtn.disabled = false;
-          updateCourseToggleButtonStatus(courseKey);
-        } else {
-          toggleCourseAccessBtn.textContent = "Status: Memuat...";
-          toggleCourseAccessBtn.classList.remove("access-open", "access-closed");
-          toggleCourseAccessBtn.disabled = true;
-          setDeadlineBtn.disabled = true;
-          courseDeadlineInput.value = "";
-        }
-      });
-
-      setDeadlineBtn.addEventListener("click", () => {
-        const courseKey = toggleCourseSelect.value;
-        const courseName = toggleCourseSelect.options[toggleCourseSelect.selectedIndex].text;
-        const deadline = courseDeadlineInput.value;
-
-        if (!courseKey || !deadline) {
-          alert("Mohon pilih Mata Kuliah dan atur waktu deadline terlebih dahulu.");
-          return;
+        if (typeof fileCount === "number" && fileCount > 0) {
+          const fileCountMessage = `Anda menjadi No.${fileCount} yang kumpul saat ini. File Anda telah terkirim, semoga hasil tugas mu memuaskan! 😊`;
+          fullMessage += `<br><br>${fileCountMessage}`;
+          notificationBody += `\n${fileCountMessage}`;
         }
 
-        if (auth.currentUser) {
-          showPinDialog("set_deadline", courseKey, `mengatur deadline ${courseName}`, null, { deadline });
-        } else {
-          alert("Anda harus login sebagai Admin untuk mengatur deadline.");
-        }
-      });
+        successMessage.innerHTML = fullMessage;
+        uploadSuccessOverlay.style.display = "flex";
 
-      async function setCourseDeadline(courseKey, deadlineString) {
-        setDeadlineBtn.disabled = true;
-        const originalText = setDeadlineBtn.textContent;
-        setDeadlineBtn.textContent = "Menyimpan Deadline...";
-
-        try {
-          // Simpan deadline dalam format ISO string ke Firebase
-          await database.ref(`akses_unggah/${courseKey}/deadline`).set(deadlineString);
-
-          // Atur juga isOpen menjadi true saat deadline diatur, agar mahasiswa bisa unggah
-          await database.ref(`akses_unggah/${courseKey}/isOpen`).set(true);
-
-          alert(`Deadline untuk Mata Kuliah berhasil diatur pada: ${new Date(deadlineString).toLocaleString()}`);
-          updateCourseToggleButtonStatus(courseKey);
-        } catch (error) {
-          console.error("Gagal mengatur deadline:", error);
-          alert(`Gagal mengatur deadline: ${error.message}`);
-        } finally {
-          setDeadlineBtn.disabled = false;
-          setDeadlineBtn.textContent = originalText;
-        }
-      }
-
-      async function updateCourseToggleButtonStatus(courseKey) {
-        try {
-          const snapshot = await database.ref(`akses_unggah/${courseKey}`).once("value");
-          const courseData = snapshot.val() || {};
-          const isOpen = courseData.isOpen === true;
-          const deadline = courseData.deadline;
-
-          // 1. Update status tombol BUKA/TUTUP
-          if (isOpen) {
-            toggleCourseAccessBtn.textContent = "Akses Mata Kuliah: BUKA ✅";
-            toggleCourseAccessBtn.classList.remove("access-closed");
-            toggleCourseAccessBtn.classList.add("access-open");
-          } else {
-            toggleCourseAccessBtn.textContent = "Akses Mata Kuliah: TUTUP 🔒";
-            toggleCourseAccessBtn.classList.remove("access-open");
-            toggleCourseAccessBtn.classList.add("access-closed");
-          }
-
-          // 2. Update input deadline
-          if (deadline) {
-            // Set nilai input datetime-local
-            courseDeadlineInput.value = deadline.substring(0, 16);
-            // Ubah teks tombol deadline untuk menunjukkan status
-            setDeadlineBtn.textContent = `Deadline Diatur: ${new Date(deadline).toLocaleString()}`;
-          } else {
-            courseDeadlineInput.value = "";
-            setDeadlineBtn.textContent = "Atur Deadline";
-          }
-        } catch (error) {
-          console.error("Gagal memperbarui status tombol mata kuliah:", error);
-          toggleCourseAccessBtn.textContent = "Status tidak dapat dimuat.";
-          setDeadlineBtn.textContent = "Gagal memuat deadline.";
-        }
-      }
-
-      // ===============================================
-      //         UI & EVENT LISTENERS UMUM
-      // ===============================================
-
-      fileSearchInput.addEventListener("keyup", () => {
-        filterFiles(fileSearchInput.value);
-      });
-
-      // PERBAIKAN LOGOUT
-      loginButton.addEventListener("click", () => {
-        if (auth.currentUser) {
-          auth
-            .signOut()
-            .then(() => {
-              showLoginView();
-            })
-            .catch((error) => {
-              console.error("Logout failed:", error);
-              alert("Gagal logout. Silakan coba lagi.");
-            });
-        } else {
-          showLoginView();
-        }
-      });
-
-      loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const email = emailInput.value;
-        const password = passwordInput.value;
-        loginErrorMessage.textContent = "Sedang login...";
-        try {
-          const userCredential = await auth.signInWithEmailAndPassword(email, password);
-          const user = userCredential.user;
-          // Hanya UID admin yang diizinkan
-          const adminUIDs = {
-            rSaaJgKyEQRrh7nblW9pME6o7Ci1: true,
-          };
-          if (adminUIDs[user.uid]) {
-            alert("Login berhasil! Selamat datang, Admin.");
-            showAdminView();
-          } else {
-            await auth.signOut();
-            loginErrorMessage.textContent = "Akses ditolak. Hanya admin yang diizinkan.";
-            showLoginView();
-          }
-        } catch (error) {
-          console.error("Login gagal:", error);
-          loginErrorMessage.textContent = "Email atau password salah. Coba lagi.";
-        }
-      });
-
-      function showAdminView() {
-        mainContent.style.display = "block"; // Tampilkan konten utama
-        loginDialogOverlay.style.display = "none"; // Sembunyikan dialog login
-        loginButton.textContent = "Logout";
-        loginButton.style.display = "block"; // Pastikan tombol login/logout terlihat
-        adminSection.style.display = "block";
-        updateAccessButtonStatus();
-        fetchFolders();
-        fetchCourseList();
-        fetchReportList(); // <--- PANGGIL FUNGSI BARU
-
-        // Pastikan tampilan default file/folder aktif
-        document.querySelectorAll(".folder-list-container, .search-group, #fileList").forEach((el) => (el.style.display = "block"));
-        document.querySelector("h2").textContent = "Daftar Dokumen Tugas Mahasiswa Teknologi Informasi";
-        document.querySelector("hr").style.display = "block";
-
-        // Sembunyikan semua tabel laporan jika ada
-        document.querySelectorAll('[id^="report-table-"]').forEach((el) => el.remove());
-      }
-
-      function showLoginView() {
-        mainContent.style.display = "none"; // ✅ Sembunyikan konten utama
-        loginDialogOverlay.style.display = "flex"; // Tampilkan overlay login
-        loginButton.textContent = "Login Admin";
-        adminSection.style.display = "none";
-        emailInput.value = "";
-        passwordInput.value = "";
-        loginErrorMessage.textContent = "";
-      }
-
-      // ===============================================
-      //         PIN DIALOG LOGIC
-      // ===============================================
-
-      pinForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const enteredPin = pinInput.value.trim();
-        const actionType = pinDialogOverlay.dataset.actionType;
-        const actionKey = pinDialogOverlay.dataset.actionKey;
-        const selectedPath = pinDialogOverlay.dataset.selectedPath;
-        const folderName = pinDialogOverlay.dataset.folderName;
-        validatePin(enteredPin, actionType, actionKey, selectedPath, folderName);
-      });
-
-      cancelBtn.addEventListener("click", () => {
-        pinDialogOverlay.style.display = "none";
-        pinInput.value = "";
-        pinErrorMessage.textContent = "";
-        pendingAction = null;
-      });
-
-      function showPinDialog(actionType, actionKey, dialogTitle, selectedPath, data = null) {
-        pinInput.value = "";
-        pinErrorMessage.textContent = "";
-        pinDialogTitle.textContent = `Masukkan PIN untuk ${dialogTitle}`;
-        pinDialogMessage.textContent = "Untuk melanjutkan, Anda harus memasukkan PIN.";
-        pinDialogOverlay.dataset.actionType = actionType;
-        pinDialogOverlay.dataset.actionKey = actionKey;
-        if (selectedPath) {
-          pinDialogOverlay.dataset.selectedPath = selectedPath;
-        } else {
-          delete pinDialogOverlay.dataset.selectedPath;
-        }
-        if (data && data.folderName) {
-          pinDialogOverlay.dataset.folderName = data.folderName;
-        } else {
-          delete pinDialogOverlay.dataset.folderName;
-        }
-        pendingAction = data;
-        pinDialogOverlay.style.display = "flex";
-      }
-
-      async function validatePin(enteredPin, actionType, actionKey, selectedPath, folderName) {
-        let pinToCheck = "";
-
-        // PIN UNTUK LAPORAN NILAI
-        if (actionType === "view_report" || actionType === "delete_report") {
-          pinToCheck = await database
-            .ref(`akses_pin/${actionKey}`) // actionKey adalah reportKey
-            .once("value")
-            .then((snap) => snap.val());
-        }
-        // PIN UNTUK AKSES GLOBAL
-        else if (actionType === "toggle_access") {
-          pinToCheck = await database
-            .ref(`akses_pin/toggle_access_pin`)
-            .once("value")
-            .then((snap) => snap.val());
-        }
-        // PIN PER MATA KULIAH / FOLDER
-        else if (actionType === "toggle_course_access" || actionType === "set_deadline" || actionType === "view_folder" || actionType === "delete_folder") {
-          pinToCheck = await database
-            .ref(`akses_pin/${actionKey}`)
-            .once("value")
-            .then((snap) => snap.val());
-        } else {
-          // Fallback, harusnya tidak tercapai
-          pinToCheck = null;
-        }
-
-        if (enteredPin === pinToCheck) {
-          pinErrorMessage.textContent = "";
-          pinDialogOverlay.style.display = "none";
-
-          if (actionType === "view_folder") {
-            if (activeFolderElement) {
-              activeFolderElement.classList.remove("active-folder");
-            }
-            const folderElement = document.querySelector(`.folder-item[data-folder-name="${folderName}"]`);
-            if (folderElement) {
-              folderElement.classList.add("active-folder");
-              activeFolderElement = folderElement;
-            }
-
-            courseAuthStatus[actionKey] = true;
-            fetchFiles(selectedPath);
-          }
-          // LOGIKA UNTUK TAMPILKAN LAPORAN NILAI SETELAH PIN BENAR
-          else if (actionType === "view_report") {
-            const reportKey = actionKey;
-            const reportName = pendingAction.reportName;
-
-            // Hapus semua tabel laporan yang mungkin sudah dibuat, untuk memastikan hanya 1 yang aktif
-            document.querySelectorAll('[id^="report-table-"]').forEach((el) => el.remove());
-
-            const reportTableId = `report-table-${reportKey}`;
-            let reportElement = document.createElement("div");
-            reportElement.id = reportTableId;
-            reportElement.style.marginTop = "20px";
-            mainCard.appendChild(reportElement);
-
-            displayReportTable(reportKey, reportName); // Panggil fungsi render utama
-          }
-          // LOGIKA UNTUK HAPUS LAPORAN SETELAH PIN BENAR
-          else if (actionType === "delete_report") {
-            await deleteReport(actionKey, pendingAction.reportName);
-            pendingAction = null;
-          } else if (actionType === "toggle_access") {
-            await _toggleAccessStatusLogic("akses");
-          } else if (actionType === "toggle_course_access") {
-            await _toggleAccessStatusLogic(`akses_unggah/${actionKey}/isOpen`);
-          } else if (actionType === "delete_folder") {
-            await deleteFolder(pendingAction.folderName, pendingAction.folderKey);
-            pendingAction = null;
-          } else if (actionType === "set_deadline") {
-            pendingAction = null;
-          }
-        } else {
-          pinErrorMessage.textContent = "PIN salah! Silakan coba lagi.";
-        }
-      }
-
-      // ===============================================
-      //         FOLDER & FILE LOGIC
-      // ===============================================
-
-      async function fetchFolders() {
-        const storageRef = storage.ref("dokumen");
-        folderStatusMessage.textContent = "Memuat daftar folder...";
-        try {
-          const listResult = await storageRef.listAll();
-          displayFolders(listResult.prefixes);
-          if (listResult.prefixes.length > 0) {
-            folderStatusMessage.textContent = "";
-          } else {
-            folderStatusMessage.textContent = "Belum ada folder yang dibuat.";
-          }
-        } catch (error) {
-          console.error("Gagal mengambil daftar folder:", error);
-          folderStatusMessage.textContent = `Gagal memuat folder: ${error.message}`;
-        }
-      }
-
-      function displayFolders(prefixes) {
-        folderListContainer.innerHTML = "";
-        if (prefixes.length === 0) {
-          folderListContainer.innerHTML = '<p class="empty-message">Belum ada folder yang dibuat.</p>';
-          return;
-        }
-
-        prefixes.forEach((prefix) => {
-          const folderName = prefix.name;
-          const folderKey = folderName.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
-          const folderItem = document.createElement("li");
-          folderItem.classList.add("folder-item");
-          folderItem.dataset.folderName = folderName;
-          folderItem.innerHTML = `
-                            <img src="https://img.icons8.com/color/48/000000/folder-invoices.png" alt="Folder Icon" class="folder-icon" />
-                            <span>${folderName}</span>
-                            <button class="folder-delete-btn" data-folder-name="${folderName}" style="display: ${auth.currentUser ? "block" : "none"};">
-                                <img src="https://img.icons8.com/material-outlined/24/000000/trash--v1.png" alt="Hapus Folder" />
-                            </button>
-                        `;
-
-          folderItem.addEventListener("click", () => {
-            const path = `dokumen/${folderName}/`;
-            showPinDialog("view_folder", folderKey, `melihat folder ${folderName}`, path, { folderName });
+        if (Notification.permission === "granted") {
+          new Notification("Unggah Berhasil!", {
+            body: notificationBody,
+            icon: "https://img.icons8.com/color/96/000000/ok--v1.png",
           });
-
-          const deleteButton = folderItem.querySelector(".folder-delete-btn");
-          if (deleteButton) {
-            deleteButton.addEventListener("click", (e) => {
-              e.stopPropagation();
-              if (auth.currentUser && confirm(`Apakah Anda yakin ingin menghapus folder "${folderName}" beserta seluruh isinya? Aksi ini tidak dapat dibatalkan.`)) {
-                showPinDialog("delete_folder", folderKey, `menghapus folder ${folderName}`, null, { folderName, folderKey });
-              }
-            });
-          }
-          folderListContainer.appendChild(folderItem);
-        });
-      }
-
-      createFolderBtn.addEventListener("click", () => {
-        const folderName = newFolderNameInput.value.trim();
-        const folderPin = newFolderPinInput.value.trim();
-        if (!folderName || !folderPin) {
-          alert("Mohon masukkan nama folder dan PIN terlebih dahulu.");
-          return;
-        }
-        createFolder(folderName, folderPin);
-      });
-
-      async function createFolder(folderName, folderPin) {
-        createFolderBtn.disabled = true;
-        const originalBtnText = createFolderBtn.textContent;
-        createFolderBtn.textContent = "Sedang membuat...";
-
-        // 1. Buat key yang unik dan aman dari nama folder
-        const folderKey = folderName.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
-
-        try {
-          // 2. Cek apakah folder dengan key ini sudah ada di database
-          const snapshot = await database.ref(`mata_kuliah/${folderKey}`).once("value");
-          if (snapshot.exists()) {
-            alert(`Folder "${folderName}" sudah ada. Mohon gunakan nama lain.`);
-            return; // Hentikan proses jika folder sudah ada
-          }
-
-          // Lanjutkan proses pembuatan jika folder belum ada
-          const folderPath = `dokumen/${folderName}/`;
-          const placeholderFileName = ".gitkeep";
-          const placeholderBlob = new Blob([], { type: "text/plain" });
-
-          // Buat file placeholder di Firebase Storage untuk "membuat" folder
-          const storageRef = storage.ref(`${folderPath}${placeholderFileName}`);
-          await storageRef.put(placeholderBlob);
-
-          // Simpan data folder baru ke database
-          await database.ref(`akses_pin/${folderKey}`).set(folderPin);
-          await database.ref(`akses_unggah/${folderKey}/isOpen`).set(true); // Default open
-          await database.ref(`mata_kuliah/${folderKey}`).set(folderName);
-
-          alert(`Folder "${folderName}" berhasil dibuat dengan PIN. Akses unggah diatur ke BUKA.`);
-          newFolderNameInput.value = "";
-          newFolderPinInput.value = "";
-          fetchFolders();
-          fetchCourseList();
-        } catch (error) {
-          console.error("Gagal membuat folder:", error);
-          alert(`Gagal membuat folder: ${error.message}`);
-        } finally {
-          createFolderBtn.disabled = false;
-          createFolderBtn.textContent = originalBtnText;
         }
       }
 
-      async function deleteFolder(folderName, folderKey) {
-        const folderRef = storage.ref(`dokumen/${folderName}`);
-        try {
-          // Hapus semua file di dalam folder (termasuk .gitkeep jika ada)
-          const listResult = await folderRef.listAll();
-          const deletePromises = listResult.items.map((fileRef) => fileRef.delete());
-          await Promise.all(deletePromises);
-
-          // Hapus entri dari Realtime Database
-          const dbPromises = [database.ref(`akses_pin/${folderKey}`).remove(), database.ref(`akses_unggah/${folderKey}`).remove(), database.ref(`mata_kuliah/${folderKey}`).remove()];
-          await Promise.all(dbPromises);
-
-          alert(`Folder "${folderName}" berhasil dihapus beserta seluruh databasenya.`);
-          fetchFolders();
-          fetchCourseList();
-          fileListContainer.innerHTML = '<p class="status-message">Pilih folder di atas untuk melihat file.</p>';
-        } catch (error) {
-          console.error("Gagal menghapus folder:", error);
-          alert(`Gagal menghapus folder: ${error.message}`);
-        }
+      function showFailDialog(message) {
+        failMessage.textContent = message;
+        uploadFailOverlay.style.display = "flex";
       }
 
-      async function fetchFiles(path) {
-        currentFolderPath = path;
-        const storageRef = storage.ref(path);
-        fileListContainer.innerHTML = '<p class="status-message">Memuat daftar file...</p>';
-
-        try {
-          const listResult = await storageRef.listAll();
-          cachedFiles = [];
-          const filePromises = listResult.items.map(async (itemRef) => {
-            if (itemRef.name === ".gitkeep") return null;
-            const downloadURL = await itemRef.getDownloadURL();
-            const fileName = itemRef.name;
-            const filePath = itemRef.fullPath;
-            const fileExtension = fileName.split(".").pop().toLowerCase();
-            return { fileName, downloadURL, filePath, fileExtension };
-          });
-
-          cachedFiles = (await Promise.all(filePromises)).filter((file) => file !== null);
-          displayFiles(cachedFiles);
-        } catch (error) {
-          console.error("Gagal mengambil data file:", error);
-          fileListContainer.innerHTML = `<p class="status-message" style="color:#dc3545;">Gagal memuat file: ${error.message}</p>`;
-        }
+      function closeSuccessDialog() {
+        uploadSuccessOverlay.style.display = "none";
+        resetUploadState();
       }
 
-      function filterFiles(searchTerm) {
-        const filtered = cachedFiles.filter((file) => file.fileName.toLowerCase().includes(searchTerm.toLowerCase()));
-        displayFiles(filtered);
+      function closeFailDialog() {
+        uploadFailOverlay.style.display = "none";
+        resetUploadState();
       }
 
-      function displayFiles(files) {
-        fileListContainer.innerHTML = "";
-        if (files.length === 0) {
-          fileListContainer.innerHTML = '<p class="empty-message">Tidak ada file yang ditemukan.</p>';
-          return;
-        }
+      function resetUploadState() {
+        fileInput.value = "";
+        fileNameSpan.textContent = "";
+        progressContainer.style.display = "none";
+        rocketAnimation.style.display = "none";
+        scanAnimation.style.display = "none";
+        dropArea.style.display = "flex";
+        clearInterval(countdownInterval);
 
-        let fileNumber = 1;
-        files.forEach((file) => {
-          const li = document.createElement("li");
-          const fileNumberSpan = document.createElement("span");
-          fileNumberSpan.classList.add("file-number");
-          fileNumberSpan.textContent = `${fileNumber}.`;
+        statusMessage.classList.remove("timer-text");
+        statusMessage.style.color = "#555";
+        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
 
-          const fileNameSpan = document.createElement("span");
-          fileNameSpan.classList.add("file-name-text");
-          fileNameSpan.textContent = file.fileName;
-
-          const actionButtonsDiv = document.createElement("div");
-          actionButtonsDiv.classList.add("action-buttons");
-
-          // Preview Button Logic
-          const supportedPreviewExtensions = ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"];
-          if (supportedPreviewExtensions.includes(file.fileExtension)) {
-            const previewBtn = document.createElement("a");
-            previewBtn.classList.add("preview-btn");
-            previewBtn.target = "_blank";
-            let viewerUrl = file.fileExtension === "pdf" ? file.downloadURL : `https://docs.google.com/gview?url=${encodeURIComponent(file.downloadURL)}&embedded=true`;
-            previewBtn.href = viewerUrl;
-            const previewIcon = document.createElement("img");
-            previewIcon.src = "https://img.icons8.com/material-outlined/24/000000/visible.png";
-            previewIcon.alt = "Pratinjau";
-            previewBtn.appendChild(previewIcon);
-            actionButtonsDiv.appendChild(previewBtn);
-          }
-
-          // Download Button
-          const downloadBtn = document.createElement("a");
-          downloadBtn.href = file.downloadURL;
-          downloadBtn.classList.add("download-btn");
-          downloadBtn.target = "_blank";
-          downloadBtn.download = file.fileName;
-          const downloadIcon = document.createElement("img");
-          downloadIcon.src = "https://img.icons8.com/material-outlined/24/000000/download--v1.png";
-          downloadIcon.alt = "Unduh";
-          downloadBtn.appendChild(downloadIcon);
-          actionButtonsDiv.appendChild(downloadBtn);
-
-          // Delete Button (Admin Only)
-          const deleteBtn = document.createElement("button");
-          deleteBtn.classList.add("delete-btn");
-          const deleteIcon = document.createElement("img");
-          deleteIcon.src = "https://img.icons8.com/material-outlined/24/000000/trash--v1.png";
-          deleteIcon.alt = "Hapus";
-          deleteBtn.appendChild(deleteIcon);
-          deleteBtn.style.display = auth.currentUser ? "block" : "none";
-
-          deleteBtn.addEventListener("click", () => {
-            if (auth.currentUser && confirm(`Apakah Anda yakin ingin menghapus file "${file.fileName}"?`)) {
-              deleteFile(file.filePath);
-            }
-          });
-
-          actionButtonsDiv.appendChild(deleteBtn);
-          li.appendChild(fileNumberSpan);
-          li.appendChild(fileNameSpan);
-          li.appendChild(actionButtonsDiv);
-          fileListContainer.appendChild(li);
-          fileNumber++;
-        });
-      }
-
-      async function deleteFile(filePath) {
-        const fileRef = storage.ref(filePath);
-        try {
-          await fileRef.delete();
-          alert(`File berhasil dihapus.`);
-          fetchFiles(currentFolderPath);
-        } catch (error) {
-          console.error("Gagal menghapus file:", error);
-          alert(`Gagal menghapus file: ${error.message}`);
+        if (courseSelect.value) {
+          const courseKey = courseSelect.value;
+          const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+          checkCourseAccess(courseKey, courseName);
+          startCourseCountdown(courseKey, courseName);
         }
       }
-
-      // ===============================================
-      //         ACCESS TOGGLE & NOTIFICATION LOGIC
-      // ===============================================
-
-      toggleAccessBtn.addEventListener("click", () => {
-        showPinDialog("toggle_access", "toggle_access_pin", "mengubah status akses global", null);
-      });
-
-      toggleCourseAccessBtn.addEventListener("click", () => {
-        const courseKey = toggleCourseSelect.value;
-        if (courseKey) {
-          const courseName = toggleCourseSelect.options[toggleCourseSelect.selectedIndex].text;
-          showPinDialog("toggle_course_access", courseKey, `mengubah status akses ${courseName}`, null);
-        } else {
-          alert("Mohon pilih mata kuliah terlebih dahulu.");
-        }
-      });
 
       async function fetchCourseList() {
         try {
           const snapshot = await database.ref("mata_kuliah").once("value");
           const courses = snapshot.val();
 
-          // Bersihkan dropdown
-          while (toggleCourseSelect.options.length > 1) {
-            toggleCourseSelect.remove(1);
+          courseMap = {};
+          while (courseSelect.options.length > 1) {
+            courseSelect.remove(1);
           }
 
           if (courses) {
             for (const key in courses) {
               if (Object.hasOwnProperty.call(courses, key)) {
                 const courseName = courses[key];
+                courseMap[key] = courseName;
                 const option = document.createElement("option");
                 option.value = key;
                 option.textContent = courseName;
-                toggleCourseSelect.appendChild(option);
+                courseSelect.appendChild(option);
               }
             }
-          } else {
-            console.log("No courses found in the database.");
-          }
-          const currentSelection = toggleCourseSelect.value;
-          if (currentSelection) {
-            updateCourseToggleButtonStatus(currentSelection);
           }
         } catch (error) {
           console.error("Gagal memuat daftar mata kuliah:", error);
         }
       }
 
-      async function updateAccessButtonStatus() {
+      async function fetchCourseDeadlines() {
+        try {
+          const snapshot = await database.ref("akses_unggah").once("value");
+          courseDeadlines = snapshot.val() || {};
+        } catch (error) {
+          console.error("Gagal memuat deadline mata kuliah:", error);
+        }
+      }
+
+      function formatTime(ms) {
+        if (ms < 0) return "00 Hari 00:00:00";
+
+        const totalSeconds = Math.floor(ms / 1000);
+        const days = Math.floor(totalSeconds / (3600 * 24));
+        const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        const h = String(hours).padStart(2, "0");
+        const m = String(minutes).padStart(2, "0");
+        const s = String(seconds).padStart(2, "0");
+
+        return `${days} Hari ${h}:${m}:${s}`;
+      }
+
+      function updateCountdownDisplay(courseKey, courseName, deadlineTime) {
+        const now = new Date().getTime();
+        let distance = deadlineTime - now;
+
+        clearInterval(countdownInterval);
+
+        statusMessage.style.color = "";
+        statusMessage.classList.add("timer-text");
+
+        const updateTimer = () => {
+          distance = deadlineTime - new Date().getTime();
+
+          if (distance < 0) {
+            clearInterval(countdownInterval);
+            closeCourseAccess(courseKey, courseName);
+          } else {
+            statusMessage.innerHTML = `Waktu Pengumpulan Tersisa: ${formatTime(distance)}`;
+          }
+        };
+
+        updateTimer();
+        countdownInterval = setInterval(updateTimer, 1000);
+      }
+
+      function startCourseCountdown(courseKey, courseName) {
+        clearInterval(countdownInterval);
+
+        statusMessage.classList.remove("timer-text");
+        statusMessage.style.color = "#555";
+        statusMessage.textContent = "Memuat status pengumpulan...";
+
+        const courseData = courseDeadlines[courseKey];
+
+        if (courseData && courseData.isOpen === false) {
+          statusMessage.classList.add("timer-text");
+          statusMessage.style.color = "#dc3545";
+          statusMessage.innerHTML = "Akses pengumpulan sudah ditutup.";
+        } else if (courseData && courseData.deadline) {
+          const deadlineString = courseData.deadline;
+          const deadlineTime = new Date(deadlineString).getTime();
+          const now = new Date().getTime();
+
+          if (deadlineTime < now) {
+            closeCourseAccess(courseKey, courseName);
+            statusMessage.classList.add("timer-text");
+            statusMessage.style.color = "#dc3545";
+            statusMessage.innerHTML = `Pengumpulan ditutup karena Waktu habis sejak ${new Date(deadlineTime).toLocaleDateString("id-ID", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`;
+          } else {
+            updateCountdownDisplay(courseKey, courseName, deadlineTime);
+          }
+        } else {
+          statusMessage.classList.add("timer-text");
+          statusMessage.style.color = "#28a745";
+          statusMessage.innerHTML = "Akses terbuka silakan Pilih dokumen untuk diunggah.";
+        }
+      }
+
+      function closeCourseAccess(courseKey, courseName) {
+        courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
+        courseAccessMessage.textContent = `Waktu pengumpulan untuk mata kuliah ${courseName} telah habis. Akses ditutup secara otomatis.`;
+        courseAccessClosedOverlay.style.display = "flex";
+        fileInput.value = "";
+
+        database
+          .ref(`akses_unggah/${courseKey}/isOpen`)
+          .set(false)
+          .then(() => {
+            console.log(`Akses ${courseName} berhasil ditutup di Firebase.`);
+            if (courseDeadlines[courseKey]) {
+              courseDeadlines[courseKey].isOpen = false;
+            }
+            statusMessage.classList.add("timer-text");
+            statusMessage.style.color = "#dc3545";
+            statusMessage.innerHTML = `Pengumpulan tugas untuk ${courseName} telah ditutup.`;
+
+            if (Notification.permission === "granted") {
+              new Notification("Pengumpulan Ditutup Otomatis", {
+                body: `Waktu pengumpulan untuk ${courseName} sudah habis.`,
+                icon: "https://img.icons8.com/ios-filled/100/fa314a/lock.png",
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Gagal menutup akses di Firebase:", error);
+            statusMessage.innerHTML = `Gagal menutup akses di Firebase, namun waktu sudah habis.`;
+          });
+      }
+
+      async function checkCourseAccess(courseKey, courseName, callback = null) {
+        try {
+          const courseData = courseDeadlines[courseKey];
+          const isOpen = courseData ? courseData.isOpen : true;
+          const deadlineString = courseData ? courseData.deadline : null;
+          const now = new Date().getTime();
+
+          let isAccessOpen = isOpen;
+
+          if (isOpen === true && deadlineString) {
+            const deadlineTime = new Date(deadlineString).getTime();
+            if (deadlineTime < now) {
+              isAccessOpen = false;
+              closeCourseAccess(courseKey, courseName);
+            }
+          }
+
+          if (isAccessOpen === true) {
+            courseAccessClosedOverlay.style.display = "none";
+          } else {
+            courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
+            courseAccessMessage.textContent = `Pengumpulan tugas untuk mata kuliah ${courseName} telah ditutup (baik secara manual maupun otomatis karena waktu habis).`;
+            courseAccessClosedOverlay.style.display = "flex";
+            fileInput.value = "";
+          }
+
+          if (callback) {
+            callback(isAccessOpen);
+          }
+          return isAccessOpen;
+        } catch (error) {
+          console.error("Gagal memeriksa status akses mata kuliah:", error);
+          courseAccessTitle.textContent = "Gagal Memuat Status";
+          courseAccessMessage.textContent = `Gagal memuat status akses mata kuliah: ${error.message}`;
+          courseAccessClosedOverlay.style.display = "flex";
+          fileInput.value = "";
+          if (callback) {
+            callback(false);
+          }
+          return false;
+        }
+      }
+
+      function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+          console.log("Browser ini tidak mendukung notifikasi desktop.");
+          return;
+        }
+
+        Notification.requestPermission().then((permission) => {
+          console.log("Izin notifikasi:", permission);
+        });
+      }
+
+      async function checkMainAccessStatus() {
         try {
           const snapshot = await database.ref("akses").once("value");
           const isOpen = snapshot.val();
+
           if (isOpen === true) {
-            toggleAccessBtn.textContent = "Akses Website: BUKA ✅";
-            toggleAccessBtn.classList.remove("access-closed");
-            toggleAccessBtn.classList.add("access-open");
+            mainAccessClosedOverlay.style.display = "none";
           } else {
-            toggleAccessBtn.textContent = "Akses Website: TUTUP 🔒";
-            toggleAccessBtn.classList.remove("access-open");
-            toggleAccessBtn.classList.add("access-closed");
-          }
-        } catch (error) {
-          console.error("Gagal memperbarui status tombol:", error);
-          toggleAccessBtn.textContent = "Status tidak dapat dimuat.";
-        }
-      }
-
-      async function _toggleAccessStatusLogic(dbPath) {
-        try {
-          const snapshot = await database.ref(dbPath).once("value");
-          const currentStatus = snapshot.val();
-          const newStatus = !currentStatus;
-          await database.ref(dbPath).set(newStatus);
-
-          if (dbPath === "akses") {
-            updateAccessButtonStatus();
-          } else {
-            // dbPath is like 'akses_unggah/mk_key/isOpen'
-            const parts = dbPath.split("/");
-            const courseKey = parts[1];
-            updateCourseToggleButtonStatus(courseKey);
-          }
-          alert(`Akses berhasil diubah menjadi: ${newStatus ? "DIBUKA" : "DITUTUP"}`);
-        } catch (error) {
-          console.error("Gagal mengubah status akses:", error);
-          alert(`Gagal mengubah status akses: ${error.message}`);
-        }
-      }
-
-      sendNotificationBtn.addEventListener("click", () => {
-        const title = notificationTitleInput.value.trim();
-        const message = notificationMessageInput.value.trim();
-        if (!title || !message) {
-          alert("Judul dan pesan tidak boleh kosong.");
-          return;
-        }
-        sendManualNotification(title, message);
-      });
-
-      async function sendManualNotification(title, message) {
-        sendNotificationBtn.disabled = true;
-        const originalBtnText = sendNotificationBtn.textContent;
-        sendNotificationBtn.textContent = "Mengirim...";
-
-        try {
-          const notifRef = database.ref("notifikasi_manual");
-          const snapshot = await notifRef.once("value");
-          const currentNotif = snapshot.val();
-
-          let newIdNumber = 1;
-          if (currentNotif && currentNotif.id) {
-            const lastId = currentNotif.id;
-            const numberString = lastId.split("-").pop();
-            const lastNumber = parseInt(numberString);
-            if (!isNaN(lastNumber)) {
-              newIdNumber = lastNumber + 1;
-            }
-          }
-
-          const newId = `notif-penting-${String(newIdNumber).padStart(2, "0")}`;
-
-          await notifRef.set({
-            aktif: true,
-            id: newId,
-            judul: title,
-            isi: message,
-            timestamp: firebase.database.ServerValue.TIMESTAMP,
-          });
-
-          alert("Notifikasi berhasil dikirim!");
-          notificationTitleInput.value = "";
-          notificationMessageInput.value = "";
-        } catch (error) {
-          console.error("Gagal mengirim notifikasi:", error);
-          alert(`Gagal mengirim notifikasi: ${error.message}`);
-        } finally {
-          sendNotificationBtn.disabled = false;
-          sendNotificationBtn.textContent = originalBtnText;
-        }
-      }
-
-      // ===============================================
-      //         LAPORAN NILAI LOGIC (FITUR BARU)
-      // ===============================================
-
-      async function fetchReportList() {
-        reportListContainer.innerHTML = '<p class="status-message">Memuat daftar laporan...</p>';
-        try {
-          const snapshot = await database.ref("laporan_nilai").once("value");
-          const reports = snapshot.val();
-          reportListContainer.innerHTML = "";
-
-          if (reports) {
-            for (const key in reports) {
-              const reportName = reports[key].name || key; // Gunakan key jika name tidak ada
-              const reportItem = document.createElement("li");
-              reportItem.classList.add("folder-item"); // Reuse folder-item style
-              reportItem.dataset.reportKey = key;
-
-              const deleteBtnHtml = `
-                    <button 
-                        class="folder-delete-btn delete-report-btn" 
-                        data-report-key="${key}" 
-                        data-report-name="${reportName}"
-                        style="display: ${auth.currentUser ? "block" : "none"};"
-                    >
-                        <img src="https://img.icons8.com/material-outlined/24/000000/trash--v1.png" alt="Hapus Laporan" />
-                    </button>
-                `;
-
-              reportItem.innerHTML = `
-                                <img src="https://img.icons8.com/color/48/000000/documents.png" alt="Report Icon" class="folder-icon" />
-                                <span>${reportName}</span>
-                                ${deleteBtnHtml}
-                            `;
-
-              // Event listener untuk melihat laporan
-              reportItem.addEventListener("click", (e) => {
-                // Jika yang diklik adalah tombol hapus, jangan tampilkan laporan
-                if (e.target.closest(".delete-report-btn")) return;
-
-                // --- MINTA PIN SEBELUM MELIHAT LAPORAN ---
-                showPinDialog("view_report", key, `melihat laporan ${reportName}`, null, { reportName });
-                // ----------------------------------------
+            mainLayout.style.display = "none";
+            loginScreen.style.display = "none";
+            mainAccessClosedOverlay.style.display = "flex";
+            if (Notification.permission === "granted") {
+              new Notification("Pengumpulan Tugas Ditutup", {
+                body: "Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak putra untuk informasi lebih lanjut.",
+                icon: "https://img.icons8.com/ios-filled/100/fa314a/lock.png",
               });
-
-              // Event listener untuk menghapus laporan
-              const deleteButton = reportItem.querySelector(".delete-report-btn");
-              if (deleteButton) {
-                deleteButton.addEventListener("click", (e) => {
-                  e.stopPropagation();
-                  if (auth.currentUser && confirm(`Apakah Anda yakin ingin menghapus Laporan Nilai "${reportName}"? Aksi ini tidak dapat dibatalkan.`)) {
-                    showPinDialog("delete_report", key, `menghapus laporan ${reportName}`, null, { reportName: reportName });
-                  }
-                });
-              }
-
-              reportListContainer.appendChild(reportItem);
             }
-          } else {
-            reportListContainer.innerHTML = '<p class="empty-message">Belum ada laporan nilai yang dibuat.</p>';
           }
         } catch (error) {
-          console.error("Gagal memuat daftar laporan:", error);
-          reportListContainer.innerHTML = `<p class="status-message" style="color:#dc3545;">Gagal memuat laporan: ${error.message}</p>`;
+          console.error("Gagal memeriksa status akses:", error);
+          mainLayout.style.display = "none";
+          loginScreen.style.display = "none";
+          mainAccessClosedOverlay.style.display = "flex";
+          const message = mainAccessClosedOverlay.querySelector("p");
+          message.textContent = `Gagal memuat status akses: ${error.message}`;
         }
       }
 
-      // FUNGSI BARU: HAPUS LAPORAN
-      async function deleteReport(reportKey, reportName) {
-        try {
-          // 1. Hapus data laporan dari laporan_nilai
-          await database.ref(`laporan_nilai/${reportKey}`).remove();
+      function listenForManualNotifications() {
+        const notifRef = database.ref("notifikasi_manual");
 
-          // 2. Hapus PIN terkait dari akses_pin
-          await database.ref(`akses_pin/${reportKey}`).remove();
+        notifRef.on("value", (snapshot) => {
+          const notifData = snapshot.val();
+          if (notifData && notifData.aktif === true) {
+            const lastNotifId = localStorage.getItem("last-notification-id");
 
-          alert(`Laporan "${reportName}" berhasil dihapus.`);
-          fetchReportList(); // Muat ulang daftar laporan
-
-          // Bersihkan tampilan jika laporan yang dihapus sedang aktif
-          document.querySelectorAll('[id^="report-table-"]').forEach((el) => el.remove());
-          showAdminView();
-        } catch (error) {
-          console.error("Gagal menghapus laporan:", error);
-          alert(`Gagal menghapus laporan: ${error.message}`);
-        }
-      }
-
-      createReportBtn.addEventListener("click", () => {
-        const reportName = newReportNameInput.value.trim();
-        if (!reportName) {
-          alert("Mohon masukkan nama laporan.");
-          return;
-        }
-        createReport(reportName);
-      });
-
-      async function createReport(reportName) {
-        createReportBtn.disabled = true;
-        const originalBtnText = createReportBtn.textContent;
-        createReportBtn.textContent = "Sedang membuat...";
-
-        // --- AMBIL PIN BARU ---
-        const reportPin = newReportPinInput.value.trim();
-        if (!reportPin) {
-          alert("PIN untuk Laporan Baru tidak boleh kosong.");
-          createReportBtn.disabled = false;
-          createReportBtn.textContent = originalBtnText;
-          return;
-        }
-        // -----------------------
-
-        // 1. Dapatkan daftar mahasiswa dari input user via prompt
-        const studentListInput = prompt("Masukkan daftar mahasiswa (NIM, Nama Mahasiswa, L/P) per baris.\nContoh:\n162024001,NADA MAHARANI,P\n162024002,JUNIAIN RISKI,L\n\n(Kosongkan untuk data demo 3 mahasiswa)");
-
-        if (studentListInput === null) {
-          // User membatalkan prompt
-          createReportBtn.disabled = false;
-          createReportBtn.textContent = originalBtnText;
-          return;
-        }
-
-        let rawStudents = [];
-        if (studentListInput.trim() === "") {
-          // Data demo jika user kosongkan
-          rawStudents = ["162024001,NAMA DEMO SATU,P", "162024002,NAMA DEMO DUA,L", "162024003,NAMA DEMO TIGA,P"];
-        } else {
-          rawStudents = studentListInput
-            .trim()
-            .split("\n")
-            .filter((line) => line.trim() !== ""); // Filter baris kosong
-        }
-
-        const taskColumns = [];
-        for (let i = 1; i <= 16; i++) {
-          // Kolom TUGAS 1 sampai TUGAS 16
-          // Mengganti TUGAS 8 dan TUGAS 16
-          if (i === 8) taskColumns.push("UTS");
-          else if (i === 16) taskColumns.push("UAS");
-          else taskColumns.push(`TUGAS ${i}`);
-        }
-
-        const studentData = [];
-
-        // 2. Proses data input
-        rawStudents.forEach((line) => {
-          const parts = line.split(",").map((p) => p.trim());
-          if (parts.length >= 3) {
-            const nim = parts[0];
-            const name = parts[1];
-            const lp = parts[2].toUpperCase().substring(0, 1); // Ambil L atau P
-
-            let studentRow = {
-              NIM: nim,
-              "NAMA MAHASISWA": name,
-              L_P: lp,
-              // Inisiasi nilai untuk kolom ujian
-              UTS: 0,
-              UAS: 0,
-            };
-
-            // Tambahkan kolom Tugas (1-7, 9-15) dengan nilai awal 0
-            for (let i = 1; i <= 16; i++) {
-              if (i === 8) studentRow["UTS"] = 0;
-              else if (i === 16) studentRow["UAS"] = 0;
-              else studentRow[`TUGAS ${i}`] = 0;
+            if (lastNotifId !== notifData.id) {
+              displaySystemNotification(notifData);
             }
-
-            studentData.push(studentRow);
           }
         });
+      }
 
-        if (studentData.length === 0) {
-          alert("Input data mahasiswa tidak valid. Pastikan formatnya adalah NIM, Nama Mahasiswa, L/P dan minimal ada 1 mahasiswa.");
-          createReportBtn.disabled = false;
-          createReportBtn.textContent = originalBtnText;
-          return;
-        }
-
-        // --- PENGURUTAN SEBELUM DISIMPAN KE FIREBASE ---
-        studentData.sort((a, b) => {
-          const nimA = parseInt(a.NIM);
-          const nimB = parseInt(b.NIM);
-          if (!isNaN(nimA) && !isNaN(nimB)) {
-            return nimA - nimB; // Urutan berdasarkan angka NIM
-          }
-          return a.NIM.localeCompare(b.NIM); // Fallback ke pengurutan string
-        });
-        // ----------------------------------------------
-
-        // 4. Tambahkan kolom hasil ke array kolom utama
-        const columnsArray = ["NO", "NAMA MAHASISWA", "NIM", "L_P", ...taskColumns, ...RESULT_COLUMNS];
-
-        try {
-          const newReportRef = database.ref("laporan_nilai").push();
-          const reportKey = newReportRef.key;
-
-          await newReportRef.set({
-            name: reportName, // Simpan nama laporan
-            columns: columnsArray,
-            data: studentData,
+      function displaySystemNotification(data) {
+        if (Notification.permission === "granted") {
+          new Notification(data.judul, {
+            body: data.isi,
+            icon: "https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1",
           });
 
-          // --- SIMPAN PIN DI NODE AKSES_PIN ---
-          await database.ref(`akses_pin/${reportKey}`).set(reportPin);
-          // ------------------------------------
-
-          alert(`Laporan "${reportName}" berhasil dibuat dengan PIN. Gunakan PIN ini untuk mengakses.`);
-          newReportNameInput.value = "";
-          newReportPinInput.value = ""; // Bersihkan input PIN
-          fetchReportList();
-        } catch (error) {
-          console.error("Gagal membuat laporan:", error);
-          alert(`Gagal membuat laporan: ${error.message}`);
-        } finally {
-          createReportBtn.disabled = false;
-          createReportBtn.textContent = originalBtnText;
-        }
-      }
-
-      function displayReportTable(reportKey, reportName) {
-        // Simpan reportKey yang sedang aktif untuk fungsi update live
-        window.currentReportKey = reportKey;
-
-        // Sembunyikan semua konten utama
-        document.querySelectorAll(".folder-list-container, .search-group, #fileList, #admin-section").forEach((el) => (el.style.display = "none"));
-        document.querySelector("h2").textContent = `Laporan Nilai: ${reportName}`;
-        document.querySelector("hr").style.display = "none";
-        loginButton.style.display = "none";
-
-        // Hapus semua tabel laporan yang mungkin sudah dibuat
-        document.querySelectorAll('[id^="report-table-"]').forEach((el) => el.remove());
-
-        const reportTableId = `report-table-${reportKey}`;
-        let reportElement = document.createElement("div");
-        reportElement.id = reportTableId;
-        reportElement.style.marginTop = "20px";
-        mainCard.appendChild(reportElement); // Sisipkan ke dalam card utama
-
-        renderReportContent(reportElement, reportKey, reportName);
-      }
-
-      async function renderReportContent(container, reportKey, reportName) {
-        container.innerHTML = `<p class="status-message">Memuat detail laporan...</p>`;
-
-        // Tombol-tombol Aksi (BACK & EXPORT)
-        const actionDiv = document.createElement("div");
-        actionDiv.style.marginBottom = "15px";
-
-        const backBtn = document.createElement("button");
-        backBtn.textContent = "⬅️ Kembali ke Admin Dashboard";
-        backBtn.classList.add("access-button", "access-closed");
-        backBtn.style.marginRight = "10px";
-        backBtn.style.marginBottom = "0";
-        backBtn.addEventListener("click", () => {
-          container.remove(); // Hapus tabel saat kembali
-          delete window.currentReportKey; // Hapus state reportKey yang aktif
-          showAdminView(); // Tampilkan kembali Admin View
-        });
-        actionDiv.appendChild(backBtn);
-
-        const exportBtn = document.createElement("button");
-        exportBtn.textContent = "Export ke CSV 📄";
-        exportBtn.classList.add("access-button", "access-open");
-        exportBtn.style.marginBottom = "0";
-        exportBtn.addEventListener("click", () => exportReportToCSV(reportKey, reportName));
-        actionDiv.appendChild(exportBtn);
-
-        container.innerHTML = "";
-        container.appendChild(actionDiv);
-
-        const dataSnapshot = await database.ref(`laporan_nilai/${reportKey}`).once("value");
-        const reportData = dataSnapshot.val();
-
-        if (!reportData || !reportData.data || reportData.data.length === 0) {
-          container.innerHTML += '<p class="empty-message">Tidak ada data mahasiswa dalam laporan ini.</p>';
-
-          // Tambahkan tombol Add Student di sini juga jika list kosong
-          const addStudentBtn = document.createElement("button");
-          addStudentBtn.textContent = "⬇️ Tambah Baris Mahasiswa Baru";
-          addStudentBtn.classList.add("access-button", "access-open");
-          addStudentBtn.style.marginTop = "15px";
-          addStudentBtn.style.width = "100%";
-          addStudentBtn.addEventListener("click", () => addNewStudentRow(reportKey, reportData.name));
-          container.appendChild(addStudentBtn);
-
-          return;
-        }
-
-        // --- PENGURUTAN SEBELUM DITAMPILKAN ---
-        reportData.data.sort((a, b) => {
-          const nimA = parseInt(a.NIM);
-          const nimB = parseInt(b.NIM);
-          if (!isNaN(nimA) && !isNaN(nimB)) {
-            return nimA - nimB; // Urutan berdasarkan angka NIM
-          }
-          return a.NIM.localeCompare(b.NIM); // Fallback ke pengurutan string
-        });
-        // ------------------------------------
-
-        const tableContainer = document.createElement("div");
-        // Kontainer ini akan memiliki scrollbar jika tabel terlalu lebar
-        tableContainer.id = "report-table-fixed-container";
-        container.appendChild(tableContainer);
-
-        const table = document.createElement("table");
-        table.style.width = "auto"; // Mengizinkan tabel menyusut/melebar sesuai konten
-        table.style.minWidth = "100%"; // Agar tetap memenuhi 100% jika layarnya cukup lebar
-        table.style.borderCollapse = "collapse";
-
-        // Buat kolom header
-        let headerHtml = "<tr>";
-        reportData.columns.forEach((col) => {
-          let minWidth = "auto";
-          let bgColor = "#007bff";
-
-          // Tentukan lebar kolom nilai agar tampilan desktop optimal
-          if (col.includes("TUGAS")) {
-            minWidth = "80px";
-          } else if (col === "NIM") {
-            minWidth = "100px";
-          } else if (col === "NAMA MAHASISWA") {
-            minWidth = "150px";
-          } else if (col === "UTS" || col === "UAS" || RESULT_COLUMNS.includes(col)) {
-            minWidth = "100px";
-          } else if (col === "NO" || col === "L_P") {
-            minWidth = "40px";
-          }
-
-          if (RESULT_COLUMNS.includes(col)) {
-            bgColor = "#17a2b8"; // Warna berbeda untuk hasil perhitungan
-          }
-
-          headerHtml += `<th class="report-table-fixed" style="border: 1px solid #ddd; padding: 8px; min-width: ${minWidth}; background-color: ${bgColor}; color: white; white-space: nowrap;">${col}</th>`;
-        });
-        headerHtml += "</tr>";
-
-        table.innerHTML = `
-          <thead style="color: white;">
-            ${headerHtml}
-          </thead>
-          <tbody id="report-tbody-${reportKey}">
-            </tbody>
-        `;
-        tableContainer.appendChild(table);
-
-        const tbody = document.getElementById(`report-tbody-${reportKey}`);
-        reportData.data.forEach((row, rowIndex) => {
-          // Hitung nilai akhir untuk baris ini
-          const finalGrades = calculateFinalGrade(row);
-
-          const tr = document.createElement("tr");
-          tr.dataset.rowIndex = rowIndex; // Simpan index urutan TAMPILAN
-
-          reportData.columns.forEach((colName, colIndex) => {
-            const td = document.createElement("td");
-            td.style.border = "1px solid #ddd";
-            td.style.padding = "8px";
-
-            td.style.textAlign = ["NO", "L_P"].includes(colName) || colName.includes("TUGAS") || colName === "UTS" || colName === "UAS" ? "center" : "left";
-
-            if (colName === "NO") {
-              td.textContent = rowIndex + 1;
-            } else if (RESULT_COLUMNS.includes(colName)) {
-              // Kolom Hasil Perhitungan
-              td.textContent = finalGrades[colName];
-              td.style.backgroundColor = "#e9f8ff";
-            } else if (["NAMA MAHASISWA", "NIM", "L_P"].includes(colName)) {
-              // Kolom data identitas
-              td.textContent = row[colName];
-            } else {
-              // Kolom nilai yang bisa diedit (TUGAS, UTS, UAS, dll.)
-              const input = document.createElement("input");
-              input.type = "number";
-              input.min = 0;
-              input.max = 100;
-              input.value = row[colName] || 0;
-              // Gunakan style inline untuk lebar input agar konsisten
-              input.style.width = "55px";
-              input.style.textAlign = "center";
-              input.style.border = "1px solid #ccc";
-              input.style.borderRadius = "4px";
-              input.style.padding = "5px";
-              input.style.boxSizing = "border-box";
-              input.style.transition = "background-color 0.2s";
-
-              input.dataset.colName = colName;
-              input.dataset.rowIndex = rowIndex;
-
-              input.addEventListener("change", async (e) => {
-                const changedRowIndex = parseInt(e.target.dataset.rowIndex);
-                const changedColName = e.target.dataset.colName;
-                const newValue = parseInt(e.target.value) || 0;
-
-                e.target.disabled = true;
-                e.target.style.backgroundColor = "#fff3cd"; // Kuning: Menyimpan
-
-                try {
-                  // 1. Update data di array lokal (yang sudah diurutkan)
-                  reportData.data[changedRowIndex][changedColName] = newValue;
-
-                  // 2. Simpan SELURUH array data ke Firebase (Lebih aman untuk data yang diurutkan)
-                  await database.ref(`laporan_nilai/${reportKey}/data`).set(reportData.data);
-
-                  // 3. Update Kolom Hasil secara LIVE (tanpa render ulang tabel)
-                  updateResultColumns(reportData.data[changedRowIndex], changedRowIndex, reportData.columns);
-
-                  e.target.style.backgroundColor = "#d4edda"; // Hijau: Berhasil
-                  setTimeout(() => {
-                    e.target.style.backgroundColor = "white";
-                    e.target.disabled = false;
-                  }, 500);
-                } catch (error) {
-                  console.error("Gagal menyimpan nilai:", error);
-                  e.target.style.backgroundColor = "#f8d7da"; // Merah: Error
-                  alert("Gagal menyimpan nilai. Cek koneksi.");
-                  setTimeout(() => {
-                    e.target.style.backgroundColor = "white";
-                    e.target.disabled = false;
-                  }, 2000);
-                }
-              });
-              td.appendChild(input);
-            }
-            tr.appendChild(td);
-          });
-          tbody.appendChild(tr);
-        });
-
-        // Tombol Tambah Kolom Nilai Baru (horizontal)
-        const newColumnBtn = document.createElement("button");
-        newColumnBtn.textContent = "➕ Tambah Kolom Nilai Baru";
-        newColumnBtn.classList.add("access-button", "access-open");
-        newColumnBtn.style.marginTop = "15px";
-        newColumnBtn.style.width = "100%";
-        newColumnBtn.addEventListener("click", () => {
-          const newColName = prompt("Masukkan nama kolom nilai baru (Contoh: QUIZ atau TUGAS 17):");
-          if (newColName && newColName.trim()) {
-            addNewColumn(reportKey, newColName.trim().toUpperCase());
-          } else if (newColName !== null) {
-            alert("Nama kolom tidak boleh kosong.");
-          }
-        });
-        container.appendChild(newColumnBtn);
-
-        // Tombol Tambah Baris Mahasiswa Baru (vertikal)
-        const addStudentBtn = document.createElement("button");
-        addStudentBtn.textContent = "⬇️ Tambah Baris Mahasiswa Baru (Otomatis Diurutkan)";
-        addStudentBtn.classList.add("access-button", "access-open");
-        addStudentBtn.style.marginTop = "15px";
-        addStudentBtn.style.width = "100%";
-        addStudentBtn.addEventListener("click", () => addNewStudentRow(reportKey, reportData.name));
-        container.appendChild(addStudentBtn);
-      }
-
-      // ===============================================
-      //         FUNGSI TAMBAH BARIS MAHASISWA BARU
-      // ===============================================
-      async function addNewStudentRow(reportKey, reportName) {
-        const studentInput = prompt("Masukkan data mahasiswa baru (NIM, Nama Mahasiswa, L/P).\nContoh: 162024099,JOHN DOE,L");
-
-        if (!studentInput) return; // Batal atau input kosong
-
-        const parts = studentInput.split(",").map((p) => p.trim());
-        if (parts.length < 3) {
-          alert("Format input salah. Harap masukkan NIM, Nama Mahasiswa, dan L/P dipisahkan koma.");
-          return;
-        }
-
-        const [nim, name, lpRaw] = parts;
-        const lp = lpRaw.toUpperCase().substring(0, 1);
-
-        if (!nim || !name || (lp !== "L" && lp !== "P")) {
-          alert("Data tidak lengkap atau Jenis Kelamin (L/P) tidak valid.");
-          return;
-        }
-
-        try {
-          // 1. Ambil data laporan yang sudah ada
-          const dataSnapshot = await database.ref(`laporan_nilai/${reportKey}`).once("value");
-          const reportData = dataSnapshot.val();
-          let currentData = reportData.data || [];
-          const columns = reportData.columns;
-
-          // Cek duplikasi NIM
-          if (currentData.some((row) => row.NIM === nim)) {
-            alert(`Mahasiswa dengan NIM ${nim} sudah ada di laporan ini.`);
-            return;
-          }
-
-          // 2. Buat objek data mahasiswa baru
-          let newStudentRow = {
-            NIM: nim,
-            "NAMA MAHASISWA": name,
-            L_P: lp,
-            UTS: 0,
-            UAS: 0,
-          };
-
-          // 3. Isi nilai 0 untuk semua kolom tugas/nilai yang sudah ada
-          columns.forEach((col) => {
-            if (col.startsWith("TUGAS") || col === "UTS" || col === "UAS") {
-              newStudentRow[col] = 0;
+          localStorage.setItem("last-notification-id", data.id);
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              displaySystemNotification(data);
             }
           });
-
-          // 4. Tambahkan ke array data saat ini
-          currentData.push(newStudentRow);
-
-          // 5. Urutkan kembali array data
-          currentData.sort((a, b) => {
-            const nimA = parseInt(a.NIM);
-            const nimB = parseInt(b.NIM);
-            if (!isNaN(nimA) && !isNaN(nimB)) {
-              return nimA - nimB; // Urutan berdasarkan angka NIM
-            }
-            return a.NIM.localeCompare(b.NIM); // Fallback ke pengurutan string
-          });
-
-          // 6. Simpan kembali ke Firebase
-          await database.ref(`laporan_nilai/${reportKey}/data`).set(currentData);
-
-          alert(`Mahasiswa "${name}" berhasil ditambahkan ke laporan dan diurutkan berdasarkan NIM.`);
-
-          // Render ulang tabel untuk menampilkan baris baru dengan urutan yang benar
-          const oldTable = document.getElementById(`report-table-${reportKey}`);
-          if (oldTable) oldTable.remove();
-          displayReportTable(reportKey, reportName);
-        } catch (error) {
-          console.error("Gagal menambahkan baris mahasiswa:", error);
-          alert(`Gagal menambahkan mahasiswa: ${error.message}`);
-        }
-      }
-
-      async function addNewColumn(reportKey, newColName) {
-        try {
-          const dataSnapshot = await database.ref(`laporan_nilai/${reportKey}`).once("value");
-          const reportData = dataSnapshot.val();
-
-          if (reportData.columns.includes(newColName)) {
-            alert(`Kolom dengan nama "${newColName}" sudah ada.`);
-            return;
-          }
-
-          // Cek apakah kolom hasil akan tertimpa
-          if (RESULT_COLUMNS.includes(newColName)) {
-            alert(`Nama kolom "${newColName}" dicadangkan untuk hasil perhitungan.`);
-            return;
-          }
-
-          // 1. Ambil kolom original tanpa kolom hasil
-          const originalColumns = reportData.columns.filter((col) => !RESULT_COLUMNS.includes(col));
-
-          // 2. Tambahkan kolom baru di sebelum kolom hasil
-          const newColumns = [...originalColumns, newColName, ...RESULT_COLUMNS];
-
-          await database.ref(`laporan_nilai/${reportKey}/columns`).set(newColumns);
-
-          // 3. Inisialisasi nilai 0 untuk kolom baru di setiap baris data
-          const newData = reportData.data.map((row) => ({
-            ...row,
-            [newColName]: 0, // Nilai awal 0
-          }));
-          await database.ref(`laporan_nilai/${reportKey}/data`).set(newData);
-
-          alert(`Kolom "${newColName}" berhasil ditambahkan. Memuat ulang tabel...`);
-
-          // Render ulang tabel untuk menampilkan kolom baru
-          const oldTable = document.getElementById(`report-table-${reportKey}`);
-          const reportName = reportData.name;
-          if (oldTable) oldTable.remove();
-          displayReportTable(reportKey, reportName);
-        } catch (error) {
-          console.error("Gagal menambahkan kolom:", error);
-          alert(`Gagal menambahkan kolom: ${error.message}`);
-        }
-      }
-
-      // Fungsi untuk Ekspor ke CSV
-      async function exportReportToCSV(reportKey, reportName) {
-        try {
-          const snapshot = await database.ref(`laporan_nilai/${reportKey}`).once("value");
-          const reportData = snapshot.val();
-
-          if (!reportData || !reportData.data || reportData.data.length === 0) {
-            alert("Tidak ada data untuk diekspor.");
-            return;
-          }
-
-          const columns = reportData.columns;
-          let data = reportData.data;
-
-          // Urutkan data berdasarkan NIM sebelum diekspor
-          data.sort((a, b) => {
-            const nimA = parseInt(a.NIM);
-            const nimB = parseInt(b.NIM);
-            if (!isNaN(nimA) && !isNaN(nimB)) {
-              return nimA - nimB;
-            }
-            return a.NIM.localeCompare(b.NIM);
-          });
-
-          // Siapkan data dengan kolom hasil yang sudah dihitung
-          const dataWithGrades = data.map((row) => {
-            const grades = calculateFinalGrade(row);
-            return { ...row, ...grades };
-          });
-
-          // Header CSV
-          let csvContent = columns.join(",") + "\n";
-
-          // Isi Data
-          dataWithGrades.forEach((row, index) => {
-            const rowValues = columns.map((col) => {
-              if (col === "NO") return index + 1;
-              let value = row[col];
-
-              // Logika Khusus untuk memastikan nilai numerik diekspor tanpa tanda kutip
-              if (RESULT_COLUMNS.includes(col) || col.includes("TUGAS") || col === "UTS" || col === "UAS") {
-                value = parseFloat(value); // Pastikan numerik
-              }
-
-              // Mengatasi koma/newline dalam data string (jika ada)
-              if (typeof value === "string" && (value.includes(",") || value.includes("\n"))) {
-                return `"${value.replace(/"/g, '""')}"`;
-              }
-              return value;
-            });
-            csvContent += rowValues.join(",") + "\n";
-          });
-
-          // Buat Blob dan Download
-          const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-          const link = document.createElement("a");
-          if (link.download !== undefined) {
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `${reportName.replace(/\s/g, "_")}_${new Date().toISOString().slice(0, 10)}.csv`);
-            link.style.visibility = "hidden";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          } else {
-            alert("Browser Anda tidak mendukung fitur download otomatis. Mohon salin konten CSV secara manual.");
-          }
-        } catch (error) {
-          console.error("Gagal ekspor CSV:", error);
-          alert(`Gagal mengekspor data: ${error.message}`);
         }
       }
     </script>
