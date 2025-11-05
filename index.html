@@ -5,164 +5,293 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portal Tugas TI UM-Palembang (Login & Riwayat)</title>
     <link rel="icon" type="image/x-icon" href="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
     <style>
-      /* ========================== CSS DARK MODE ELEGAN ========================== */
-
-      /* ========================== CSS DARK MODE ELEGAN ========================== */
-
+      /* CSS Variables untuk kemudahan kustomisasi */
       :root {
-        /* Palet Warna Dark Mode */
-        --bg-dark: #1e1e2d; /* Latar belakang utama */
-        --card-bg: #27293d; /* Latar belakang kartu/elemen */
-        --sidebar-bg: #222533; /* Latar belakang sidebar */
-        --text-light: #e0e0e0; /* Teks umum */
-        --text-muted: #aaaaaa; /* Teks sekunder/deskripsi */
-        --accent-blue: #dc3545; /* Warna aksen biru (Dibuat merah agar sesuai logo) */
-        --accent-blue-hover: rgb(179, 0, 0);
-        --delete-red: #dc3545; /* Warna tombol hapus */
-        --border-dark: #3a3a5a; /* Warna border di dark mode */
-        --red-header: #c0392b; /* Warna header merah paling atas */
+        --primary: #4e73df; /* Warna utama, dari Bootstrap Blue */
+        --accent-red: #e74a3b; /* Warna aksen, dari Bootstrap Danger */
+        --text-dark: #2c3e50;
+        --text-light: #ecf0f1;
+        --text-muted: #95a5a6;
+        --bg-dark: #1f2a3a;
+        --card-bg: #2b394d;
+        --border-dark: #44546c;
+        --sidebar-bg: #1f2a3a;
+        --sidebar-hover: #34495e;
       }
 
+      /* Base Styles & Typography */
       body {
         font-family: "Poppins", sans-serif;
-        margin: 0;
-        padding: 0;
         background-color: var(--bg-dark);
         color: var(--text-light);
-        display: flex;
-        flex-direction: column;
+        margin: 0;
         min-height: 100vh;
+        overflow-x: hidden;
       }
 
-      /* Running Text (Header Paling Atas) */
-      .running-text-container {
-        width: 100%;
-        padding: 8px 0;
-        background: var(--red-header);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-        color: white;
-        text-align: center;
-        overflow: hidden;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-      }
-      .running-text-container .text-wrapper {
-        display: inline-block;
-        padding-left: 100%;
-        animation: marquee-animation 15s linear infinite;
-      }
-      .running-text-container span {
-        font-weight: 500;
-        font-size: 0.9rem;
-        padding-right: 50px;
-      }
-      .running-text-container a {
-        color: #ffd700;
-        text-decoration: none;
+      h2,
+      h3 {
+        color: var(--text-light);
         font-weight: 600;
       }
-      @keyframes marquee-animation {
+
+      a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: var(--primary);
+        text-decoration: underline;
+      }
+
+      /* Running Text/Marquee */
+      .running-text-container {
+        background-color: var(--accent-red);
+        color: var(--text-light);
+        padding: 8px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+
+      .text-wrapper {
+        display: inline-block;
+        padding-left: 100%;
+        animation: marquee 25s linear infinite;
+      }
+
+      .text-wrapper a {
+        color: var(--text-light);
+        font-weight: 500;
+        text-decoration: underline;
+      }
+
+      @keyframes marquee {
         0% {
-          transform: translateX(0);
+          transform: translate(0, 0);
         }
         100% {
-          transform: translateX(-100%);
+          transform: translate(-100%, 0);
         }
       }
 
-      /* Main Layout */
-      .main-layout {
+      /* ================== LOGIN SCREEN ================== */
+      #loginScreen {
         display: flex;
-        flex: 1;
-        padding-top: 40px; /* Jarak untuk running text */
-        width: 100%;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 42px);
+        padding: 20px;
       }
 
-      /* Sidebar Navigation */
+      .login-card {
+        background-color: var(--card-bg);
+        padding: 30px; /* Lebih kecil untuk mobile */
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        border: 1px solid var(--border-dark);
+      }
+
+      .form-group input,
+      .upload-card select,
+      #accessKeyInput {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border-dark);
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+        /* Tambahkan margin bawah untuk group */
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+
+      .form-group input:focus,
+      #accessKeyInput:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+      }
+
+      /* Tombol Kustom */
+      .google-sign-in-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary);
+        color: var(--text-light);
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        transition: background-color 0.3s;
+      }
+
+      .google-sign-in-btn:hover {
+        background-color: #3f65c9;
+      }
+
+      .google-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+      }
+
+      /* Pembatas ATAU */
+      .or-divider {
+        margin: 20px 0;
+        color: var(--text-muted);
+        font-size: 0.9em;
+        position: relative;
+        text-align: center;
+      }
+
+      .or-text {
+        background: var(--card-bg);
+        padding: 0 10px;
+        z-index: 1;
+        position: relative;
+      }
+
+      .or-line {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        border-top: 1px solid var(--border-dark);
+        z-index: 0;
+      }
+
+      /* ================== MAIN LAYOUT (DESKTOP) ================== */
+      .main-layout {
+        display: flex;
+        min-height: calc(100vh - 42px);
+      }
+
+      /* Sidebar (Desktop Only) */
       .sidebar {
-        width: 200px;
+        width: 250px;
         background-color: var(--sidebar-bg);
-        padding-top: 20px;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        padding: 20px 0;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
         flex-shrink: 0;
+        position: sticky;
+        top: 0;
+        height: 100vh; /* Agar sidebar penuh */
+        overflow-y: auto;
       }
 
       .sidebar-item {
+        display: block;
         color: var(--text-light);
         padding: 15px 20px;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        margin: 5px 10px;
+        border-radius: 8px;
+        transition: background-color 0.2s, color 0.2s;
         font-weight: 500;
-        transition: background-color 0.3s ease;
       }
 
-      .sidebar-item:hover,
+      .sidebar-item:hover {
+        background-color: var(--sidebar-hover);
+        color: var(--text-light);
+        text-decoration: none;
+      }
+
       .sidebar-item.active {
-        background-color: var(--accent-blue);
-        color: white;
+        background-color: var(--primary);
+        color: var(--text-light);
+      }
+
+      .sidebar-item i {
+        margin-right: 10px;
+      }
+
+      .developer-info {
+        font-size: 0.85em;
+        color: var(--text-muted);
+        border-top: 1px solid var(--border-dark);
+        padding-top: 10px !important;
+      }
+
+      .developer-info a {
+        color: var(--primary);
+      }
+
+      .developer-info-mobile {
+        font-size: 0.85em;
+        color: var(--text-muted);
       }
 
       /* Content Area */
       .content-area {
         flex-grow: 1;
         padding: 20px;
-        max-width: calc(100% - 200px);
+        overflow-y: auto;
       }
 
-      /* Navbar (Header Biru) */
+      /* Navbar */
       .navbar {
-        background-color: var(--accent-blue);
-        color: white;
-        padding: 15px 20px;
-        border-radius: 10px;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        margin-bottom: 30px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        position: sticky;
-        top: 40px;
-        z-index: 900;
-      }
-
-      .user-info-dropdown {
-        position: relative;
         display: flex;
         align-items: center;
-        gap: 10px;
-        cursor: pointer;
+        background-color: var(--card-bg);
+        padding: 10px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border-dark);
+        z-index: 999;
       }
 
-      .user-info-dropdown:hover .dropdown-content {
-        display: block;
+      .user-info-display-only {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+        padding: 5px 10px;
+        background-color: var(--bg-dark);
+        border-radius: 8px;
       }
 
       .user-name-wrapper {
         display: flex;
         flex-direction: column;
-        align-items: flex-end;
-        line-height: 1.2;
+        margin-right: 10px;
+        text-align: right;
       }
 
       .user-name {
         font-weight: 600;
-        font-size: 0.95em;
-        color: white;
+        color: var(--primary);
+        font-size: 1em;
       }
 
       .user-email {
         font-size: 0.8em;
-        color: #e0e0e0;
+        color: var(--text-muted);
       }
 
       .user-avatar {
@@ -170,332 +299,218 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid white;
-        margin-left: 10px;
+        border: 2px solid var(--primary);
       }
 
-      .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: var(--card-bg);
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.5);
-        z-index: 100;
-        right: 0;
-        top: 100%;
-        border-radius: 5px;
-        overflow: hidden;
-        margin-top: 10px;
-      }
-
-      .dropdown-content a {
-        color: var(--text-light);
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        text-align: left;
+      .logout-permanent-btn {
+        background-color: var(--accent-red);
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
         transition: background-color 0.2s;
-        font-size: 0.9em;
       }
 
-      .dropdown-content a:hover {
-        background-color: var(--accent-blue-hover);
+      .logout-permanent-btn:hover {
+        background-color: #c73729;
       }
 
-      /* Card Styling (Upload & History) */
+      /* Navigasi Mobile Buttons */
+      .nav-mobile-btn {
+        background-color: var(--sidebar-bg);
+        color: var(--text-light);
+        border: 1px solid var(--border-dark);
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-size: 1em;
+        transition: background-color 0.2s;
+      }
+
+      .nav-mobile-btn:hover,
+      .nav-mobile-btn.active {
+        background-color: var(--primary);
+        color: var(--text-light);
+      }
+
+      .nav-mobile-btn i {
+        margin-right: 5px;
+      }
+
+      /* Cards & Forms */
       .main-card {
         background-color: var(--card-bg);
-        padding: 30px;
-        border-radius: 10px;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 20px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        margin-bottom: 20px;
-      }
-
-      .upload-view .main-card {
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .main-card h2,
-      .main-card h3 {
-        color: var(--text-light);
-        margin-bottom: 10px;
-        font-weight: 600;
-        text-align: center;
-      }
-
-      .main-card p {
-        color: var(--text-muted);
-        margin-bottom: 20px;
-        text-align: center;
-      }
-
-      /* Form Group & Select */
-      .form-group {
-        margin-bottom: 25px;
-        text-align: left;
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        color: var(--text-light);
-        font-weight: 500;
-      }
-
-      /* Styling untuk semua input text/email/password */
-      input[type="email"],
-      input[type="password"],
-      input[type="text"],
-      select {
-        width: 100%;
-        padding: 12px;
         border: 1px solid var(--border-dark);
-        border-radius: 5px;
-        background-color: #333647;
-        color: var(--text-light);
-        font-size: 1em;
-        box-sizing: border-box; /* Penting untuk input di dalam form */
-      }
-      input[type="email"]:focus,
-      input[type="password"]:focus,
-      input[type="text"]:focus,
-      select:focus {
-        border-color: var(--accent-blue);
-        outline: none;
-      }
-      select {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23e0e0e0' d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.757 7.586 5.343 9z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 1.2em;
-        transition: border-color 0.3s;
       }
 
-      /* Drop Area for File Upload */
-      .drop-area-wrap {
+      /* Drop Area */
+      .drop-area {
+        height: 150px;
+        border: 3px dashed var(--border-dark);
+        border-radius: 10px;
         display: flex;
         flex-direction: column;
         align-items: center;
-      }
-
-      .drop-area {
-        border: 2px dashed var(--accent-blue);
-        border-radius: 10px;
-        padding: 40px 20px;
-        text-align: center;
+        justify-content: center;
         cursor: pointer;
-        transition: background-color 0.3s ease, border-color 0.3s ease;
-        margin-bottom: 30px;
-        background-color: rgba(220, 53, 69, 0.05); /* Menggunakan aksen biru (merah) */
-        width: 100%;
-        box-sizing: border-box;
-        display: flex; /* Pastikan selalu flex */
-        flex-direction: column;
-        align-items: center;
+        transition: border-color 0.3s, background-color 0.3s;
+        padding: 20px;
+        margin-top: 15px; /* Tambahkan margin atas */
       }
 
+      .drop-area:hover,
       .drop-area.dragover {
-        background-color: rgba(220, 53, 69, 0.2);
-        border-color: white;
+        border-color: var(--primary);
+        background-color: #35455a;
       }
 
       .upload-icon {
-        font-size: 4em;
-        color: var(--accent-blue);
-        margin-bottom: 15px;
-        animation: none;
-      }
-
-      .drop-area p {
+        font-size: 3em;
         color: var(--text-muted);
-        font-size: 1.1em;
-        line-height: 1.5;
-        margin: 0;
-      }
-      .file-name {
-        color: var(--text-light);
-        margin-bottom: 15px;
-        font-size: 0.9em;
+        margin-bottom: 10px;
       }
 
-      /* Status & Progress */
+      .file-name {
+        display: block;
+        margin-top: 10px;
+        font-size: 0.9em;
+        color: var(--primary);
+        font-weight: 500;
+        text-align: center;
+        word-break: break-all; /* Agar nama file panjang tidak keluar batas */
+      }
+
+      /* Animations */
+      .scan-container,
+      .rocket-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 150px;
+        text-align: center;
+        color: var(--primary);
+      }
+
+      .scan-container i,
+      .rocket-container i {
+        font-size: 3em;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .rocket-container i {
+        animation: none;
+      } /* Hapus spin pada roket */
+
+      /* Progress Bar */
       .progress-container {
         width: 100%;
-        background-color: #333;
-        border-radius: 50px;
-        margin-top: 20px;
+        background-color: var(--bg-dark);
+        border-radius: 8px;
+        margin-top: 15px;
+        height: 15px;
         overflow: hidden;
-        height: 10px;
-        display: none;
+        border: 1px solid var(--border-dark);
       }
 
       .progress-bar {
         height: 100%;
         width: 0%;
-        background-color: #28a745;
+        background-color: var(--primary);
         transition: width 0.3s ease;
-        border-radius: 50px;
       }
 
+      /* Status Messages & Progress */
       .status-message {
         margin-top: 15px;
-        font-weight: 500;
-        min-height: 20px;
-        color: var(--text-muted);
+        font-size: 0.95em;
+        font-weight: 400;
         text-align: center;
+        padding: 10px;
+        border-radius: 8px;
       }
 
-      /* History List */
-      #historyList {
+      .status-message.timer-text {
+        font-weight: 600;
+        font-size: 1.1em;
+        color: var(--primary); /* Menggunakan primary untuk timer */
+      }
+      /* Riwayat Unggah */
+      .history-list {
         list-style: none;
         padding: 0;
       }
 
       .history-item {
-        background-color: #333647;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-wrap: wrap;
-        transition: background-color 0.3s;
-      }
-
-      .history-item:hover {
-        background-color: #3a3d50;
+        background-color: var(--bg-dark);
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border-dark);
       }
 
       .file-details {
+        display: flex;
+        flex-direction: column;
         text-align: left;
         flex-grow: 1;
-        padding-right: 15px;
+        min-width: 0; /* Penting untuk mobile */
       }
 
       .file-details strong {
-        display: block;
-        font-size: 1rem;
-        color: var(--text-light);
-        margin-bottom: 3px;
-      }
-
-      .file-details span {
-        display: block;
-        font-size: 0.8em;
-        color: var(--text-muted);
+        font-size: 1.1em;
+        color: var(--primary);
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .delete-btn {
-        background-color: var(--delete-red);
+        flex-shrink: 0;
+        margin-left: 10px;
+        background-color: var(--accent-red);
         color: white;
         padding: 8px 15px;
         border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.2s ease;
-        flex-shrink: 0;
-      }
-
-      .delete-btn:hover {
-        background-color: #a71d2a;
-      }
-
-      #noHistoryMessage {
-        text-align: center;
-        color: var(--text-muted);
-        padding: 30px;
-      }
-
-      /* Login Screen */
-      #loginScreen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: var(--bg-dark);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 2000;
-        text-align: center;
-      }
-
-      .login-card {
-        padding: 50px 40px;
-        background: var(--card-bg);
-        border-radius: 15px;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-        max-width: 450px;
-        width: 90%;
-      }
-
-      .login-card h2 {
-        font-size: 2em;
-        margin-bottom: 10px;
-        color: white;
-      }
-
-      .login-card .sub-text {
-        color: var(--text-muted);
-        margin-bottom: 30px;
-      }
-
-      .google-sign-in-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #4285f4; /* Warna Google */
-        color: white;
-        padding: 12px 25px;
         border-radius: 8px;
         cursor: pointer;
         font-weight: 600;
-        gap: 10px;
-        transition: background-color 0.2s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        border: none; /* Tambahkan border none untuk button */
+        transition: background-color 0.2s;
+        font-size: 0.9em;
       }
 
-      .google-sign-in-btn:hover {
-        background-color: #3367d6;
+      .delete-btn:hover {
+        background-color: #c73729;
       }
 
-      .google-icon {
-        width: 20px;
-        height: 20px;
-        background: white;
-        border-radius: 50%;
+      /* Dialogs/Overlays */
+      .syarat-list li {
+        padding-left: 0;
+        margin-bottom: 10px;
+        list-style: none; /* Hilangkan numbering default di HTML */
       }
 
-      /* Custom button untuk Register (warna hijau) */
-      #registerForm .google-sign-in-btn {
-        background-color: #28a745 !important;
-      }
-      #registerForm .google-sign-in-btn:hover {
-        background-color: #1e7e34 !important;
-      }
+      /* ================== OVERLAYS/DIALOGS ================== */
 
-      /* Custom button untuk Login Email (warna aksen) */
-      #loginForm .google-sign-in-btn {
-        background-color: var(--accent-blue) !important;
-      }
-      #loginForm .google-sign-in-btn:hover {
-        background-color: var(--accent-blue-hover) !important;
-      }
-
-      /* Garis ATAU */
-      .login-card > div[style] {
-        position: relative;
-      }
-
-      /* --- GENERAL UTILS & DIALOGS (Modified for Dark Mode) --- */
+      /* Container Overlay (Background gelap transparan) */
       .access-overlay,
       .upload-status-overlay {
         position: fixed;
@@ -503,188 +518,167 @@
         left: 0;
         width: 100%;
         height: 100%;
+        /* Gunakan warna gelap transparan yang lebih dalam */
         background-color: rgba(0, 0, 0, 0.85);
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 3000;
+        z-index: 2000;
+        padding: 20px; /* Padding agar konten tidak menempel tepi di mobile */
       }
+
+      /* Card Dialog (Kotak tengah) */
       .access-card,
       .upload-status-card {
         background-color: var(--card-bg);
-        color: var(--text-light);
         padding: 30px;
-        border-radius: 10px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 450px; /* Sedikit lebih ramping */
         text-align: center;
-        max-width: 400px;
-        width: 90%;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        border: 1px solid var(--border-dark);
+        /* Animasi ringan saat muncul */
+        transform: scale(0.95);
+        opacity: 0;
+        animation: fadeInScale 0.3s forwards ease-out;
       }
-      .access-card h3,
-      .upload-status-card h3 {
+
+      @keyframes fadeInScale {
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Style Khusus Dialog Gagal (Fail) */
+      #uploadFailOverlay .upload-status-card h3 {
+        color: var(--accent-red); /* Merah untuk Gagal */
+        font-size: 1.6em;
+      }
+
+      #uploadFailOverlay .upload-status-card p {
         color: var(--text-light);
-        margin-bottom: 15px;
+        font-size: 0.95em;
+        /* Tambahkan sedikit ruang atas agar pesan error tidak terlalu rapat */
+        margin-top: 15px;
+        /* Pastikan text wrap dengan benar */
+        word-wrap: break-word;
       }
+
+      /* Style Khusus Dialog Sukses (Success) */
+      #uploadSuccessOverlay .upload-status-card h3 {
+        color: var(--primary); /* Biru/Hijau untuk Sukses */
+        font-size: 1.6em;
+      }
+
+      /* Tombol Dialog */
       .dialog-button {
-        background-color: var(--accent-blue);
+        background-color: var(--primary);
         color: white;
-        border: none;
         padding: 10px 20px;
-        border-radius: 5px;
+        border: none;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: 600;
-        margin-top: 15px;
         transition: background-color 0.2s;
-      }
-      .dialog-button:hover {
-        background-color: var(--accent-blue-hover);
+        width: 100%; /* Membuat tombol lebar penuh di dialog */
+        margin-top: 15px;
       }
 
-      /* ========================== MEDIA QUERIES (RESPONSIVE) ========================== */
-      @media (max-width: 768px) {
+      .dialog-button:hover {
+        background-color: #3f65c9;
+      }
+
+      /* Kuis Options */
+      .list-group-item {
+        background-color: var(--bg-dark) !important;
+        color: var(--text-light) !important;
+        border: 1px solid var(--border-dark) !important;
+        transition: background-color 0.2s, border-color 0.2s;
+      }
+
+      .list-group-item:hover {
+        background-color: var(--sidebar-hover) !important;
+        cursor: pointer;
+      }
+
+      .list-group-item.active {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+      }
+
+      .timer-display {
+        font-weight: 700;
+        color: var(--accent-red);
+      }
+
+      /* ================== RESPONSIVE MEDIA QUERIES (MOBILE) ================== */
+
+      @media (max-width: 767.98px) {
+        /* Main Layout - Hilangkan Sidebar, Konten Ambil Full Width */
         .main-layout {
           flex-direction: column;
-          padding-top: 50px;
         }
 
+        /* Navbar - Kustomisasi untuk Mobile */
         .navbar {
-          flex-direction: row; /* Kembali ke baris */
-          justify-content: space-between; /* Menyebar konten */
-          align-items: center;
-          padding: 10px;
-          position: static;
-          margin-bottom: 20px;
-        }
-
-        .sidebar {
-          width: 100%;
-          height: auto;
-          padding-top: 0;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-          flex-direction: row;
-          justify-content: space-around;
-          position: fixed;
-          top: 40px;
-          z-index: 950;
-          display: flex;
-        }
-
-        .sidebar-item {
+          border-radius: 0;
+          margin-left: -10px; /* Sesuaikan dengan padding content-area */
+          margin-right: -10px;
           padding: 10px 15px;
-          width: 50%;
-          text-align: center;
-          justify-content: center;
         }
 
+        /* Hilangkan Info Detail User di Mobile Kecil */
+        .user-name-wrapper {
+          display: none !important;
+        }
+
+        .user-info-display-only {
+          margin-right: 5px;
+          padding: 5px;
+          background-color: transparent;
+          border: none;
+        }
+
+        .user-avatar {
+          width: 35px;
+          height: 35px;
+        }
+
+        .logout-permanent-btn {
+          padding: 8px 10px;
+          font-size: 0.9em;
+        }
+
+        /* Konten Area - Hapus Padding Samping agar konten sentuh tepi*/
         .content-area {
           padding: 10px;
-          max-width: 100%;
-          margin-top: 50px;
         }
 
-        .navbar {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
+        /* Card/Konten - Gunakan Margin yang lebih kecil */
+        .main-card {
           padding: 15px;
-          position: static;
-          margin-bottom: 20px;
+          margin-bottom: 15px;
         }
 
-        .user-info-dropdown {
-          width: 100%;
-          justify-content: space-between;
-          flex-direction: row-reverse;
-        }
-
-        .user-name-wrapper {
-          align-items: flex-start;
-        }
-        .user-avatar {
-          margin-left: 0;
-        }
-
-        .info-card,
-        .upload-card {
-          padding: 20px;
-        }
-
+        /* Riwayat Unggah di Mobile */
         .history-item {
           flex-direction: column;
           align-items: flex-start;
         }
 
         .file-details {
-          width: 100%;
-          padding-right: 0;
           margin-bottom: 10px;
+          width: 100%;
         }
 
         .delete-btn {
           width: 100%;
-        }
-      }
-      /* ... Di sekitar baris 260 ... */
-
-      /* Menghilangkan fungsi dropdown dari info pengguna */
-      .user-info-display-only {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      /* Menyembunyikan elemen dropdown content yang tidak terpakai */
-      .dropdown-content {
-        display: none !important; /* Pastikan dropdown benar-benar hilang */
-      }
-
-      /* Tombol Keluar Permanen (Baru) */
-      .logout-permanent-btn {
-        background-color: var(--card-bg); /* Warna latar belakang gelap untuk kontras */
-        color: var(--text-light); /* Warna teks terang */
-        padding: 8px 15px;
-        border-radius: 5px;
-        margin-left: 20px; /* Jarak dari avatar */
-        text-decoration: none;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: background-color 0.2s;
-      }
-
-      .logout-permanent-btn:hover {
-        background-color: #333647; /* Sedikit lebih gelap saat hover */
-      }
-
-      /* Perbaikan Navbar di Mobile agar tombolnya muncul */
-      @media (max-width: 768px) {
-        /* ... (CSS mobile lain) ... */
-
-        .navbar {
-          /* ... (properti navbar sebelumnya) ... */
-          justify-content: space-between; /* Agar elemen menyebar di mobile */
-        }
-
-        .user-info-display-only {
-          /* Memastikan info pengguna muncul di kiri/tengah */
-          flex-grow: 1;
-          justify-content: flex-start;
-        }
-
-        .logout-permanent-btn {
-          margin-left: 10px;
-          padding: 5px 10px;
-          font-size: 0.85em;
-          background-color: var(--card-bg); /* Tetap di kanan */
+          margin-left: 0;
         }
       }
     </style>
-
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   </head>
 
   <body>
@@ -697,111 +691,116 @@
       </div>
     </div>
 
-    <div id="loginScreen" style="display: flex">
+    <div id="loginScreen" class="d-flex" style="display: flex">
       <div class="login-card">
-        <img src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" alt="Logo" style="width: 100px; margin-bottom: 20px" />
+        <img src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1" alt="Logo" class="img-fluid mb-4" style="width: 100px" />
         <h2 id="authTitle">Masuk ke Portal Tugas</h2>
         <p class="sub-text" id="authSubText">Pilih metode masuk yang Anda inginkan.</p>
 
-        <button id="googleSignInBtn" class="google-sign-in-btn" style="width: 100%; margin-bottom: 20px">
+        <button id="googleSignInBtn" class="google-sign-in-btn w-100 mb-4">
           <img class="google-icon" src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Icon" />
           Masuk dengan Google
         </button>
 
-        <div style="margin: 20px 0; color: var(--text-muted); font-size: 0.9em; position: relative; text-align: center">
-          <span style="background: var(--card-bg); padding: 0 10px; z-index: 1">ATAU</span>
-          <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid var(--border-dark); z-index: 0"></div>
+        <div class="or-divider mb-4">
+          <span class="or-text">ATAU</span>
+          <div class="or-line"></div>
         </div>
 
         <form id="loginForm" style="display: block">
-          <div class="form-group" style="text-align: left">
+          <div class="form-group text-start">
             <label for="loginEmail">Email:</label>
-            <input type="email" id="loginEmail" placeholder="Masukkan Email" required style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)" />
+            <input type="email" id="loginEmail" placeholder="Masukkan Email" required />
           </div>
-          <div class="form-group" style="text-align: left">
+          <div class="form-group text-start">
             <label for="loginPassword">Password:</label>
-            <input
-              type="password"
-              id="loginPassword"
-              placeholder="Masukkan Password"
-              required
-              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
-            />
+            <input type="password" id="loginPassword" placeholder="Masukkan Password" required />
           </div>
-          <button type="submit" class="google-sign-in-btn" style="width: 100%; margin-top: 20px; background-color: var(--accent-blue)">Masuk dengan Email</button>
-          <p style="margin-top: 20px; color: var(--text-muted); text-align: center">Belum punya akun? <a href="#" id="showRegisterLink" style="color: white; font-weight: 600">Daftar di sini</a></p>
+          <button type="submit" class="google-sign-in-btn w-100 mt-4">Masuk dengan Email</button>
+          <p class="mt-3 text-center text-muted">
+            Belum punya akun?
+            <a href="#" id="showRegisterLink" class="text-accent-red fw-bold">Daftar di sini</a>
+          </p>
         </form>
 
         <form id="registerForm" style="display: none">
-          <div class="form-group" style="text-align: left">
+          <div class="form-group text-start">
             <label for="registerUsername">Nama Lengkap:</label>
-            <input
-              type="text"
-              id="registerUsername"
-              placeholder="Contoh: M. Putra Ramadhani"
-              required
-              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
-            />
+            <input type="text" id="registerUsername" placeholder="Contoh: M. Putra Ramadhani" required />
           </div>
-          <div class="form-group" style="text-align: left">
+          <div class="form-group text-start">
             <label for="registerEmail">Email:</label>
-            <input
-              type="email"
-              id="registerEmail"
-              placeholder="Masukkan Email Aktif"
-              required
-              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
-            />
+            <input type="email" id="registerEmail" placeholder="Masukkan Email Aktif" required />
           </div>
-          <div class="form-group" style="text-align: left">
+          <div class="form-group text-start">
             <label for="registerPassword">Password:</label>
-            <input
-              type="password"
-              id="registerPassword"
-              placeholder="Min. 6 Karakter"
-              required
-              style="width: 100%; padding: 12px; border: 1px solid var(--border-dark); border-radius: 5px; background-color: #333647; color: var(--text-light)"
-            />
+            <input type="password" id="registerPassword" placeholder="Min. 6 Karakter" required />
           </div>
-          <button type="submit" class="google-sign-in-btn" style="width: 100%; margin-top: 20px; background-color: #28a745">Daftar Akun</button>
-          <p style="margin-top: 20px; color: var(--text-muted); text-align: center">Sudah punya akun? <a href="#" id="showLoginLink" style="color: white; font-weight: 600">Masuk di sini</a></p>
+          <button type="submit" class="google-sign-in-btn w-100 mt-4">Daftar Akun</button>
+          <p class="mt-3 text-center text-muted">
+            Sudah punya akun?
+            <a href="#" id="showLoginLink" class="text-accent-red fw-bold">Masuk di sini</a>
+          </p>
         </form>
       </div>
     </div>
 
     <div class="main-layout" id="mainLayout" style="display: none">
-      <div class="sidebar">
-        <a href="#" id="navHome" class="sidebar-item active"><i class="fas fa-home"></i> Unggah Tugas</a>
-        <a href="#" id="navHistory" class="sidebar-item"><i class="fas fa-history"></i> Riwayat Upload</a>
+      <div class="sidebar d-none d-md-flex flex-column justify-content-between">
+        <div>
+          <a href="#" id="navHome" class="sidebar-item active"><i class="fas fa-upload"></i> Unggah Tugas</a>
+          <a href="#" id="navHistory" class="sidebar-item"><i class="fas fa-history"></i> Riwayat Upload</a>
+          <a href="#" id="navQuiz" class="sidebar-item"><i class="fas fa-brain"></i> Ikut Kuis</a>
+        </div>
+
+        <div class="developer-info text-center p-3">
+          <p class="mb-1">Dibuat oleh:</p>
+          <a href="https://www.instagram.com/putramdhanii_" target="_blank" class="dev-link"> <i class="fab fa-instagram"></i> M. Putra Ramadhani </a>
+        </div>
       </div>
 
       <div class="content-area">
-        <div class="navbar">
+        <div class="navbar sticky-top">
+          <div class="d-flex d-md-none me-3">
+            <button class="nav-mobile-btn active" id="navHomeMobile">
+              <i class="fas fa-upload"></i>
+            </button>
+            <button class="nav-mobile-btn ms-2" id="navHistoryMobile">
+              <i class="fas fa-history"></i>
+            </button>
+            <button class="nav-mobile-btn ms-2" id="navQuizMobile">
+              <i class="fas fa-brain"></i>
+            </button>
+          </div>
+
           <div style="flex-grow: 1"></div>
+
           <div id="userInfoDisplay" class="user-info-display-only">
-            <div class="user-name-wrapper">
+            <div class="user-name-wrapper d-none d-sm-flex">
               <span id="userName" class="user-name"></span>
               <span id="userEmail" class="user-email"></span>
             </div>
             <img id="profilePicture" class="user-avatar" src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png" alt="Profile" />
           </div>
 
-          <a href="#" id="logoutBtn" class="logout-permanent-btn"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+          <button id="logoutBtn" class="logout-permanent-btn ms-2">
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="d-none d-sm-inline">Keluar</span>
+          </button>
         </div>
 
         <div id="uploadView" class="upload-view">
           <div class="info-card main-card">
-            <h2>PENGUMPULAN TUGAS TEKNOLOGI INFORMASI UM-PALEMBANG</h2>
-            <p>Dibuat oleh M. Putra Ramadhani</p>
+            <h2>PENGUMPULAN TUGAS TEKNOLOGI INFORMASI</h2>
+            <p>Portal resmi untuk pengumpulan dokumen tugas mahasiswa TI UM-Palembang. Dibuat oleh M. Putra Ramadhani.</p>
           </div>
 
           <div class="upload-card main-card">
-            <h3>Unggah Dokumen</h3>
-            <p class="sub-text">Pilih file dokumen (PDF, DOCX, PPT, ZIP, 7z, dsb.) untuk diunggah.</p>
+            <h3>Form Unggah Dokumen</h3>
 
-            <div class="form-group">
+            <div class="form-group text-start">
               <label for="courseSelect">Pilih Mata Kuliah:</label>
-              <select id="courseSelect">
+              <select id="courseSelect" class="form-select">
                 <option value="" disabled selected>-- Pilih salah satu --</option>
               </select>
             </div>
@@ -809,20 +808,22 @@
             <div class="drop-area-wrap">
               <input type="file" id="fileInput" accept=".pdf, .doc, .docx, .zip, .rar, .7z" hidden />
               <label for="fileInput" id="dropArea" class="drop-area upload-area">
-                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <i class="fas fa-folder-open upload-icon"></i>
                 <p>Pilih Dokumen<br />atau Seret dan Lepas di Sini</p>
               </label>
               <span id="fileName" class="file-name"></span>
             </div>
 
             <div id="scanAnimation" class="scan-container" style="display: none">
-              <p style="color: var(--accent-blue); font-weight: 500">Memindai file...</p>
+              <i class="fas fa-sync-alt"></i>
+              <p>Memindai file...</p>
             </div>
             <div id="rocketAnimation" class="rocket-container" style="display: none">
-              <p style="color: var(--accent-blue); font-weight: 500">Mengunggah...</p>
+              <i class="fas fa-rocket"></i>
+              <p>Mengunggah...</p>
             </div>
 
-            <div id="progressContainer" class="progress-container">
+            <div id="progressContainer" class="progress-container" style="display: none">
               <div id="progressBar" class="progress-bar"></div>
             </div>
 
@@ -835,11 +836,54 @@
             <h2>RIWAYAT UNGGAH TUGAS ANDA</h2>
             <p>Anda dapat menghapus file yang salah unggah. Mohon gunakan dengan bijak.</p>
           </div>
-          <div class="main-card" style="padding: 20px">
+          <div class="main-card">
             <ul id="historyList" class="history-list">
               <p id="noHistoryMessage">Tidak ada riwayat unggahan.</p>
             </ul>
           </div>
+        </div>
+
+        <div id="quizView" style="display: none">
+          <div class="info-card main-card">
+            <h2>LOMBA KUIS CEPAT TI</h2>
+            <p>Uji pengetahuan Anda! Kuis hanya dapat diakses 1x. Dapatkan nilai maksimal untuk dicatat.</p>
+          </div>
+
+          <div id="quizAccessCard" class="main-card">
+            <h3 class="mb-3">Akses Kuis</h3>
+            <p id="quizStatusMessage" class="text-muted">Masukkan Kunci Akses untuk memulai kuis.</p>
+
+            <div id="quizFormContainer" class="text-start">
+              <div class="form-group">
+                <label for="accessKeyInput">Kunci Akses:</label>
+                <input type="password" id="accessKeyInput" class="form-control" placeholder="Masukkan Kunci" required />
+              </div>
+              <button id="startQuizBtn" class="google-sign-in-btn w-100 mt-3"><i class="fas fa-key me-2"></i> Mulai Kuis</button>
+            </div>
+
+            <div id="quizResultDisplay" style="display: none; text-align: center">
+              <h3 id="finalScoreTitle" class="text-primary"></h3>
+              <p id="resultDetails" class="text-muted"></p>
+              <button id="resetQuizBtn" class="dialog-button" style="display: none">Ikut Lagi (Jika Diizinkan)</button>
+            </div>
+          </div>
+
+          <div id="quizQuestionCard" class="main-card" style="display: none">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4 id="questionNumber">Soal 1/N</h4>
+              <div class="timer-display" id="quizTimer">Waktu: 10s</div>
+            </div>
+            <p id="questionText" class="fs-5 fw-bold mb-4"></p>
+
+            <div id="answerOptions" class="list-group"></div>
+
+            <button id="nextQuestionBtn" class="dialog-button mt-4" disabled>Selanjutnya <i class="fas fa-arrow-right ms-2"></i></button>
+          </div>
+        </div>
+
+        <div class="developer-info-mobile text-center p-3 d-md-none">
+          <p class="mb-1">Dibuat oleh:</p>
+          <a href="https://www.instagram.com/putramdhanii_" target="_blank" class="dev-link"> <i class="fab fa-instagram"></i> M. Putra Ramadhani </a>
         </div>
       </div>
     </div>
@@ -847,36 +891,40 @@
     <div id="syaratDialogOverlay" class="access-overlay" style="display: none">
       <div class="access-card">
         <h3>Syarat & Ketentuan Pengumpulan</h3>
-        <div style="text-align: left; color: var(--text-light); margin-bottom: 20px">
-          <p style="margin-top: 0; margin-bottom: 10px; font-weight: 500">Mohon perhatikan ketentuan berikut sebelum mengunggah tugas Anda:</p>
-          <ul style="padding-left: 20px; margin: 0; list-style-type: decimal">
-            <li style="margin-bottom: 8px">Format file yang diizinkan: <strong>PDF, DOC, DOCX, ZIP, RAR, atau 7Z</strong>.</li>
-            <li style="margin-bottom: 8px">Ukuran file maksimal yang dapat diunggah adalah <strong>12 MB</strong>.</li>
-            <li style="margin-bottom: 8px">
-              Penamaan file harus mengikuti format yang ditentukan:
+        <div class="text-start text-light mb-4">
+          <p class="mt-0 mb-2 fw-bold">Mohon perhatikan ketentuan berikut sebelum mengunggah tugas Anda:</p>
+          <ul class="list-unstyled syarat-list">
+            <li><i class="fas fa-check-circle me-2 text-success"></i> Format file yang diizinkan: <strong>PDF, DOC, DOCX, ZIP, RAR, atau 7Z</strong>.</li>
+            <li><i class="fas fa-check-circle me-2 text-success"></i> Ukuran file maksimal yang dapat diunggah adalah <strong>12 MB</strong>.</li>
+            <li>
+              <i class="fas fa-exclamation-triangle me-2 text-warning"></i> Penamaan file harus mengikuti format yang ditentukan:
               <br />
-              <strong>[Nama Lengkap]_[NIM]_[Mata Kuliah]_[Nomor Pertemuan]</strong>
+              <strong class="text-primary">[Nama Lengkap]_[NIM]_[Mata Kuliah]_[Nomor Pertemuan]</strong>
               <br />
               (Contoh: Putra_1955201011_PBO_P1)
             </li>
-            <li style="margin-bottom: 8px">Kesalahan dalam format nama file <strong>dapat mengakibatkan tugas tidak tercatat atau dinilai</strong>.</li>
-            <li style="margin-bottom: 0">Anda memiliki opsi untuk menghapus file yang salah unggah melalui menu <strong>Riwayat Upload</strong>.</li>
+            <li><i class="fas fa-times-circle me-2 text-danger"></i> Kesalahan dalam format nama file <strong>dapat mengakibatkan tugas tidak tercatat atau dinilai</strong>.</li>
+            <li><i class="fas fa-info-circle me-2 text-info"></i> Anda memiliki opsi untuk menghapus file yang salah unggah melalui menu <strong>Riwayat Upload</strong>.</li>
           </ul>
         </div>
-        <button id="confirmSyaratBtn" class="dialog-button">Saya Mengerti</button>
+        <button id="confirmSyaratBtn" class="dialog-button w-100">Saya Mengerti</button>
       </div>
     </div>
 
     <div id="mainAccessClosedOverlay" class="access-overlay" style="display: none">
       <div class="access-card">
-        <h3>!MAINTENANCE!</h3>
-        <p>Portal pengumpulan tugas telah ditutup untuk saat ini sedang melakukan maintenance. Silakan hubungi Administrator di instagram @putramdhanii_ untuk informasi lebih lanjut atau coba lagi nanti.</p>
+        <h3><i class="fas fa-wrench me-2"></i> !MAINTENANCE!</h3>
+        <p>
+          Portal pengumpulan tugas telah ditutup untuk saat ini sedang melakukan maintenance. Silakan hubungi Administrator di instagram
+          <a href="https://www.instagram.com/putramdhanii_" class="text-accent-red fw-bold">@putramdhanii_</a>
+          untuk informasi lebih lanjut atau coba lagi nanti.
+        </p>
       </div>
     </div>
 
     <div id="courseAccessClosedOverlay" class="access-overlay" style="display: none">
       <div class="access-card">
-        <h3 id="courseAccessTitle">Pengumpulan Tugas Ditutup</h3>
+        <h3 id="courseAccessTitle"><i class="fas fa-lock me-2"></i> Pengumpulan Tugas Ditutup</h3>
         <p id="courseAccessMessage">Waktu pengumpulan untuk mata kuliah ini telah habis.</p>
         <button onclick="document.getElementById('courseAccessClosedOverlay').style.display = 'none'" class="dialog-button">Tutup</button>
       </div>
@@ -884,7 +932,7 @@
 
     <div id="uploadSuccessOverlay" class="upload-status-overlay" style="display: none">
       <div class="upload-status-card">
-        <h3>Unggah Berhasil!</h3>
+        <h3><i class="fas fa-check-circle me-2"></i> Unggah Berhasil!</h3>
         <p class="status-text" id="successMessage"></p>
         <button onclick="closeSuccessDialog()" class="dialog-button">Tutup</button>
       </div>
@@ -892,14 +940,15 @@
 
     <div id="uploadFailOverlay" class="upload-status-overlay" style="display: none">
       <div class="upload-status-card">
-        <h3>Unggah Gagal!</h3>
+        <h3><i class="fas fa-times-circle me-2"></i> Unggah Gagal!</h3>
         <p class="status-text" id="failMessage"></p>
         <button onclick="closeFailDialog()" class="dialog-button">Tutup</button>
       </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
     <script>
-      // ========================== INISIALISASI FIREBASE ==========================
       // ========================== INISIALISASI FIREBASE ==========================
       const firebaseConfig = {
         // Ganti dengan Config Asli Anda!
@@ -923,6 +972,7 @@
       const mainLayout = document.getElementById("mainLayout");
       const uploadView = document.getElementById("uploadView");
       const uploadHistoryContainer = document.getElementById("uploadHistoryContainer");
+      const quizView = document.getElementById("quizView");
       const logoutBtn = document.getElementById("logoutBtn");
 
       // Elemen Otentikasi
@@ -946,6 +996,10 @@
 
       const navHome = document.getElementById("navHome");
       const navHistory = document.getElementById("navHistory");
+      const navQuiz = document.getElementById("navQuiz");
+      const navHomeMobile = document.getElementById("navHomeMobile");
+      const navHistoryMobile = document.getElementById("navHistoryMobile");
+      const navQuizMobile = document.getElementById("navQuizMobile");
       const historyList = document.getElementById("historyList");
       const noHistoryMessage = document.getElementById("noHistoryMessage");
 
@@ -970,6 +1024,23 @@
       const courseAccessMessage = document.getElementById("courseAccessMessage");
       const mainAccessClosedOverlay = document.getElementById("mainAccessClosedOverlay");
 
+      // Elemen Kuis BARU
+      const quizAccessCard = document.getElementById("quizAccessCard");
+      const quizQuestionCard = document.getElementById("quizQuestionCard");
+      const accessKeyInput = document.getElementById("accessKeyInput");
+      const startQuizBtn = document.getElementById("startQuizBtn");
+      const quizStatusMessage = document.getElementById("quizStatusMessage");
+      const quizTimer = document.getElementById("quizTimer");
+      const questionNumber = document.getElementById("questionNumber");
+      const questionText = document.getElementById("questionText");
+      const answerOptions = document.getElementById("answerOptions");
+      const nextQuestionBtn = document.getElementById("nextQuestionBtn");
+      const quizResultDisplay = document.getElementById("quizResultDisplay");
+      const finalScoreTitle = document.getElementById("finalScoreTitle");
+      const resultDetails = document.getElementById("resultDetails");
+      const resetQuizBtn = document.getElementById("resetQuizBtn");
+      const quizFormContainer = document.getElementById("quizFormContainer");
+
       // ========================== VARIABEL GLOBAL & KONSTANTA ==========================
       const MAX_FILE_SIZE_MB = 12;
       const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
@@ -977,6 +1048,16 @@
       let countdownInterval = null;
       let currentUser = null;
       let courseMap = {};
+
+      // Variabel Kuis
+      let quizQuestions = []; // Akan diisi dari Firebase
+      let currentQuestionIndex = 0;
+      let userAnswers = [];
+      let quizScore = 0;
+      let quizTimerInterval = null;
+      const QUESTION_DURATION = 10; // 10 detik per soal
+      let quizKey = ""; // Kunci dari Firebase
+      let quizCanRetake = false; // Status retake dari Firebase
 
       // ========================== EVENT LISTENERS ==========================
       document.addEventListener("DOMContentLoaded", () => {
@@ -1018,6 +1099,21 @@
         e.preventDefault();
         showView("history");
       });
+      navQuiz.addEventListener("click", (e) => {
+        e.preventDefault();
+        showView("quiz");
+      });
+
+      // Navigasi Mobile
+      if (navHomeMobile) {
+        navHomeMobile.addEventListener("click", () => showView("home"));
+      }
+      if (navHistoryMobile) {
+        navHistoryMobile.addEventListener("click", () => showView("history"));
+      }
+      if (navQuizMobile) {
+        navQuizMobile.addEventListener("click", () => showView("quiz"));
+      }
 
       logoutBtn.addEventListener("click", handleSignOut);
 
@@ -1056,8 +1152,12 @@
         }
       });
 
-      // ========================== FUNGSI OTENTIKASI (LOGIN/REGISTER) ==========================
+      // Kuis Listeners
+      startQuizBtn.addEventListener("click", () => checkQuizAccess(accessKeyInput.value));
+      nextQuestionBtn.addEventListener("click", nextQuestion);
+      resetQuizBtn.addEventListener("click", resetQuizAttempt);
 
+      // ========================== FUNGSI OTENTIKASI (LOGIN/REGISTER) ==========================
       function toggleAuthView(view) {
         if (view === "login") {
           loginForm.style.display = "block";
@@ -1075,27 +1175,25 @@
       }
 
       async function fetchUserName(user) {
-        // Prioritaskan nama dari Google atau display name
         if (user.displayName && user.displayName !== user.email) {
           return user.displayName;
         }
-
-        // Coba ambil dari Realtime Database (khusus untuk yang daftar Email/Password)
         try {
           const snapshot = await database.ref(`users/${user.uid}/username`).once("value");
-          return snapshot.val() || user.email; // Jika tidak ada username, gunakan email
+          return snapshot.val() || user.email;
         } catch (error) {
           console.error("Gagal mengambil username:", error);
           return user.email;
         }
       }
 
+      // ... (Bagian sebelumnya)
+
       auth.onAuthStateChanged(async (user) => {
         if (user) {
           currentUser = user;
           const displayName = await fetchUserName(user);
 
-          // Tambahkan record ke DB untuk pengguna Google/Email jika belum ada
           database
             .ref(`users/${user.uid}`)
             .once("value")
@@ -1110,8 +1208,9 @@
               }
             });
 
-          loginScreen.style.display = "none";
-          mainLayout.style.display = "flex";
+          // 🟢 PERBAIKAN PENTING: Gunakan setProperty dengan 'important'
+          loginScreen.style.setProperty("display", "none", "important");
+          mainLayout.style.setProperty("display", "flex", "important");
 
           userNameDisplay.textContent = displayName;
           userEmailDisplay.textContent = user.email;
@@ -1120,13 +1219,15 @@
           showView("home");
         } else {
           currentUser = null;
-          loginScreen.style.display = "flex";
-          mainLayout.style.display = "none";
+
+          // 🔴 PERBAIKAN PENTING: Gunakan setProperty dengan 'important'
+          mainLayout.style.setProperty("display", "none", "important");
+          loginScreen.style.setProperty("display", "flex", "important");
+
           toggleAuthView("login");
         }
       });
 
-      // --- FUNGSI GOOGLE SIGN IN ---
       function handleGoogleSignIn() {
         const provider = new firebase.auth.GoogleAuthProvider();
         auth
@@ -1140,7 +1241,6 @@
           });
       }
 
-      // --- FUNGSI EMAIL/PASSWORD SIGN IN ---
       function handleEmailSignIn(email, password) {
         auth
           .signInWithEmailAndPassword(email, password)
@@ -1161,7 +1261,6 @@
           });
       }
 
-      // --- FUNGSI REGISTER EMAIL/PASSWORD ---
       function handleRegister(username, email, password) {
         if (password.length < 6) {
           showFailDialog("Daftar Gagal: Password minimal 6 karakter.");
@@ -1173,7 +1272,6 @@
           .then(async (userCredential) => {
             const user = userCredential.user;
 
-            // 1. Simpan username ke Realtime Database
             await database.ref(`users/${user.uid}`).set({
               username: username,
               email: email,
@@ -1181,7 +1279,6 @@
               provider: "email",
             });
 
-            // 2. Update profile (Display name)
             await user.updateProfile({
               displayName: username,
             });
@@ -1217,98 +1314,283 @@
       function showView(view) {
         if (!currentUser) return;
 
+        // Nonaktifkan semua navigasi
         navHome.classList.remove("active");
         navHistory.classList.remove("active");
+        if (navQuiz) navQuiz.classList.remove("active");
+        if (navHomeMobile) navHomeMobile.classList.remove("active");
+        if (navHistoryMobile) navHistoryMobile.classList.remove("active");
+        if (navQuizMobile) navQuizMobile.classList.remove("active");
 
         uploadView.style.display = "none";
         uploadHistoryContainer.style.display = "none";
+        quizView.style.display = "none";
 
         if (view === "home") {
           uploadView.style.display = "block";
           navHome.classList.add("active");
+          if (navHomeMobile) navHomeMobile.classList.add("active");
         } else if (view === "history") {
           uploadHistoryContainer.style.display = "block";
           navHistory.classList.add("active");
+          if (navHistoryMobile) navHistoryMobile.classList.add("active");
           fetchUploadHistory(currentUser.uid);
+        } else if (view === "quiz") {
+          quizView.style.display = "block";
+          navQuiz.classList.add("active");
+          if (navQuizMobile) navQuizMobile.classList.add("active");
+          loadQuizData(); // Panggil fungsi untuk memuat data dan memeriksa status kuis
         }
       }
 
-      // ========================== RIWAYAT & HAPUS ==========================
-      async function fetchUploadHistory(userUid) {
-        historyList.innerHTML = "";
-        noHistoryMessage.style.display = "block";
+      // ========================== FUNGSI KUIS DENGAN PERBAIKAN ==========================
+      async function loadQuizData() {
+        if (!currentUser) return;
+
+        // Atur tampilan awal
+        quizQuestionCard.style.display = "none";
+        quizResultDisplay.style.display = "none";
+        quizAccessCard.style.display = "block";
+        quizFormContainer.style.display = "block"; // Tampilkan form kunci secara default
 
         try {
-          const snapshot = await database.ref(`riwayat_unggah/${userUid}`).once("value");
-          const history = snapshot.val();
+          // 1. Ambil data kuis dan kunci akses dari Firebase
+          const snapshot = await database.ref("quiz_config").once("value");
+          const config = snapshot.val();
 
-          if (!history) {
+          if (!config || !config.questions || !config.key) {
+            quizStatusMessage.textContent = "Kuis belum dikonfigurasi oleh administrator.";
+            startQuizBtn.disabled = true;
             return;
           }
 
-          noHistoryMessage.style.display = "none";
+          quizQuestions = Object.values(config.questions);
+          quizKey = config.key;
+          quizCanRetake = config.canRetake || false; // Ambil status retake
 
-          const historyArray = Object.keys(history)
-            .map((key) => ({
-              id: key,
-              ...history[key],
-            }))
-            .sort((a, b) => b.timestamp - a.timestamp);
+          // 2. Cek status kuis pengguna
+          const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}`).once("value");
+          const userResult = scoreSnapshot.val();
 
-          historyArray.forEach((item) => {
-            const listItem = document.createElement("li");
-            listItem.className = "history-item";
-
-            const fileDetails = document.createElement("div");
-            fileDetails.className = "file-details";
-
-            const cleanFileName = item.originalFileName.substring(0, item.originalFileName.lastIndexOf(".")) || item.originalFileName;
-
-            fileDetails.innerHTML = `
-            <strong>${item.courseName}</strong>
-            <span>Nama File: ${cleanFileName} (${item.fileSizeMB} MB)</span>
-            <span>Diunggah: ${new Date(item.timestamp).toLocaleDateString("id-ID", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}</span>
-          `;
-
-            const deleteButton = document.createElement("button");
-            deleteButton.className = "delete-btn";
-            deleteButton.textContent = "Hapus";
-            deleteButton.onclick = () => deleteUploadedFile(userUid, item.id, item.storagePath);
-
-            listItem.appendChild(fileDetails);
-            listItem.appendChild(deleteButton);
-            historyList.appendChild(listItem);
-          });
+          if (userResult && userResult.finished) {
+            // Sudah pernah ikut
+            showQuizResult(userResult.score, userResult.totalQuestions, userResult.timestamp, quizCanRetake);
+          } else {
+            // Belum ikut, tampilkan form kunci
+            quizStatusMessage.textContent = "Masukkan Kunci Akses untuk memulai kuis.";
+            quizFormContainer.style.display = "block";
+            startQuizBtn.disabled = false;
+          }
         } catch (error) {
-          console.error("Gagal memuat riwayat upload:", error);
-          noHistoryMessage.textContent = "Gagal memuat riwayat. Silakan coba lagi.";
+          console.error("Gagal memuat data kuis:", error);
+          quizStatusMessage.textContent = "Gagal memuat kuis. Coba lagi nanti.";
+          startQuizBtn.disabled = true;
         }
       }
 
-      async function deleteUploadedFile(userUid, uploadId, storagePath) {
-        if (!confirm("Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat dibatalkan.")) {
+      async function checkQuizAccess(enteredKey) {
+        if (enteredKey === quizKey) {
+          // Cek ulang apakah sudah pernah submit (walaupun loadQuizData sudah cek)
+          const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}/finished`).once("value");
+          if (scoreSnapshot.val() === true && quizCanRetake === false) {
+            showFailDialog("Anda sudah menyelesaikan kuis dan tidak diizinkan untuk mengulang.");
+            return;
+          }
+          startQuiz();
+        } else {
+          showFailDialog("Kunci Akses Salah!");
+          accessKeyInput.value = "";
+        }
+      }
+
+      function startQuiz() {
+        quizAccessCard.style.display = "none";
+        quizQuestionCard.style.display = "block";
+        currentQuestionIndex = 0;
+        userAnswers = Array(quizQuestions.length).fill(null);
+        quizScore = 0;
+
+        displayQuestion(currentQuestionIndex);
+      }
+
+      function displayQuestion(index) {
+        if (index >= quizQuestions.length) {
+          finishQuiz();
           return;
         }
 
+        const questionData = quizQuestions[index];
+        questionNumber.textContent = `Soal ${index + 1}/${quizQuestions.length}`;
+        questionText.textContent = questionData.text;
+        answerOptions.innerHTML = "";
+        nextQuestionBtn.disabled = true;
+
+        // Reset text tombol
+        nextQuestionBtn.innerHTML = `Selanjutnya <i class="fas fa-arrow-right ms-2"></i>`;
+        if (index === quizQuestions.length - 1) {
+          nextQuestionBtn.innerHTML = `Selesai <i class="fas fa-check ms-2"></i>`;
+        }
+
+        questionData.options.forEach((option, optionIndex) => {
+          const button = document.createElement("button");
+          button.className = "list-group-item list-group-item-action list-group-item-dark mb-2 text-start";
+          button.textContent = option;
+          button.setAttribute("data-index", optionIndex);
+          // Tambahkan event listener dengan closure agar optionIndex tetap benar
+          button.onclick = () => selectAnswer(optionIndex);
+          answerOptions.appendChild(button);
+        });
+
+        // Tandai jawaban yang sudah dipilih jika ada
+        if (userAnswers[index] !== null && userAnswers[index] !== -1) {
+          const selectedButton = answerOptions.querySelector(`[data-index="${userAnswers[index]}"]`);
+          if (selectedButton) selectedButton.classList.add("active", "bg-primary");
+          nextQuestionBtn.disabled = false;
+        }
+
+        startQuestionTimer();
+      }
+
+      function selectAnswer(optionIndex) {
+        userAnswers[currentQuestionIndex] = optionIndex;
+
+        // Hapus kelas aktif dari semua tombol
+        answerOptions.querySelectorAll("button").forEach((btn) => {
+          btn.classList.remove("active", "bg-primary");
+        });
+
+        // Tambahkan kelas aktif ke tombol yang dipilih
+        const selectedButton = answerOptions.querySelector(`[data-index="${optionIndex}"]`);
+        selectedButton.classList.add("active", "bg-primary");
+
+        nextQuestionBtn.disabled = false;
+
+        // Hentikan timer karena jawaban sudah dipilih
+        clearInterval(quizTimerInterval);
+        quizTimer.textContent = "Terkunci";
+      }
+
+      function startQuestionTimer() {
+        let timeLeft = QUESTION_DURATION;
+        quizTimer.textContent = `Waktu: ${timeLeft}s`;
+        clearInterval(quizTimerInterval);
+
+        quizTimerInterval = setInterval(() => {
+          timeLeft--;
+          quizTimer.textContent = `Waktu: ${timeLeft}s`;
+
+          if (timeLeft <= 0) {
+            clearInterval(quizTimerInterval);
+            // Jika waktu habis dan belum ada jawaban, anggap jawaban null
+            if (userAnswers[currentQuestionIndex] === null) {
+              userAnswers[currentQuestionIndex] = -1; // -1 menandakan tidak menjawab/waktu habis
+            }
+            nextQuestion();
+          }
+        }, 1000);
+      }
+
+      function nextQuestion() {
+        clearInterval(quizTimerInterval);
+
+        // Pastikan ada jawaban, meskipun itu null/-1 (jika lompat tanpa klik)
+        if (userAnswers[currentQuestionIndex] === null) {
+          userAnswers[currentQuestionIndex] = -1;
+        }
+
+        currentQuestionIndex++;
+        displayQuestion(currentQuestionIndex);
+      }
+
+      async function finishQuiz() {
+        quizQuestionCard.style.display = "none";
+
+        // 1. Hitung Nilai
+        let correctCount = 0;
+        quizQuestions.forEach((question, index) => {
+          const userAnswer = userAnswers[index];
+          // Pastikan correctOptionIndex adalah angka, Firebase kadang menyimpan string
+          const correctIndex = parseInt(question.correctOptionIndex);
+
+          if (userAnswer === correctIndex) {
+            correctCount++;
+          }
+        });
+
+        quizScore = (correctCount / quizQuestions.length) * 100;
+
+        // 2. Kirim Hasil ke Firebase
+        const resultData = {
+          score: parseFloat(quizScore.toFixed(2)),
+          correctAnswers: correctCount,
+          totalQuestions: quizQuestions.length,
+          // userAnswers: userAnswers, // Tidak perlu simpan semua jawaban di DB publik
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+          finished: true,
+          userName: currentUser.displayName || (await fetchUserName(currentUser)),
+          userEmail: currentUser.email,
+        };
+
         try {
-          const fileRef = storage.ref(storagePath);
-          await fileRef.delete();
-          console.log(`File di Storage berhasil dihapus: ${storagePath}`);
-
-          await database.ref(`riwayat_unggah/${userUid}/${uploadId}`).remove();
-          console.log(`Data di Database berhasil dihapus: ${uploadId}`);
-
-          showSuccessDialog("File berhasil dihapus dari riwayat upload Anda.");
-          fetchUploadHistory(userUid);
+          // Simpan hasil ke node quiz_results
+          await database.ref(`quiz_results/${currentUser.uid}`).set(resultData);
         } catch (error) {
-          console.error("Gagal menghapus file:", error);
-          showFailDialog(`Gagal menghapus file. Pesan Error: ${error.message}`);
+          console.error("Gagal menyimpan hasil kuis:", error);
+          showFailDialog("Kuis Selesai, tapi gagal menyimpan nilai ke database. Hubungi Admin!");
+          return;
+        }
+
+        // 3. Tampilkan Hasil (gunakan status retake dari loadQuizData sebelumnya)
+        showQuizResult(resultData.score, resultData.totalQuestions, resultData.timestamp, quizCanRetake);
+
+        showSuccessDialog(`Kuis Selesai! Nilai Anda: ${resultData.score.toFixed(2)}`, null);
+      }
+
+      async function showQuizResult(score, totalQuestions, timestamp, canRetake) {
+        quizAccessCard.style.display = "block";
+        quizFormContainer.style.display = "none";
+        quizResultDisplay.style.display = "block";
+
+        finalScoreTitle.textContent = `Nilai Anda: ${score.toFixed(2)} / 100`;
+        // Atur warna berdasarkan nilai (misalnya di atas 70 lulus)
+        finalScoreTitle.className = score >= 70 ? "text-success" : "text-accent-red";
+
+        const date = new Date(timestamp).toLocaleDateString("id-ID", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        // Hitung jawaban benar untuk tampilan
+        const correctCount = Math.round((score / 100) * totalQuestions);
+
+        resultDetails.innerHTML = `Anda menjawab benar ${correctCount} dari ${totalQuestions} soal.<br>Tes selesai pada ${date}.`;
+
+        if (canRetake) {
+          resetQuizBtn.style.display = "block";
+          resetQuizBtn.textContent = "Reset & Ikut Lagi";
+        } else {
+          resetQuizBtn.style.display = "none";
+        }
+      }
+
+      function resetQuizAttempt() {
+        // Logika untuk reset kuis di database hanya jika diizinkan
+        if (quizCanRetake && confirm("Yakin ingin mereset hasil kuis Anda? Anda harus memasukkan kunci akses lagi.")) {
+          database
+            .ref(`quiz_results/${currentUser.uid}`)
+            .remove()
+            .then(() => {
+              showSuccessDialog("Status kuis berhasil direset.");
+              loadQuizData(); // Muat ulang tampilan
+            })
+            .catch((error) => {
+              showFailDialog("Gagal mereset status kuis: " + error.message);
+            });
+        } else if (!quizCanRetake) {
+          showFailDialog("Reset tidak diizinkan oleh administrator.");
         }
       }
 
@@ -1366,7 +1648,7 @@
           now.getSeconds()
         ).padStart(2, "0")}`;
 
-        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".");
+        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".") || file.name; // Handle case with no extension
         const fileExtension = file.name.split(".").pop();
         const storageFileName = `${fileNameWithoutExt}_${timestampFormat}.${fileExtension}`;
 
@@ -1435,8 +1717,86 @@
         );
       }
 
-      // ========================== FUNGSI DIALOG & UTILITY ==========================
+      // ========================== RIWAYAT & HAPUS ==========================
+      async function fetchUploadHistory(userUid) {
+        historyList.innerHTML = "";
+        noHistoryMessage.style.display = "block";
 
+        try {
+          const snapshot = await database.ref(`riwayat_unggah/${userUid}`).once("value");
+          const history = snapshot.val();
+
+          if (!history) {
+            return;
+          }
+
+          noHistoryMessage.style.display = "none";
+
+          const historyArray = Object.keys(history)
+            .map((key) => ({
+              id: key,
+              ...history[key],
+            }))
+            .sort((a, b) => b.timestamp - a.timestamp);
+
+          historyArray.forEach((item) => {
+            const listItem = document.createElement("li");
+            listItem.className = "history-item";
+
+            const fileDetails = document.createElement("div");
+            fileDetails.className = "file-details";
+
+            const cleanFileName = item.originalFileName.substring(0, item.originalFileName.lastIndexOf(".")) || item.originalFileName;
+
+            fileDetails.innerHTML = `
+					<strong><i class="fas fa-file-alt"></i> ${item.courseName}</strong>
+					<span>Nama File: ${cleanFileName} (${item.fileSizeMB} MB)</span>
+					<span>Diunggah: ${new Date(item.timestamp).toLocaleDateString("id-ID", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}</span>
+				`;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "delete-btn";
+            deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Hapus';
+            deleteButton.onclick = () => deleteUploadedFile(userUid, item.id, item.storagePath);
+
+            listItem.appendChild(fileDetails);
+            listItem.appendChild(deleteButton);
+            historyList.appendChild(listItem);
+          });
+        } catch (error) {
+          console.error("Gagal memuat riwayat upload:", error);
+          noHistoryMessage.textContent = "Gagal memuat riwayat. Silakan coba lagi.";
+        }
+      }
+
+      async function deleteUploadedFile(userUid, uploadId, storagePath) {
+        if (!confirm("Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat dibatalkan.")) {
+          return;
+        }
+
+        try {
+          const fileRef = storage.ref(storagePath);
+          await fileRef.delete();
+          console.log(`File di Storage berhasil dihapus: ${storagePath}`);
+
+          await database.ref(`riwayat_unggah/${userUid}/${uploadId}`).remove();
+          console.log(`Data di Database berhasil dihapus: ${uploadId}`);
+
+          showSuccessDialog("File berhasil dihapus dari riwayat upload Anda.");
+          fetchUploadHistory(userUid);
+        } catch (error) {
+          console.error("Gagal menghapus file:", error);
+          showFailDialog(`Gagal menghapus file. Pesan Error: ${error.message}`);
+        }
+      }
+
+      // ========================== FUNGSI DIALOG & UTILITY ==========================
       function showSyaratDialogAtStart() {
         syaratDialogOverlay.style.display = "flex";
         confirmSyaratBtn.onclick = () => {
@@ -1487,7 +1847,11 @@
         rocketAnimation.style.display = "none";
         scanAnimation.style.display = "none";
         dropArea.style.display = "flex";
-        clearInterval(countdownInterval);
+
+        if (countdownInterval) {
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+        }
 
         statusMessage.classList.remove("timer-text");
         statusMessage.style.color = "#555";
@@ -1569,7 +1933,7 @@
             clearInterval(countdownInterval);
             closeCourseAccess(courseKey, courseName);
           } else {
-            statusMessage.innerHTML = `Waktu Pengumpulan Tersisa: ${formatTime(distance)}`;
+            statusMessage.innerHTML = `<i class="fas fa-hourglass-half"></i> Waktu Pengumpulan Tersisa: ${formatTime(distance)}`;
           }
         };
 
@@ -1589,7 +1953,7 @@
         if (courseData && courseData.isOpen === false) {
           statusMessage.classList.add("timer-text");
           statusMessage.style.color = "#dc3545";
-          statusMessage.innerHTML = "Akses pengumpulan sudah ditutup.";
+          statusMessage.innerHTML = '<i class="fas fa-times-circle"></i> Akses pengumpulan sudah ditutup.';
         } else if (courseData && courseData.deadline) {
           const deadlineString = courseData.deadline;
           const deadlineTime = new Date(deadlineString).getTime();
@@ -1599,7 +1963,7 @@
             closeCourseAccess(courseKey, courseName);
             statusMessage.classList.add("timer-text");
             statusMessage.style.color = "#dc3545";
-            statusMessage.innerHTML = `Pengumpulan ditutup karena Waktu habis sejak ${new Date(deadlineTime).toLocaleDateString("id-ID", {
+            statusMessage.innerHTML = `<i class="fas fa-lock"></i> Pengumpulan ditutup karena Waktu habis sejak ${new Date(deadlineTime).toLocaleDateString("id-ID", {
               year: "numeric",
               month: "long",
               day: "numeric",
@@ -1612,16 +1976,17 @@
         } else {
           statusMessage.classList.add("timer-text");
           statusMessage.style.color = "#28a745";
-          statusMessage.innerHTML = "Akses terbuka silakan Pilih dokumen untuk diunggah.";
+          statusMessage.innerHTML = '<i class="fas fa-check-circle"></i> Akses terbuka silakan Pilih dokumen untuk diunggah.';
         }
       }
 
       function closeCourseAccess(courseKey, courseName) {
         courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
-        courseAccessMessage.textContent = `Waktu pengumpulan untuk mata kuliah ${courseName} telah habis. Akses ditutup secara otomatis.`;
+        courseAccessMessage.textContent = `Waktu pengumpulan untuk mata kuliah ini telah habis. Akses ditutup secara otomatis.`;
         courseAccessClosedOverlay.style.display = "flex";
         fileInput.value = "";
 
+        // Update status di Firebase
         database
           .ref(`akses_unggah/${courseKey}/isOpen`)
           .set(false)
@@ -1632,7 +1997,7 @@
             }
             statusMessage.classList.add("timer-text");
             statusMessage.style.color = "#dc3545";
-            statusMessage.innerHTML = `Pengumpulan tugas untuk ${courseName} telah ditutup.`;
+            statusMessage.innerHTML = `<i class="fas fa-lock"></i> Pengumpulan tugas untuk ${courseName} telah ditutup.`;
 
             if (Notification.permission === "granted") {
               new Notification("Pengumpulan Ditutup Otomatis", {
