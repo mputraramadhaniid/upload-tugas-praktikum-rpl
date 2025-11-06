@@ -1641,9 +1641,9 @@
           // 3. Tampilkan poin yang didapat
           let pointMessage;
           if (earnedPoints > 0) {
-            pointMessage = `Benar! Anda mendapat <b>${earnedPoints.toFixed(2)} poin</b> (Poin Dasar + Bonus Waktu).`;
+            pointMessage = `Benar! Anda mendapat <b>${earnedPoints.toFixed(2)} poin</b>.`;
           } else {
-            pointMessage = `Jawaban Salah atau Terlambat. Poin: <b>0</b>.`;
+            pointMessage = `Jawaban Salah atau Terlambat. Poin: <b>0 point</b>.`;
           }
           showSuccessDialog(pointMessage, null);
 
