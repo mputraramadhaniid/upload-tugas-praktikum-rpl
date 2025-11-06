@@ -1049,15 +1049,17 @@
       let currentUser = null;
       let courseMap = {};
 
-      // Variabel Kuis
-      let quizQuestions = []; // Akan diisi dari Firebase
-      let currentQuestionIndex = 0;
-      let userAnswers = [];
-      let quizScore = 0;
-      let quizTimerInterval = null;
-      const QUESTION_DURATION = 10; // 10 detik per soal
-      let quizKey = ""; // Kunci dari Firebase
-      let quizCanRetake = false; // Status retake dari Firebase
+      // Variabel Kuis REAL-TIME
+      let quizQuestions = [];
+      let quizKey = "";
+      let quizCanRetake = false;
+      let userAnswers = {}; // {0: 1, 1: 3}
+      let userScoredPoints = {}; // {0: 10.5, 1: 0}
+      let currentQuizStateRef = null;
+      let currentQuizData = null;
+      let timerDisplayInterval = null;
+      const BASE_POINTS = 10; // Poin dasar jika jawaban benar (sebelum bonus/penalti)
+      const MAX_DURATION = 10; // Durasi maksimum per soal (harus sesuai admin)
 
       // ========================== EVENT LISTENERS ==========================
       document.addEventListener("DOMContentLoaded", () => {
@@ -1068,7 +1070,7 @@
         showSyaratDialogAtStart();
         listenForManualNotifications();
         statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
-        toggleAuthView("login"); // Default view is login
+        toggleAuthView("login");
       });
 
       // Otentikasi Listeners
@@ -1154,10 +1156,10 @@
 
       // Kuis Listeners
       startQuizBtn.addEventListener("click", () => checkQuizAccess(accessKeyInput.value));
-      nextQuestionBtn.addEventListener("click", nextQuestion);
+      nextQuestionBtn.addEventListener("click", saveAnswerAndWait);
       resetQuizBtn.addEventListener("click", resetQuizAttempt);
 
-      // ========================== FUNGSI OTENTIKASI (LOGIN/REGISTER) ==========================
+      // ========================== FUNGSI OTENTIKASI (Tetap sama) ==========================
       function toggleAuthView(view) {
         if (view === "login") {
           loginForm.style.display = "block";
@@ -1186,8 +1188,6 @@
           return user.email;
         }
       }
-
-      // ... (Bagian sebelumnya)
 
       auth.onAuthStateChanged(async (user) => {
         if (user) {
@@ -1310,7 +1310,7 @@
           });
       }
 
-      // ========================== FUNGSI NAVIGASI ==========================
+      // ========================== FUNGSI NAVIGASI (Tetap sama) ==========================
       function showView(view) {
         if (!currentUser) return;
 
@@ -1325,6 +1325,12 @@
         uploadView.style.display = "none";
         uploadHistoryContainer.style.display = "none";
         quizView.style.display = "none";
+
+        // Hentikan listener quiz sebelumnya jika ada
+        if (currentQuizStateRef) {
+          currentQuizStateRef.off();
+        }
+        clearInterval(timerDisplayInterval);
 
         if (view === "home") {
           uploadView.style.display = "block";
@@ -1343,20 +1349,52 @@
         }
       }
 
-      // ========================== FUNGSI KUIS DENGAN PERBAIKAN ==========================
+      // ========================== FUNGSI KUIS REAL-TIME (DENGAN POIN DINAMIS) ==========================
+
+      /**
+       * 💰 Logika Penghitungan Poin Dinamis:
+       * - Poin Dasar: BASE_POINTS (10)
+       * - Poin Maksimal (jika jawab di detik pertama): BASE_POINTS + MAX_DURATION
+       * - Formula: Score = BASE_POINTS + (Waktu_Tersisa / MAX_DURATION) * MAX_DURATION
+       * - Jika waktu habis (timeLeft <= 0), Score = 0
+       * - Jika jawaban salah, Score = 0
+       */
+      function calculateDynamicPoints(questionDurationSeconds, timeElapsedSeconds, isCorrect) {
+        if (!isCorrect) {
+          return 0; // Poin 0 jika jawaban salah
+        }
+
+        const timeLeftSeconds = Math.max(0, questionDurationSeconds - timeElapsedSeconds);
+
+        // Jika waktu habis saat menjawab (walaupun benar), anggap poin 0
+        if (timeElapsedSeconds >= questionDurationSeconds) {
+          return 0;
+        }
+
+        // Hitung bonus/penalti: Lebih cepat menjawab, lebih besar poin mendekati 20 (10+10)
+        // Poin maksimal (detik 1): 10 + 10 = 20
+        // Poin minimal (detik 10): 10 + 1 = 11
+        const bonusFraction = timeLeftSeconds / questionDurationSeconds;
+        const dynamicPoints = BASE_POINTS + bonusFraction * BASE_POINTS;
+
+        return parseFloat(dynamicPoints.toFixed(2));
+      }
+
       async function loadQuizData() {
         if (!currentUser) return;
 
-        // Atur tampilan awal
         quizQuestionCard.style.display = "none";
         quizResultDisplay.style.display = "none";
         quizAccessCard.style.display = "block";
-        quizFormContainer.style.display = "block"; // Tampilkan form kunci secara default
+        quizFormContainer.style.display = "block";
 
         try {
-          // 1. Ambil data kuis dan kunci akses dari Firebase
-          const snapshot = await database.ref("quiz_config").once("value");
-          const config = snapshot.val();
+          if (currentQuizStateRef) {
+            currentQuizStateRef.off();
+          }
+
+          const configSnapshot = await database.ref("quiz_config").once("value");
+          const config = configSnapshot.val();
 
           if (!config || !config.questions || !config.key) {
             quizStatusMessage.textContent = "Kuis belum dikonfigurasi oleh administrator.";
@@ -1366,21 +1404,29 @@
 
           quizQuestions = Object.values(config.questions);
           quizKey = config.key;
-          quizCanRetake = config.canRetake || false; // Ambil status retake
+          quizCanRetake = config.canRetake || false;
 
-          // 2. Cek status kuis pengguna
           const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}`).once("value");
           const userResult = scoreSnapshot.val();
 
+          // Load saved points and answers
+          const userAnswersSnapshot = await database.ref(`user_answers/${currentUser.uid}`).once("value");
+          userAnswers = userAnswersSnapshot.val() || {};
+
+          const userPointsSnapshot = await database.ref(`user_points/${currentUser.uid}`).once("value");
+          userScoredPoints = userPointsSnapshot.val() || {};
+
           if (userResult && userResult.finished) {
-            // Sudah pernah ikut
             showQuizResult(userResult.score, userResult.totalQuestions, userResult.timestamp, quizCanRetake);
+            quizStatusMessage.textContent = "Anda sudah menyelesaikan kuis.";
           } else {
-            // Belum ikut, tampilkan form kunci
-            quizStatusMessage.textContent = "Masukkan Kunci Akses untuk memulai kuis.";
+            quizStatusMessage.textContent = "Masukkan Kunci Akses yang diberikan Admin untuk memulai kuis.";
             quizFormContainer.style.display = "block";
             startQuizBtn.disabled = false;
           }
+
+          currentQuizStateRef = database.ref("current_quiz_state");
+          currentQuizStateRef.on("value", handleAdminQuizStateChange);
         } catch (error) {
           console.error("Gagal memuat data kuis:", error);
           quizStatusMessage.textContent = "Gagal memuat kuis. Coba lagi nanti.";
@@ -1390,159 +1436,312 @@
 
       async function checkQuizAccess(enteredKey) {
         if (enteredKey === quizKey) {
-          // Cek ulang apakah sudah pernah submit (walaupun loadQuizData sudah cek)
           const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}/finished`).once("value");
           if (scoreSnapshot.val() === true && quizCanRetake === false) {
             showFailDialog("Anda sudah menyelesaikan kuis dan tidak diizinkan untuk mengulang.");
             return;
           }
-          startQuiz();
+
+          await database.ref(`user_quiz_status/${currentUser.uid}`).set({
+            userName: currentUser.displayName || (await fetchUserName(currentUser)),
+            email: currentUser.email,
+            lastAccess: firebase.database.ServerValue.TIMESTAMP,
+            isJoined: true,
+            currentAnswer: null,
+          });
+
+          quizFormContainer.style.display = "none";
+          quizStatusMessage.textContent = "Kunci akses diterima. Menunggu Admin memulai soal pertama...";
         } else {
           showFailDialog("Kunci Akses Salah!");
           accessKeyInput.value = "";
         }
       }
 
-      function startQuiz() {
-        quizAccessCard.style.display = "none";
-        quizQuestionCard.style.display = "block";
-        currentQuestionIndex = 0;
-        userAnswers = Array(quizQuestions.length).fill(null);
-        quizScore = 0;
+      async function handleAdminQuizStateChange(snapshot) {
+        if (!currentUser) return;
 
-        displayQuestion(currentQuestionIndex);
+        const state = snapshot.val();
+        currentQuizData = state;
+
+        const isUserJoined = await database
+          .ref(`user_quiz_status/${currentUser.uid}/isJoined`)
+          .once("value")
+          .then((s) => s.val());
+
+        const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}`).once("value");
+        const userResult = scoreSnapshot.val();
+
+        if (userResult && userResult.finished) {
+          showQuizResult(userResult.score, userResult.totalQuestions, userResult.timestamp, quizCanRetake);
+          return;
+        }
+
+        if (!state || state.status === "WAITING" || !isUserJoined) {
+          quizQuestionCard.style.display = "none";
+          quizAccessCard.style.display = "block";
+          if (isUserJoined) {
+            quizStatusMessage.textContent = "Kunci akses diterima. Menunggu Admin memulai soal pertama...";
+          } else {
+            quizStatusMessage.textContent = "Masukkan Kunci Akses yang diberikan Admin untuk memulai kuis.";
+            quizFormContainer.style.display = "block";
+          }
+          clearInterval(timerDisplayInterval);
+          quizTimer.textContent = "Waktu: --s";
+          return;
+        }
+
+        if (state.status === "ACTIVE" && isUserJoined) {
+          const questionIndex = parseInt(state.currentQuestionIndex);
+
+          if (currentQuizData.currentQuestionIndex !== questionIndex) {
+            // Check if the question was already answered and scored
+            if (userAnswers[questionIndex] === undefined) {
+              userAnswers[questionIndex] = null;
+            }
+          }
+
+          quizAccessCard.style.display = "none";
+          quizQuestionCard.style.display = "block";
+
+          displayQuestion(questionIndex, state.startTime, state.durationSeconds);
+        }
+
+        if (state.status === "FINISHED" && isUserJoined) {
+          await finishQuiz(state.totalQuestions);
+        }
       }
 
-      function displayQuestion(index) {
+      function displayQuestion(index, startTime, durationSeconds) {
         if (index >= quizQuestions.length) {
           finishQuiz();
           return;
         }
 
         const questionData = quizQuestions[index];
+
         questionNumber.textContent = `Soal ${index + 1}/${quizQuestions.length}`;
         questionText.textContent = questionData.text;
         answerOptions.innerHTML = "";
+        nextQuestionBtn.innerHTML = `<i class="fas fa-check-circle me-2"></i> Simpan Jawaban ${index === quizQuestions.length - 1 ? "Akhir" : ""}`;
         nextQuestionBtn.disabled = true;
-
-        // Reset text tombol
-        nextQuestionBtn.innerHTML = `Selanjutnya <i class="fas fa-arrow-right ms-2"></i>`;
-        if (index === quizQuestions.length - 1) {
-          nextQuestionBtn.innerHTML = `Selesai <i class="fas fa-check ms-2"></i>`;
-        }
 
         questionData.options.forEach((option, optionIndex) => {
           const button = document.createElement("button");
           button.className = "list-group-item list-group-item-action list-group-item-dark mb-2 text-start";
           button.textContent = option;
           button.setAttribute("data-index", optionIndex);
-          // Tambahkan event listener dengan closure agar optionIndex tetap benar
           button.onclick = () => selectAnswer(optionIndex);
           answerOptions.appendChild(button);
         });
 
         // Tandai jawaban yang sudah dipilih jika ada
-        if (userAnswers[index] !== null && userAnswers[index] !== -1) {
-          const selectedButton = answerOptions.querySelector(`[data-index="${userAnswers[index]}"]`);
+        const selectedAnswerIndex = userAnswers[index];
+        if (selectedAnswerIndex !== null && selectedAnswerIndex !== undefined && selectedAnswerIndex !== -1) {
+          const selectedButton = answerOptions.querySelector(`[data-index="${selectedAnswerIndex}"]`);
           if (selectedButton) selectedButton.classList.add("active", "bg-primary");
           nextQuestionBtn.disabled = false;
+          // Jika sudah dijawab, kunci opsi
+          answerOptions.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
+          nextQuestionBtn.innerHTML = `Jawaban Tersimpan. Menunggu Admin...`;
         }
 
-        startQuestionTimer();
+        startQuestionTimer(startTime, durationSeconds);
       }
 
       function selectAnswer(optionIndex) {
-        userAnswers[currentQuestionIndex] = optionIndex;
+        userAnswers[currentQuizData.currentQuestionIndex] = optionIndex;
 
-        // Hapus kelas aktif dari semua tombol
         answerOptions.querySelectorAll("button").forEach((btn) => {
           btn.classList.remove("active", "bg-primary");
         });
 
-        // Tambahkan kelas aktif ke tombol yang dipilih
         const selectedButton = answerOptions.querySelector(`[data-index="${optionIndex}"]`);
         selectedButton.classList.add("active", "bg-primary");
 
         nextQuestionBtn.disabled = false;
-
-        // Hentikan timer karena jawaban sudah dipilih
-        clearInterval(quizTimerInterval);
-        quizTimer.textContent = "Terkunci";
       }
 
-      function startQuestionTimer() {
-        let timeLeft = QUESTION_DURATION;
-        quizTimer.textContent = `Waktu: ${timeLeft}s`;
-        clearInterval(quizTimerInterval);
+      async function saveAnswerAndWait() {
+        const questionIndex = currentQuizData.currentQuestionIndex;
+        const selectedAnswer = userAnswers[questionIndex];
+        const questionData = quizQuestions[questionIndex];
 
-        quizTimerInterval = setInterval(() => {
-          timeLeft--;
-          quizTimer.textContent = `Waktu: ${timeLeft}s`;
-
-          if (timeLeft <= 0) {
-            clearInterval(quizTimerInterval);
-            // Jika waktu habis dan belum ada jawaban, anggap jawaban null
-            if (userAnswers[currentQuestionIndex] === null) {
-              userAnswers[currentQuestionIndex] = -1; // -1 menandakan tidak menjawab/waktu habis
-            }
-            nextQuestion();
-          }
-        }, 1000);
-      }
-
-      function nextQuestion() {
-        clearInterval(quizTimerInterval);
-
-        // Pastikan ada jawaban, meskipun itu null/-1 (jika lompat tanpa klik)
-        if (userAnswers[currentQuestionIndex] === null) {
-          userAnswers[currentQuestionIndex] = -1;
+        if (selectedAnswer === null || selectedAnswer === undefined) {
+          showFailDialog("Mohon pilih jawaban terlebih dahulu!");
+          return;
         }
 
-        currentQuestionIndex++;
-        displayQuestion(currentQuestionIndex);
+        // Cek apakah sudah pernah dikirim/dinilai
+        if (
+          await database
+            .ref(`user_points/${currentUser.uid}/${questionIndex}`)
+            .once("value")
+            .then((s) => s.exists())
+        ) {
+          showFailDialog("Jawaban untuk soal ini sudah tersimpan dan dinilai.");
+          return;
+        }
+
+        nextQuestionBtn.disabled = true;
+        nextQuestionBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> Menghitung Poin...`;
+
+        // --- LOGIKA HITUNG POIN REAL-TIME ---
+        const startTimeMs = currentQuizData.startTime;
+        const durationSeconds = currentQuizData.durationSeconds || MAX_DURATION;
+        const submitTimeMs = new Date().getTime();
+        const timeElapsedSeconds = Math.round((submitTimeMs - startTimeMs) / 1000);
+
+        const isCorrect = selectedAnswer === parseInt(questionData.correctOptionIndex);
+        const earnedPoints = calculateDynamicPoints(durationSeconds, timeElapsedSeconds, isCorrect);
+        // ------------------------------------
+
+        try {
+          // 1. Simpan jawaban dan poin ke node masing-masing
+          await database.ref(`user_answers/${currentUser.uid}/${questionIndex}`).set(selectedAnswer);
+          await database.ref(`user_points/${currentUser.uid}/${questionIndex}`).set(earnedPoints);
+
+          // Perbarui skor kumulatif total dan kirim ke quiz_results (sebagai PROGRESS)
+          const allPointsSnapshot = await database.ref(`user_points/${currentUser.uid}`).once("value");
+          const allPoints = allPointsSnapshot.val() || {};
+
+          let totalScoreSum = 0;
+          let answeredQuestionsCount = 0;
+          let correctCount = 0;
+
+          // Hitung skor berdasarkan semua poin yang sudah dikumpulkan
+          for (const key in allPoints) {
+            const points = allPoints[key];
+            totalScoreSum += points;
+            answeredQuestionsCount++; // Hitung jumlah soal yang sudah dijawab
+            if (points > 0) correctCount++;
+          }
+
+          // Hitung persentase skor total (total max possible points = 100% / maxPossiblePoints)
+          const maxPossiblePoints = (currentQuizData.totalQuestions || quizQuestions.length) * (BASE_POINTS + MAX_DURATION);
+          const scorePercentage = (totalScoreSum / maxPossiblePoints) * 100;
+
+          const progressiveResultData = {
+            score: parseFloat(scorePercentage.toFixed(2)),
+            totalPoints: parseFloat(totalScoreSum.toFixed(2)),
+            correctAnswers: correctCount,
+            totalQuestions: currentQuizData.totalQuestions || quizQuestions.length,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            finished: false, // KRITIS: Tandai kuis belum selesai
+            userName: currentUser.displayName || (await fetchUserName(currentUser)),
+            userEmail: currentUser.email,
+          };
+
+          // Simpan progress ke quiz_results (membuat Leaderboard real-time)
+          // Gunakan UPDATE agar tidak menimpa data finish sebelumnya
+          await database.ref(`quiz_results/${currentUser.uid}`).update(progressiveResultData);
+
+          // 2. Kunci tampilan
+          answerOptions.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
+
+          // 3. Tampilkan poin yang didapat
+          let pointMessage;
+          if (earnedPoints > 0) {
+            pointMessage = `Benar! Anda mendapat **${earnedPoints.toFixed(2)} poin** (Poin Dasar + Bonus Waktu).`;
+          } else {
+            pointMessage = `Jawaban Salah atau Terlambat. Poin: **0.00**.`;
+          }
+          showSuccessDialog(pointMessage, null);
+
+          quizTimer.textContent = "JAWABAN TERKUNCI";
+          nextQuestionBtn.innerHTML = `Jawaban Tersimpan. Menunggu Admin...`;
+        } catch (error) {
+          console.error("Gagal menyimpan jawaban/poin:", error);
+          showFailDialog("Gagal menyimpan jawaban/poin. Coba lagi.");
+          nextQuestionBtn.disabled = false;
+          nextQuestionBtn.innerHTML = `Simpan Jawaban (Gagal!)`;
+        }
       }
 
-      async function finishQuiz() {
-        quizQuestionCard.style.display = "none";
+      function startQuestionTimer(startTime, durationSeconds) {
+        clearInterval(timerDisplayInterval);
 
-        // 1. Hitung Nilai
+        const targetTime = startTime + durationSeconds * 1000;
+
+        const updateTimer = () => {
+          const now = new Date().getTime();
+          const timeLeft = targetTime - now;
+
+          if (timeLeft <= 0) {
+            clearInterval(timerDisplayInterval);
+            quizTimer.textContent = "Waktu Habis!";
+
+            // Jika waktu habis, dan user belum kirim jawaban, anggap -1 dan kirim ke DB
+            if (userAnswers[currentQuizData.currentQuestionIndex] === null) {
+              database.ref(`user_answers/${currentUser.uid}/${currentQuizData.currentQuestionIndex}`).set(-1);
+              // Poin pasti 0 jika waktu habis
+              database.ref(`user_points/${currentUser.uid}/${currentQuizData.currentQuestionIndex}`).set(0);
+            }
+
+            answerOptions.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
+            nextQuestionBtn.disabled = true;
+            nextQuestionBtn.innerHTML = `Waktu Habis. Menunggu Admin...`;
+          } else {
+            const secondsLeft = Math.ceil(timeLeft / 1000);
+            quizTimer.textContent = `Waktu: ${secondsLeft}s`;
+            quizTimer.style.color = secondsLeft <= 5 ? "var(--accent-red)" : "var(--primary)";
+          }
+        };
+
+        updateTimer();
+        timerDisplayInterval = setInterval(updateTimer, 100);
+      }
+
+      async function finishQuiz(totalQuestions) {
+        if (quizQuestionCard.style.display !== "none") {
+          quizQuestionCard.style.display = "none";
+        }
+
+        clearInterval(timerDisplayInterval);
+
+        // 1. Ambil SEMUA POIN yang telah disimpan
+        const pointsSnapshot = await database.ref(`user_points/${currentUser.uid}`).once("value");
+        const userPoints = pointsSnapshot.val() || {};
+
+        let totalScoreSum = 0;
         let correctCount = 0;
-        quizQuestions.forEach((question, index) => {
-          const userAnswer = userAnswers[index];
-          // Pastikan correctOptionIndex adalah angka, Firebase kadang menyimpan string
-          const correctIndex = parseInt(question.correctOptionIndex);
 
-          if (userAnswer === correctIndex) {
+        for (let i = 0; i < totalQuestions; i++) {
+          const points = userPoints[i] || 0;
+          totalScoreSum += points;
+          if (points > 0) {
             correctCount++;
           }
-        });
+        }
 
-        quizScore = (correctCount / quizQuestions.length) * 100;
+        // Asumsi: Max total points = 20 poin * totalQuestions.
+        const maxPossiblePoints = totalQuestions * (BASE_POINTS + MAX_DURATION);
+        const finalScorePercentage = (totalScoreSum / maxPossiblePoints) * 100;
 
-        // 2. Kirim Hasil ke Firebase
+        // 2. Kirim Hasil Final ke Firebase
         const resultData = {
-          score: parseFloat(quizScore.toFixed(2)),
+          score: parseFloat(finalScorePercentage.toFixed(2)),
+          totalPoints: parseFloat(totalScoreSum.toFixed(2)),
           correctAnswers: correctCount,
-          totalQuestions: quizQuestions.length,
-          // userAnswers: userAnswers, // Tidak perlu simpan semua jawaban di DB publik
+          totalQuestions: totalQuestions,
           timestamp: firebase.database.ServerValue.TIMESTAMP,
-          finished: true,
+          finished: true, // KRITIS: Tandai kuis selesai
           userName: currentUser.displayName || (await fetchUserName(currentUser)),
           userEmail: currentUser.email,
         };
 
         try {
-          // Simpan hasil ke node quiz_results
+          // Gunakan SET untuk memastikan data FINAL (finished: true) menimpa data progress sebelumnya
           await database.ref(`quiz_results/${currentUser.uid}`).set(resultData);
+          await database.ref(`user_quiz_status/${currentUser.uid}`).remove();
         } catch (error) {
           console.error("Gagal menyimpan hasil kuis:", error);
           showFailDialog("Kuis Selesai, tapi gagal menyimpan nilai ke database. Hubungi Admin!");
           return;
         }
 
-        // 3. Tampilkan Hasil (gunakan status retake dari loadQuizData sebelumnya)
+        // 3. Tampilkan Hasil
         showQuizResult(resultData.score, resultData.totalQuestions, resultData.timestamp, quizCanRetake);
-
         showSuccessDialog(`Kuis Selesai! Nilai Anda: ${resultData.score.toFixed(2)}`, null);
       }
 
@@ -1551,9 +1750,8 @@
         quizFormContainer.style.display = "none";
         quizResultDisplay.style.display = "block";
 
-        finalScoreTitle.textContent = `Nilai Anda: ${score.toFixed(2)} / 100`;
-        // Atur warna berdasarkan nilai (misalnya di atas 70 lulus)
-        finalScoreTitle.className = score >= 70 ? "text-success" : "text-accent-red";
+        finalScoreTitle.textContent = `Nilai Akhir: ${score.toFixed(2)} / 100`;
+        finalScoreTitle.className = score >= 70 ? "text-primary" : "text-accent-red";
 
         const date = new Date(timestamp).toLocaleDateString("id-ID", {
           year: "numeric",
@@ -1563,7 +1761,6 @@
           minute: "2-digit",
         });
 
-        // Hitung jawaban benar untuk tampilan
         const correctCount = Math.round((score / 100) * totalQuestions);
 
         resultDetails.innerHTML = `Anda menjawab benar ${correctCount} dari ${totalQuestions} soal.<br>Tes selesai pada ${date}.`;
@@ -1577,14 +1774,23 @@
       }
 
       function resetQuizAttempt() {
-        // Logika untuk reset kuis di database hanya jika diizinkan
         if (quizCanRetake && confirm("Yakin ingin mereset hasil kuis Anda? Anda harus memasukkan kunci akses lagi.")) {
           database
             .ref(`quiz_results/${currentUser.uid}`)
             .remove()
             .then(() => {
+              return database.ref(`user_answers/${currentUser.uid}`).remove();
+            })
+            .then(() => {
+              return database.ref(`user_points/${currentUser.uid}`).remove(); // Hapus poin
+            })
+            .then(() => {
+              return database.ref(`user_quiz_status/${currentUser.uid}`).remove();
+            })
+            .then(() => {
               showSuccessDialog("Status kuis berhasil direset.");
-              loadQuizData(); // Muat ulang tampilan
+              loadQuizData();
+              accessKeyInput.value = "";
             })
             .catch((error) => {
               showFailDialog("Gagal mereset status kuis: " + error.message);
@@ -1594,7 +1800,7 @@
         }
       }
 
-      // ========================== FUNGSI UPLOAD DENGAN LOG ==========================
+      // ========================== FUNGSI UPLOAD DENGAN LOG (Tetap sama) ==========================
       async function handleFile(file) {
         if (!currentUser) {
           showFailDialog("❗ Mohon masuk dengan akun Anda terlebih dahulu.");
@@ -1648,7 +1854,7 @@
           now.getSeconds()
         ).padStart(2, "0")}`;
 
-        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".") || file.name; // Handle case with no extension
+        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".") || file.name;
         const fileExtension = file.name.split(".").pop();
         const storageFileName = `${fileNameWithoutExt}_${timestampFormat}.${fileExtension}`;
 
@@ -1717,7 +1923,7 @@
         );
       }
 
-      // ========================== RIWAYAT & HAPUS ==========================
+      // ========================== RIWAYAT & HAPUS (Tetap sama) ==========================
       async function fetchUploadHistory(userUid) {
         historyList.innerHTML = "";
         noHistoryMessage.style.display = "block";
@@ -1796,7 +2002,7 @@
         }
       }
 
-      // ========================== FUNGSI DIALOG & UTILITY ==========================
+      // ========================== FUNGSI DIALOG & UTILITY (Tetap sama) ==========================
       function showSyaratDialogAtStart() {
         syaratDialogOverlay.style.display = "flex";
         confirmSyaratBtn.onclick = () => {
@@ -2128,4 +2334,3 @@
     </script>
   </body>
 </html>
-
