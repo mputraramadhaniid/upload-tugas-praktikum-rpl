@@ -780,7 +780,11 @@
   <body>
     <div id="loadingOverlay" class="loading-overlay">
       <div class="loading-content">
-        <img src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO_PRODI_2025__1_-removebg-preview.png?alt=media&token=7d615eb3-03a8-406f-ab0f-64d476fc1ba2" alt="Logo UM-Palembang" class="loading-logo mb-3" />
+        <img
+          src="https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO_PRODI_2025__1_-removebg-preview.png?alt=media&token=7d615eb3-03a8-406f-ab0f-64d476fc1ba2"
+          alt="Logo UM-Palembang"
+          class="loading-logo mb-3"
+        />
         <h3 class="mb-2">UNIVERSITAS MUHAMMADIYAH PALEMBANG</h3>
         <div class="loading-animation">
           <div class="bar"></div>
@@ -1057,1398 +1061,1467 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
-    <script>
-      // ========================== INISIALISASI FIREBASE ==========================
-      const firebaseConfig = {
-        // Ganti dengan Config Asli Anda!
-        apiKey: "AIzaSyCZAfnelUdrwUz856j2hC3yJWqUm-JJmiI",
-        authDomain: "ruangbelajar-52a67.firebaseapp.com",
-        databaseURL: "https://ruangbelajar-52a67-default-rtdb.firebaseio.com",
-        projectId: "ruangbelajar-52a67",
-        storageBucket: "ruangbelajar-52a67.appspot.com",
-        messagingSenderId: "545318863560",
-        appId: "1:545318863560:web:df392c010ff914aad49bfd",
-        measurementId: "G-9M8CKR66BW",
-      };
-
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      const storage = firebase.storage();
-      const database = firebase.database();
-
-      // ========================== ELEMEN DOM ==========================
-      const loginScreen = document.getElementById("loginScreen");
-      const mainLayout = document.getElementById("mainLayout");
-      const uploadView = document.getElementById("uploadView");
-      const uploadHistoryContainer = document.getElementById("uploadHistoryContainer");
-      const quizView = document.getElementById("quizView");
-      const logoutBtn = document.getElementById("logoutBtn");
-
-      // Elemen Otentikasi
-      const authTitle = document.getElementById("authTitle");
-      const authSubText = document.getElementById("authSubText");
-      const googleSignInBtn = document.getElementById("googleSignInBtn");
-      const loginForm = document.getElementById("loginForm");
-      const registerForm = document.getElementById("registerForm");
-      const loginEmail = document.getElementById("loginEmail");
-      const loginPassword = document.getElementById("loginPassword");
-      const registerUsername = document.getElementById("registerUsername");
-      const registerEmail = document.getElementById("registerEmail");
-      const registerPassword = document.getElementById("registerPassword");
-      const showRegisterLink = document.getElementById("showRegisterLink");
-      const showLoginLink = document.getElementById("showLoginLink");
-
-      const userNameDisplay = document.getElementById("userName");
-      const userEmailDisplay = document.getElementById("userEmail");
-      const profilePicture = document.getElementById("profilePicture");
-      const userInfoDisplay = document.getElementById("userInfoDisplay");
-
-      const navHome = document.getElementById("navHome");
-      const navHistory = document.getElementById("navHistory");
-      const navQuiz = document.getElementById("navQuiz");
-      const navHomeMobile = document.getElementById("navHomeMobile");
-      const navHistoryMobile = document.getElementById("navHistoryMobile");
-      const navQuizMobile = document.getElementById("navQuizMobile");
-      const historyList = document.getElementById("historyList");
-      const noHistoryMessage = document.getElementById("noHistoryMessage");
-
-      const fileInput = document.getElementById("fileInput");
-      const courseSelect = document.getElementById("courseSelect");
-      const fileNameSpan = document.getElementById("fileName");
-      const progressBar = document.getElementById("progressBar");
-      const progressContainer = document.getElementById("progressContainer");
-      const statusMessage = document.getElementById("statusMessage");
-      const rocketAnimation = document.getElementById("rocketAnimation");
-      const scanAnimation = document.getElementById("scanAnimation");
-      const dropArea = document.getElementById("dropArea");
-      const uploadSuccessOverlay = document.getElementById("uploadSuccessOverlay");
-      const uploadFailOverlay = document.getElementById("uploadFailOverlay");
-      const successMessage = document.getElementById("successMessage");
-      const failMessage = document.getElementById("failMessage");
-      const syaratDialogOverlay = document.getElementById("syaratDialogOverlay");
-      const confirmSyaratBtn = document.getElementById("confirmSyaratBtn");
-
-      const courseAccessClosedOverlay = document.getElementById("courseAccessClosedOverlay");
-      const courseAccessTitle = document.getElementById("courseAccessTitle");
-      const courseAccessMessage = document.getElementById("courseAccessMessage");
-      const mainAccessClosedOverlay = document.getElementById("mainAccessClosedOverlay");
-      const loadingOverlay = document.getElementById("loadingOverlay");
-
-      // Elemen Kuis BARU
-      const quizAccessCard = document.getElementById("quizAccessCard");
-      const quizQuestionCard = document.getElementById("quizQuestionCard");
-      const accessKeyInput = document.getElementById("accessKeyInput");
-      const startQuizBtn = document.getElementById("startQuizBtn");
-      const quizStatusMessage = document.getElementById("quizStatusMessage");
-      const quizTimer = document.getElementById("quizTimer");
-      const questionNumber = document.getElementById("questionNumber");
-      const questionText = document.getElementById("questionText");
-      const answerOptions = document.getElementById("answerOptions");
-      const nextQuestionBtn = document.getElementById("nextQuestionBtn");
-      const quizResultDisplay = document.getElementById("quizResultDisplay");
-      const finalScoreTitle = document.getElementById("finalScoreTitle");
-      const resultDetails = document.getElementById("resultDetails");
-      const resetQuizBtn = document.getElementById("resetQuizBtn");
-      const quizFormContainer = document.getElementById("quizFormContainer");
-
-      // ========================== VARIABEL GLOBAL & KONSTANTA ==========================
-      const MAX_FILE_SIZE_MB = 12;
-      const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
-      let courseDeadlines = {};
-      let countdownInterval = null;
-      let currentUser = null;
-      let courseMap = {};
-
-      // Variabel Kuis REAL-TIME
-      let quizQuestions = [];
-      let quizKey = "";
-      let quizCanRetake = false;
-      let userAnswers = {}; // {0: 1, 1: 3}
-      let userScoredPoints = {}; // {0: 10.5, 1: 0}
-      let currentQuizStateRef = null;
-      let currentQuizData = null;
-      let timerDisplayInterval = null;
-      const BASE_POINTS = 10; // Poin dasar jika jawaban benar (sebelum bonus/penalti)
-      const MAX_DURATION = 10; // Durasi maksimum per soal (harus sesuai admin)
-
-      // ========================== EVENT LISTENERS ==========================
-      document.addEventListener("DOMContentLoaded", () => {
-        requestNotificationPermission();
-        fetchCourseList();
-        fetchCourseDeadlines();
-        checkMainAccessStatus();
-        showSyaratDialogAtStart();
-        listenForManualNotifications();
-        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
-        toggleAuthView("login");
-
-        // --- FUNGSI BARU: Sembunyikan Loading setelah 2 detik ---
-        setTimeout(() => {
-          loadingOverlay.style.opacity = "0";
-          setTimeout(() => {
-            loadingOverlay.style.display = "none";
-          }, 500); // Waktu transisi opacity
-        }, 5000); // Durasi loading 2 detik
-      });
-
-      // Otentikasi Listeners
-      googleSignInBtn.addEventListener("click", handleGoogleSignIn);
-      loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        handleEmailSignIn(loginEmail.value, loginPassword.value);
-      });
-      registerForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        handleRegister(registerUsername.value, registerEmail.value, registerPassword.value);
-      });
-      showRegisterLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        toggleAuthView("register");
-      });
-      showLoginLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        toggleAuthView("login");
-      });
-
-      // Navigasi
-      navHome.addEventListener("click", (e) => {
-        e.preventDefault();
-        showView("home");
-      });
-      navHistory.addEventListener("click", (e) => {
-        e.preventDefault();
-        showView("history");
-      });
-      navQuiz.addEventListener("click", (e) => {
-        e.preventDefault();
-        showView("quiz");
-      });
-
-      // Navigasi Mobile
-      if (navHomeMobile) {
-        navHomeMobile.addEventListener("click", () => showView("home"));
-      }
-      if (navHistoryMobile) {
-        navHistoryMobile.addEventListener("click", () => showView("history"));
-      }
-      if (navQuizMobile) {
-        navQuizMobile.addEventListener("click", () => showView("quiz"));
-      }
-
-      logoutBtn.addEventListener("click", handleSignOut);
-
-      courseSelect.addEventListener("change", () => {
-        const courseKey = courseSelect.value;
-        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
-        checkCourseAccess(courseKey, courseName);
-        startCourseCountdown(courseKey, courseName);
-        fileInput.value = "";
-        fileNameSpan.textContent = "";
-      });
-
-      fileInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          handleFile(file);
-        }
-      });
-
-      // Drag & Drop event listeners...
-      dropArea.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropArea.classList.add("dragover");
-      });
-
-      dropArea.addEventListener("dragleave", () => {
-        dropArea.classList.remove("dragover");
-      });
-
-      dropArea.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropArea.classList.remove("dragover");
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-          handleFile(files[0]);
-        }
-      });
-
-      // Kuis Listeners
-      startQuizBtn.addEventListener("click", () => checkQuizAccess(accessKeyInput.value));
-      nextQuestionBtn.addEventListener("click", saveAnswerAndWait);
-      resetQuizBtn.addEventListener("click", resetQuizAttempt);
-
-      // ========================== FUNGSI OTENTIKASI (Tetap sama) ==========================
-      function toggleAuthView(view) {
-        if (view === "login") {
-          loginForm.style.display = "block";
-          registerForm.style.display = "none";
-          authTitle.textContent = "Masuk ke Portal Tugas";
-          authSubText.textContent = "Pilih metode masuk yang Anda inginkan.";
-          googleSignInBtn.style.display = "flex";
-        } else {
-          loginForm.style.display = "none";
-          registerForm.style.display = "block";
-          authTitle.textContent = "Daftar Akun Baru";
-          authSubText.textContent = "Masukkan data Anda untuk membuat akun portal tugas.";
-          googleSignInBtn.style.display = "none";
-        }
-      }
-
-      async function fetchUserName(user) {
-        if (user.displayName && user.displayName !== user.email) {
-          return user.displayName;
-        }
-        try {
-          const snapshot = await database.ref(`users/${user.uid}/username`).once("value");
-          return snapshot.val() || user.email;
-        } catch (error) {
-          console.error("Gagal mengambil username:", error);
-          return user.email;
-        }
-      }
-
-      auth.onAuthStateChanged(async (user) => {
-        if (user) {
-          currentUser = user;
-          const displayName = await fetchUserName(user);
-
-          database
-            .ref(`users/${user.uid}`)
-            .once("value")
-            .then((snapshot) => {
-              if (!snapshot.exists()) {
-                database.ref(`users/${user.uid}`).set({
-                  username: displayName,
-                  email: user.email,
-                  created_at: firebase.database.ServerValue.TIMESTAMP,
-                  provider: user.providerData[0] ? user.providerData[0].providerId : "email",
-                });
-              }
-            });
-
-          // 🟢 PERBAIKAN PENTING: Gunakan setProperty dengan 'important'
-          loginScreen.style.setProperty("display", "none", "important");
-          mainLayout.style.setProperty("display", "flex", "important");
-
-          userNameDisplay.textContent = displayName;
-          userEmailDisplay.textContent = user.email;
-          profilePicture.src = user.photoURL || "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
-
-          showView("home");
-        } else {
-          currentUser = null;
-
-          // 🔴 PERBAIKAN PENTING: Gunakan setProperty dengan 'important'
-          mainLayout.style.setProperty("display", "none", "important");
-          loginScreen.style.setProperty("display", "flex", "important");
-
-          toggleAuthView("login");
-        }
-      });
-
-      function handleGoogleSignIn() {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth
-          .signInWithPopup(provider)
-          .then(() => {
-            console.log("Berhasil masuk dengan Google!");
-          })
-          .catch((error) => {
-            console.error("Gagal masuk dengan Google:", error);
-            showFailDialog(`Masuk Google Gagal: ${error.message}`);
-          });
-      }
-
-      function handleEmailSignIn(email, password) {
-        auth
-          .signInWithEmailAndPassword(email, password)
-          .then(() => {
-            console.log("Berhasil masuk dengan Email!");
-          })
-          .catch((error) => {
-            console.error("Gagal masuk:", error);
-            let errorMessage = "Gagal masuk. Cek email/password Anda.";
-            if (error.code === "auth/user-not-found") {
-              errorMessage = "Email tidak terdaftar.";
-            } else if (error.code === "auth/wrong-password") {
-              errorMessage = "Password salah.";
-            } else if (error.code === "auth/invalid-email") {
-              errorMessage = "Format email tidak valid.";
-            }
-            showFailDialog(`Masuk Gagal: ${errorMessage}`);
-          });
-      }
-
-      function handleRegister(username, email, password) {
-        if (password.length < 6) {
-          showFailDialog("Daftar Gagal: Password minimal 6 karakter.");
-          return;
-        }
-
-        auth
-          .createUserWithEmailAndPassword(email, password)
-          .then(async (userCredential) => {
-            const user = userCredential.user;
-
-            await database.ref(`users/${user.uid}`).set({
-              username: username,
-              email: email,
-              created_at: firebase.database.ServerValue.TIMESTAMP,
-              provider: "email",
-            });
-
-            await user.updateProfile({
-              displayName: username,
-            });
-
-            console.log("Berhasil mendaftar dan menyimpan data!");
-            showSuccessDialog("Registrasi Berhasil! Anda sudah masuk.");
-          })
-          .catch((error) => {
-            console.error("Gagal mendaftar:", error);
-            let errorMessage = "Gagal mendaftar. Coba lagi.";
-            if (error.code === "auth/email-already-in-use") {
-              errorMessage = "Email ini sudah terdaftar.";
-            } else if (error.code === "auth/weak-password") {
-              errorMessage = "Password terlalu lemah (minimal 6 karakter).";
-            }
-            showFailDialog(`Daftar Gagal: ${errorMessage}`);
-          });
-      }
-
-      function handleSignOut() {
-        auth
-          .signOut()
-          .then(() => {
-            console.log("Berhasil keluar.");
-          })
-          .catch((error) => {
-            console.error("Gagal keluar:", error);
-            showFailDialog(`Gagal keluar: ${error.message}`);
-          });
-      }
-
-      // ========================== FUNGSI NAVIGASI (Tetap sama) ==========================
-      function showView(view) {
-        if (!currentUser) return;
-
-        // Nonaktifkan semua navigasi
-        navHome.classList.remove("active");
-        navHistory.classList.remove("active");
-        if (navQuiz) navQuiz.classList.remove("active");
-        if (navHomeMobile) navHomeMobile.classList.remove("active");
-        if (navHistoryMobile) navHistoryMobile.classList.remove("active");
-        if (navQuizMobile) navQuizMobile.classList.remove("active");
-
-        uploadView.style.display = "none";
-        uploadHistoryContainer.style.display = "none";
-        quizView.style.display = "none";
-
-        // Hentikan listener quiz sebelumnya jika ada
-        if (currentQuizStateRef) {
-          currentQuizStateRef.off();
-        }
-        clearInterval(timerDisplayInterval);
-
-        if (view === "home") {
-          uploadView.style.display = "block";
-          navHome.classList.add("active");
-          if (navHomeMobile) navHomeMobile.classList.add("active");
-        } else if (view === "history") {
-          uploadHistoryContainer.style.display = "block";
-          navHistory.classList.add("active");
-          if (navHistoryMobile) navHistoryMobile.classList.add("active");
-          fetchUploadHistory(currentUser.uid);
-        } else if (view === "quiz") {
-          quizView.style.display = "block";
-          navQuiz.classList.add("active");
-          if (navQuizMobile) navQuizMobile.classList.add("active");
-          loadQuizData(); // Panggil fungsi untuk memuat data dan memeriksa status kuis
-        }
-      }
-
-      // ========================== FUNGSI KUIS REAL-TIME (DENGAN POIN DINAMIS) ==========================
-
-      /**
-       * 💰 Logika Penghitungan Poin Dinamis:
-       * - Poin Dasar: BASE_POINTS (10)
-       * - Poin Maksimal (jika jawab di detik pertama): BASE_POINTS + MAX_DURATION
-       * - Formula: Score = BASE_POINTS + (Waktu_Tersisa / MAX_DURATION) * MAX_DURATION
-       * - Jika waktu habis (timeLeft <= 0), Score = 0
-       * - Jika jawaban salah, Score = 0
-       */
-      function calculateDynamicPoints(questionDurationSeconds, timeElapsedSeconds, isCorrect) {
-        if (!isCorrect) {
-          return 0; // Poin 0 jika jawaban salah
-        }
-
-        const timeLeftSeconds = Math.max(0, questionDurationSeconds - timeElapsedSeconds);
-
-        // Jika waktu habis saat menjawab (walaupun benar), anggap poin 0
-        if (timeElapsedSeconds >= questionDurationSeconds) {
-          return 0;
-        }
-
-        // Hitung bonus/penalti: Lebih cepat menjawab, lebih besar poin mendekati 20 (10+10)
-        // Poin maksimal (detik 1): 10 + 10 = 20
-        // Poin minimal (detik 10): 10 + 1 = 11
-        const bonusFraction = timeLeftSeconds / questionDurationSeconds;
-        const dynamicPoints = BASE_POINTS + bonusFraction * BASE_POINTS;
-
-        return parseFloat(dynamicPoints.toFixed(2));
-      }
-
-      async function loadQuizData() {
-        if (!currentUser) return;
-
-        quizQuestionCard.style.display = "none";
-        quizResultDisplay.style.display = "none";
-        quizAccessCard.style.display = "block";
-        quizFormContainer.style.display = "block";
-
-        try {
-          if (currentQuizStateRef) {
-            currentQuizStateRef.off();
-          }
-
-          const configSnapshot = await database.ref("quiz_config").once("value");
-          const config = configSnapshot.val();
-
-          if (!config || !config.questions || !config.key) {
-            quizStatusMessage.textContent = "Kuis belum dikonfigurasi oleh administrator.";
-            startQuizBtn.disabled = true;
-            return;
-          }
-
-          quizQuestions = Object.values(config.questions);
-          quizKey = config.key;
-          quizCanRetake = config.canRetake || false;
-
-          const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}`).once("value");
-          const userResult = scoreSnapshot.val();
-
-          // Load saved points and answers
-          const userAnswersSnapshot = await database.ref(`user_answers/${currentUser.uid}`).once("value");
-          userAnswers = userAnswersSnapshot.val() || {};
-
-          const userPointsSnapshot = await database.ref(`user_points/${currentUser.uid}`).once("value");
-          userScoredPoints = userPointsSnapshot.val() || {};
-
-          if (userResult && userResult.finished) {
-            showQuizResult(userResult.score, userResult.totalQuestions, userResult.timestamp, quizCanRetake);
-            quizStatusMessage.textContent = "Anda sudah menyelesaikan kuis.";
-          } else {
-            quizStatusMessage.textContent = "Masukkan Kunci Akses yang diberikan Admin untuk memulai kuis.";
-            quizFormContainer.style.display = "block";
-            startQuizBtn.disabled = false;
-          }
-
-          currentQuizStateRef = database.ref("current_quiz_state");
-          currentQuizStateRef.on("value", handleAdminQuizStateChange);
-        } catch (error) {
-          console.error("Gagal memuat data kuis:", error);
-          quizStatusMessage.textContent = "Gagal memuat kuis. Coba lagi nanti.";
-          startQuizBtn.disabled = true;
-        }
-      }
-
-      async function checkQuizAccess(enteredKey) {
-        if (enteredKey === quizKey) {
-          const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}/finished`).once("value");
-          if (scoreSnapshot.val() === true && quizCanRetake === false) {
-            showFailDialog("Anda sudah menyelesaikan kuis dan tidak diizinkan untuk mengulang.");
-            return;
-          }
-
-          await database.ref(`user_quiz_status/${currentUser.uid}`).set({
-            userName: currentUser.displayName || (await fetchUserName(currentUser)),
-            email: currentUser.email,
-            lastAccess: firebase.database.ServerValue.TIMESTAMP,
-            isJoined: true,
-            currentAnswer: null,
-          });
-
-          quizFormContainer.style.display = "none";
-          quizStatusMessage.textContent = "Kunci akses diterima. Menunggu Admin memulai soal pertama...";
-        } else {
-          showFailDialog("Kunci Akses Salah!");
-          accessKeyInput.value = "";
-        }
-      }
-
-      async function handleAdminQuizStateChange(snapshot) {
-        if (!currentUser) return;
-
-        const state = snapshot.val();
-        currentQuizData = state;
-
-        const isUserJoined = await database
-          .ref(`user_quiz_status/${currentUser.uid}/isJoined`)
-          .once("value")
-          .then((s) => s.val());
-
-        const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}`).once("value");
-        const userResult = scoreSnapshot.val();
-
-        if (userResult && userResult.finished) {
-          showQuizResult(userResult.score, userResult.totalQuestions, userResult.timestamp, quizCanRetake);
-          return;
-        }
-
-        if (!state || state.status === "WAITING" || !isUserJoined) {
-          quizQuestionCard.style.display = "none";
-          quizAccessCard.style.display = "block";
-          if (isUserJoined) {
-            quizStatusMessage.textContent = "Kunci akses diterima. Menunggu Admin memulai soal pertama...";
-          } else {
-            quizStatusMessage.textContent = "Masukkan Kunci Akses yang diberikan Admin untuk memulai kuis.";
-            quizFormContainer.style.display = "block";
-          }
-          clearInterval(timerDisplayInterval);
-          quizTimer.textContent = "Waktu: --s";
-          return;
-        }
-
-        if (state.status === "ACTIVE" && isUserJoined) {
-          const questionIndex = parseInt(state.currentQuestionIndex);
-
-          if (currentQuizData.currentQuestionIndex !== questionIndex) {
-            // Check if the question was already answered and scored
-            if (userAnswers[questionIndex] === undefined) {
-              userAnswers[questionIndex] = null;
-            }
-          }
-
-          quizAccessCard.style.display = "none";
-          quizQuestionCard.style.display = "block";
-
-          displayQuestion(questionIndex, state.startTime, state.durationSeconds);
-        }
-
-        if (state.status === "FINISHED" && isUserJoined) {
-          await finishQuiz(state.totalQuestions);
-        }
-      }
-
-      function displayQuestion(index, startTime, durationSeconds) {
-        if (index >= quizQuestions.length) {
-          finishQuiz();
-          return;
-        }
-
-        const questionData = quizQuestions[index];
-
-        questionNumber.textContent = `Soal ${index + 1}/${quizQuestions.length}`;
-        questionText.textContent = questionData.text;
-        answerOptions.innerHTML = "";
-        nextQuestionBtn.innerHTML = `<i class="fas fa-check-circle me-2"></i> Simpan Jawaban ${index === quizQuestions.length - 1 ? "Akhir" : ""}`;
-        nextQuestionBtn.disabled = true;
-
-        questionData.options.forEach((option, optionIndex) => {
-          const button = document.createElement("button");
-          button.className = "list-group-item list-group-item-action list-group-item-dark mb-2 text-start";
-          button.textContent = option;
-          button.setAttribute("data-index", optionIndex);
-          button.onclick = () => selectAnswer(optionIndex);
-          answerOptions.appendChild(button);
-        });
-
-        // Tandai jawaban yang sudah dipilih jika ada
-        const selectedAnswerIndex = userAnswers[index];
-        if (selectedAnswerIndex !== null && selectedAnswerIndex !== undefined && selectedAnswerIndex !== -1) {
-          const selectedButton = answerOptions.querySelector(`[data-index="${selectedAnswerIndex}"]`);
-          if (selectedButton) selectedButton.classList.add("active", "bg-primary");
-          nextQuestionBtn.disabled = false;
-          // Jika sudah dijawab, kunci opsi
-          answerOptions.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
-          nextQuestionBtn.innerHTML = `Jawaban Tersimpan. Menunggu Admin...`;
-        }
-
-        startQuestionTimer(startTime, durationSeconds);
-      }
-
-      function selectAnswer(optionIndex) {
-        userAnswers[currentQuizData.currentQuestionIndex] = optionIndex;
-
-        answerOptions.querySelectorAll("button").forEach((btn) => {
-          btn.classList.remove("active", "bg-primary");
-        });
-
-        const selectedButton = answerOptions.querySelector(`[data-index="${optionIndex}"]`);
-        selectedButton.classList.add("active", "bg-primary");
-
-        nextQuestionBtn.disabled = false;
-      }
-
-      async function saveAnswerAndWait() {
-        const questionIndex = currentQuizData.currentQuestionIndex;
-        const selectedAnswer = userAnswers[questionIndex];
-        const questionData = quizQuestions[questionIndex];
-
-        if (selectedAnswer === null || selectedAnswer === undefined) {
-          showFailDialog("Mohon pilih jawaban terlebih dahulu!");
-          return;
-        }
-
-        // Cek apakah sudah pernah dikirim/dinilai
-        if (
-          await database
-            .ref(`user_points/${currentUser.uid}/${questionIndex}`)
-            .once("value")
-            .then((s) => s.exists())
-        ) {
-          showFailDialog("Jawaban untuk soal ini sudah tersimpan dan dinilai.");
-          return;
-        }
-
-        nextQuestionBtn.disabled = true;
-        nextQuestionBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> Menghitung Poin...`;
-
-        // --- LOGIKA HITUNG POIN REAL-TIME ---
-        const startTimeMs = currentQuizData.startTime;
-        const durationSeconds = currentQuizData.durationSeconds || MAX_DURATION;
-        const submitTimeMs = new Date().getTime();
-        const timeElapsedSeconds = Math.round((submitTimeMs - startTimeMs) / 1000);
-
-        const isCorrect = selectedAnswer === parseInt(questionData.correctOptionIndex);
-        const earnedPoints = calculateDynamicPoints(durationSeconds, timeElapsedSeconds, isCorrect);
-        // ------------------------------------
-
-        try {
-          // 1. Simpan jawaban dan poin ke node masing-masing
-          await database.ref(`user_answers/${currentUser.uid}/${questionIndex}`).set(selectedAnswer);
-          await database.ref(`user_points/${currentUser.uid}/${questionIndex}`).set(earnedPoints);
-
-          // Perbarui skor kumulatif total dan kirim ke quiz_results (sebagai PROGRESS)
-          const allPointsSnapshot = await database.ref(`user_points/${currentUser.uid}`).once("value");
-          const allPoints = allPointsSnapshot.val() || {};
-
-          let totalScoreSum = 0;
-          let answeredQuestionsCount = 0;
-          let correctCount = 0;
-
-          // Hitung skor berdasarkan semua poin yang sudah dikumpulkan
-          for (const key in allPoints) {
-            const points = allPoints[key];
-            totalScoreSum += points;
-            answeredQuestionsCount++; // Hitung jumlah soal yang sudah dijawab
-            if (points > 0) correctCount++;
-          }
-
-          // Hitung persentase skor total (total max possible points = 100% / maxPossiblePoints)
-          const maxPossiblePoints = (currentQuizData.totalQuestions || quizQuestions.length) * (BASE_POINTS + MAX_DURATION);
-          const scorePercentage = (totalScoreSum / maxPossiblePoints) * 100;
-
-          const progressiveResultData = {
-            score: parseFloat(scorePercentage.toFixed(2)),
-            totalPoints: parseFloat(totalScoreSum.toFixed(2)),
-            correctAnswers: correctCount,
-            totalQuestions: currentQuizData.totalQuestions || quizQuestions.length,
-            timestamp: firebase.database.ServerValue.TIMESTAMP,
-            finished: false, // KRITIS: Tandai kuis belum selesai
-            userName: currentUser.displayName || (await fetchUserName(currentUser)),
-            userEmail: currentUser.email,
-          };
-
-          // Simpan progress ke quiz_results (membuat Leaderboard real-time)
-          // Gunakan UPDATE agar tidak menimpa data finish sebelumnya
-          await database.ref(`quiz_results/${currentUser.uid}`).update(progressiveResultData);
-
-          // 2. Kunci tampilan
-          answerOptions.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
-
-          // 3. Tampilkan poin yang didapat
-          let pointMessage;
-          if (earnedPoints > 0) {
-            pointMessage = `Benar! Anda mendapat <b>${earnedPoints.toFixed(2)} poin</b>.`;
-          } else {
-            pointMessage = `Jawaban Salah atau Terlambat. Poin: <b>0 point</b>.`;
-          }
-          showSuccessDialog(pointMessage, null);
-
-          quizTimer.textContent = "JAWABAN TERKUNCI";
-          nextQuestionBtn.innerHTML = `Jawaban Tersimpan. Menunggu Admin...`;
-        } catch (error) {
-          console.error("Gagal menyimpan jawaban/poin:", error);
-          showFailDialog("Gagal menyimpan jawaban/poin. Coba lagi.");
-          nextQuestionBtn.disabled = false;
-          nextQuestionBtn.innerHTML = `Simpan Jawaban (Gagal!)`;
-        }
-      }
-
-      function startQuestionTimer(startTime, durationSeconds) {
-        clearInterval(timerDisplayInterval);
-
-        const targetTime = startTime + durationSeconds * 1000;
-
-        const updateTimer = () => {
-          const now = new Date().getTime();
-          const timeLeft = targetTime - now;
-
-          if (timeLeft <= 0) {
-            clearInterval(timerDisplayInterval);
-            quizTimer.textContent = "Waktu Habis!";
-
-            // Jika waktu habis, dan user belum kirim jawaban, anggap -1 dan kirim ke DB
-            if (userAnswers[currentQuizData.currentQuestionIndex] === null) {
-              database.ref(`user_answers/${currentUser.uid}/${currentQuizData.currentQuestionIndex}`).set(-1);
-              // Poin pasti 0 jika waktu habis
-              database.ref(`user_points/${currentUser.uid}/${currentQuizData.currentQuestionIndex}`).set(0);
-            }
-
-            answerOptions.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
-            nextQuestionBtn.disabled = true;
-            nextQuestionBtn.innerHTML = `Waktu Habis. Menunggu Admin...`;
-          } else {
-            const secondsLeft = Math.ceil(timeLeft / 1000);
-            quizTimer.textContent = `Waktu: ${secondsLeft}s`;
-            quizTimer.style.color = secondsLeft <= 5 ? "var(--accent-red)" : "var(--primary)";
-          }
-        };
-
-        updateTimer();
-        timerDisplayInterval = setInterval(updateTimer, 100);
-      }
-
-      async function finishQuiz(totalQuestions) {
-        if (quizQuestionCard.style.display !== "none") {
-          quizQuestionCard.style.display = "none";
-        }
-
-        clearInterval(timerDisplayInterval);
-
-        // 1. Ambil SEMUA POIN yang telah disimpan
-        const pointsSnapshot = await database.ref(`user_points/${currentUser.uid}`).once("value");
-        const userPoints = pointsSnapshot.val() || {};
-
-        let totalScoreSum = 0;
-        let correctCount = 0;
-
-        for (let i = 0; i < totalQuestions; i++) {
-          const points = userPoints[i] || 0;
-          totalScoreSum += points;
-          if (points > 0) {
-            correctCount++;
-          }
-        }
-
-        // Asumsi: Max total points = 20 poin * totalQuestions.
-        const maxPossiblePoints = totalQuestions * (BASE_POINTS + MAX_DURATION);
-        const finalScorePercentage = (totalScoreSum / maxPossiblePoints) * 100;
-
-        // 2. Kirim Hasil Final ke Firebase
-        const resultData = {
-          score: parseFloat(finalScorePercentage.toFixed(2)),
-          totalPoints: parseFloat(totalScoreSum.toFixed(2)),
-          correctAnswers: correctCount,
-          totalQuestions: totalQuestions,
-          timestamp: firebase.database.ServerValue.TIMESTAMP,
-          finished: true, // KRITIS: Tandai kuis selesai
-          userName: currentUser.displayName || (await fetchUserName(currentUser)),
-          userEmail: currentUser.email,
-        };
-
-        try {
-          // Gunakan SET untuk memastikan data FINAL (finished: true) menimpa data progress sebelumnya
-          await database.ref(`quiz_results/${currentUser.uid}`).set(resultData);
-          await database.ref(`user_quiz_status/${currentUser.uid}`).remove();
-        } catch (error) {
-          console.error("Gagal menyimpan hasil kuis:", error);
-          showFailDialog("Kuis Selesai, tapi gagal menyimpan nilai ke database. Hubungi Admin!");
-          return;
-        }
-
-        // 3. Tampilkan Hasil
-        showQuizResult(resultData.score, resultData.totalQuestions, resultData.timestamp, quizCanRetake);
-        showSuccessDialog(`Kuis Selesai! Nilai Anda: ${resultData.score.toFixed(2)}`, null);
-      }
-
-      async function showQuizResult(score, totalQuestions, timestamp, canRetake) {
-        quizAccessCard.style.display = "block";
-        quizFormContainer.style.display = "none";
-        quizResultDisplay.style.display = "block";
-
-        finalScoreTitle.textContent = `Nilai Akhir: ${score.toFixed(2)} / 100`;
-        finalScoreTitle.className = score >= 70 ? "text-primary" : "text-accent-red";
-
-        const date = new Date(timestamp).toLocaleDateString("id-ID", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        const correctCount = Math.round((score / 100) * totalQuestions);
-
-        resultDetails.innerHTML = `Anda menjawab benar ${correctCount} dari ${totalQuestions} soal.<br>Tes selesai pada ${date}.`;
-
-        if (canRetake) {
-          resetQuizBtn.style.display = "block";
-          resetQuizBtn.textContent = "Reset & Ikut Lagi";
-        } else {
-          resetQuizBtn.style.display = "none";
-        }
-      }
-
-      function resetQuizAttempt() {
-        if (quizCanRetake && confirm("Yakin ingin mereset hasil kuis Anda? Anda harus memasukkan kunci akses lagi.")) {
-          database
-            .ref(`quiz_results/${currentUser.uid}`)
-            .remove()
-            .then(() => {
-              return database.ref(`user_answers/${currentUser.uid}`).remove();
-            })
-            .then(() => {
-              return database.ref(`user_points/${currentUser.uid}`).remove(); // Hapus poin
-            })
-            .then(() => {
-              return database.ref(`user_quiz_status/${currentUser.uid}`).remove();
-            })
-            .then(() => {
-              showSuccessDialog("Status kuis berhasil direset.");
-              loadQuizData();
-              accessKeyInput.value = "";
-            })
-            .catch((error) => {
-              showFailDialog("Gagal mereset status kuis: " + error.message);
-            });
-        } else if (!quizCanRetake) {
-          showFailDialog("Reset tidak diizinkan oleh administrator.");
-        }
-      }
-
-      // ========================== FUNGSI UPLOAD DENGAN LOG (Tetap sama) ==========================
-      async function handleFile(file) {
-        if (!currentUser) {
-          showFailDialog("❗ Mohon masuk dengan akun Anda terlebih dahulu.");
-          fileInput.value = "";
-          return;
-        }
-
-        const selectedCourse = courseSelect.value;
-        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
-
-        if (!selectedCourse) {
-          showFailDialog("❗ Mohon pilih mata kuliah terlebih dahulu.");
-          fileInput.value = "";
-          return;
-        }
-
-        if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-          showFailDialog(`❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`);
-          fileInput.value = "";
-          return;
-        }
-
-        const fileExtension = "." + file.name.split(".").pop().toLowerCase();
-        if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
-          showFailDialog(`❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`);
-          fileInput.value = "";
-          return;
-        }
-
-        dropArea.style.display = "none";
-        scanAnimation.style.display = "flex";
-        fileNameSpan.textContent = `File terpilih: ${file.name}`;
-        statusMessage.textContent = "Sedang memindai file untuk memastikan keamanan...";
-
-        setTimeout(() => {
-          scanAnimation.style.display = "none";
-          checkCourseAccess(selectedCourse, courseName, (isAccessOpen) => {
-            if (isAccessOpen) {
-              uploadFile(file, selectedCourse, courseName);
-            } else {
-              resetUploadState();
-            }
-          });
-        }, 3000);
-      }
-
-      function uploadFile(file, courseKey, courseName) {
-        const now = new Date();
-        const timestampMs = now.getTime();
-        const timestampFormat = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
-          now.getSeconds()
-        ).padStart(2, "0")}`;
-
-        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".") || file.name;
-        const fileExtension = file.name.split(".").pop();
-        const storageFileName = `${fileNameWithoutExt}_${timestampFormat}.${fileExtension}`;
-
-        const folderNameForStorage = courseKey.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
-        const folderPath = `dokumen/${folderNameForStorage}/`;
-        const storagePath = folderPath + storageFileName;
-        const fileRef = storage.ref(storagePath);
-
-        const uploadTask = fileRef.put(file);
-
-        dropArea.style.display = "none";
-        rocketAnimation.style.display = "flex";
-        progressContainer.style.display = "block";
-        progressBar.style.width = "0%";
-        statusMessage.textContent = "Sedang mengunggah...";
-        statusMessage.style.color = "#555";
-
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            progressBar.style.width = `${progress}%`;
-          },
-          (error) => {
-            console.error("Kesalahan unggah:", error);
-            rocketAnimation.style.display = "none";
-            dropArea.style.display = "flex";
-            showFailDialog(`Gagal mengunggah file: ${error.message}`);
-          },
-          async () => {
-            rocketAnimation.style.display = "none";
-            dropArea.style.display = "flex";
-
-            try {
-              const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-              console.log("File tersedia di:", downloadURL);
-
-              const folderRef = storage.ref(folderPath);
-              const result = await folderRef.listAll();
-              const fileCount = result.items.length;
-
-              const uploadLogRef = database.ref(`riwayat_unggah/${currentUser.uid}`).push();
-              const logData = {
-                uploadId: uploadLogRef.key,
-                userId: currentUser.uid,
-                userName: currentUser.displayName || (await fetchUserName(currentUser)),
-                userEmail: currentUser.email,
-                courseKey: courseKey,
-                courseName: courseName,
-                originalFileName: file.name,
-                storageFileName: storageFileName,
-                storagePath: storagePath,
-                downloadURL: downloadURL,
-                timestamp: timestampMs,
-                fileSizeMB: (file.size / (1024 * 1024)).toFixed(2),
-                uploadOrder: fileCount,
-              };
-              await uploadLogRef.set(logData);
-
-              showSuccessDialog("File Anda berhasil diunggah!", fileCount);
-            } catch (error) {
-              console.error("Gagal memproses setelah unggah:", error);
-              showFailDialog(`Unggah Berhasil, tapi Gagal mencatat riwayat: ${error.message}`);
-            }
-          }
-        );
-      }
-
-      // ========================== RIWAYAT & HAPUS (Tetap sama) ==========================
-      async function fetchUploadHistory(userUid) {
-        historyList.innerHTML = "";
-        noHistoryMessage.style.display = "block";
-
-        try {
-          const snapshot = await database.ref(`riwayat_unggah/${userUid}`).once("value");
-          const history = snapshot.val();
-
-          if (!history) {
-            return;
-          }
-
-          noHistoryMessage.style.display = "none";
-
-          const historyArray = Object.keys(history)
-            .map((key) => ({
-              id: key,
-              ...history[key],
-            }))
-            .sort((a, b) => b.timestamp - a.timestamp);
-
-          historyArray.forEach((item) => {
-            const listItem = document.createElement("li");
-            listItem.className = "history-item";
-
-            const fileDetails = document.createElement("div");
-            fileDetails.className = "file-details";
-
-            const cleanFileName = item.originalFileName.substring(0, item.originalFileName.lastIndexOf(".")) || item.originalFileName;
-
-            fileDetails.innerHTML = `
+       
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+      // ========================== INISIALISASI FIREBASE ==========================
+      const firebaseConfig = {
+        // Ganti dengan Config Asli Anda!
+        apiKey: "AIzaSyCZAfnelUdrwUz856j2hC3yJWqUm-JJmiI",
+        authDomain: "ruangbelajar-52a67.firebaseapp.com",
+        databaseURL: "https://ruangbelajar-52a67-default-rtdb.firebaseio.com",
+        projectId: "ruangbelajar-52a67",
+        storageBucket: "ruangbelajar-52a67.appspot.com",
+        messagingSenderId: "545318863560",
+        appId: "1:545318863560:web:df392c010ff914aad49bfd",
+        measurementId: "G-9M8CKR66BW",
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const storage = firebase.storage();
+      const database = firebase.database();
+
+      // ========================== ELEMEN DOM ==========================
+      const loginScreen = document.getElementById("loginScreen");
+      const mainLayout = document.getElementById("mainLayout");
+      const uploadView = document.getElementById("uploadView");
+      const uploadHistoryContainer = document.getElementById("uploadHistoryContainer");
+      const quizView = document.getElementById("quizView");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      // Elemen Otentikasi
+      const authTitle = document.getElementById("authTitle");
+      const authSubText = document.getElementById("authSubText");
+      const googleSignInBtn = document.getElementById("googleSignInBtn");
+      const loginForm = document.getElementById("loginForm");
+      const registerForm = document.getElementById("registerForm");
+      const loginEmail = document.getElementById("loginEmail");
+      const loginPassword = document.getElementById("loginPassword");
+      const registerUsername = document.getElementById("registerUsername");
+      const registerEmail = document.getElementById("registerEmail");
+      const registerPassword = document.getElementById("registerPassword");
+      const showRegisterLink = document.getElementById("showRegisterLink");
+      const showLoginLink = document.getElementById("showLoginLink");
+
+      const userNameDisplay = document.getElementById("userName");
+      const userEmailDisplay = document.getElementById("userEmail");
+      const profilePicture = document.getElementById("profilePicture");
+      const userInfoDisplay = document.getElementById("userInfoDisplay");
+
+      const navHome = document.getElementById("navHome");
+      const navHistory = document.getElementById("navHistory");
+      const navQuiz = document.getElementById("navQuiz");
+      const navHomeMobile = document.getElementById("navHomeMobile");
+      const navHistoryMobile = document.getElementById("navHistoryMobile");
+      const navQuizMobile = document.getElementById("navQuizMobile");
+      const historyList = document.getElementById("historyList");
+      const noHistoryMessage = document.getElementById("noHistoryMessage");
+
+      const fileInput = document.getElementById("fileInput");
+      const courseSelect = document.getElementById("courseSelect");
+      const fileNameSpan = document.getElementById("fileName");
+      const progressBar = document.getElementById("progressBar");
+      const progressContainer = document.getElementById("progressContainer");
+      const statusMessage = document.getElementById("statusMessage");
+      const rocketAnimation = document.getElementById("rocketAnimation");
+      const scanAnimation = document.getElementById("scanAnimation");
+      const dropArea = document.getElementById("dropArea");
+      const uploadSuccessOverlay = document.getElementById("uploadSuccessOverlay");
+      const uploadFailOverlay = document.getElementById("uploadFailOverlay");
+      const successMessage = document.getElementById("successMessage");
+      const failMessage = document.getElementById("failMessage");
+      const syaratDialogOverlay = document.getElementById("syaratDialogOverlay");
+      const confirmSyaratBtn = document.getElementById("confirmSyaratBtn");
+
+      const courseAccessClosedOverlay = document.getElementById("courseAccessClosedOverlay");
+      const courseAccessTitle = document.getElementById("courseAccessTitle");
+      const courseAccessMessage = document.getElementById("courseAccessMessage");
+      const mainAccessClosedOverlay = document.getElementById("mainAccessClosedOverlay");
+      const loadingOverlay = document.getElementById("loadingOverlay");
+
+      // Elemen Kuis BARU
+      const quizAccessCard = document.getElementById("quizAccessCard");
+      const quizQuestionCard = document.getElementById("quizQuestionCard");
+      const accessKeyInput = document.getElementById("accessKeyInput");
+      const startQuizBtn = document.getElementById("startQuizBtn");
+      const quizStatusMessage = document.getElementById("quizStatusMessage");
+      const quizTimer = document.getElementById("quizTimer");
+      const questionNumber = document.getElementById("questionNumber");
+      const questionText = document.getElementById("questionText");
+      const answerOptions = document.getElementById("answerOptions");
+      const nextQuestionBtn = document.getElementById("nextQuestionBtn");
+      const quizResultDisplay = document.getElementById("quizResultDisplay");
+      const finalScoreTitle = document.getElementById("finalScoreTitle");
+      const resultDetails = document.getElementById("resultDetails");
+      const resetQuizBtn = document.getElementById("resetQuizBtn");
+      const quizFormContainer = document.getElementById("quizFormContainer");
+
+      // ========================== VARIABEL GLOBAL & KONSTANTA ==========================
+      const MAX_FILE_SIZE_MB = 12;
+      const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".zip", ".rar", ".7z"];
+      let courseDeadlines = {};
+      let countdownInterval = null;
+      let currentUser = null;
+      let courseMap = {};
+
+      // Variabel Kuis REAL-TIME
+      let quizQuestions = [];
+      let quizKey = "";
+      let quizCanRetake = false;
+      let userAnswers = {}; // {0: 1, 1: 3}
+      let userScoredPoints = {}; // {0: 10.5, 1: 0}
+      let currentQuizStateRef = null;
+      let currentQuizData = null;
+      let timerDisplayInterval = null;
+      
+      // 🛑 KONSTANTA BARU UNTUK RANK-BASED SCORING
+      const MAX_QUIZ_POINTS = 300; // Poin untuk Rank #1
+      const MIN_CORRECT_POINTS = 50; // Poin minimal jika jawaban benar (Rank terbawah)
+      const MAX_DURATION = 10; // Durasi maksimum per soal (untuk hitungan terlambat)
+
+      // ========================== EVENT LISTENERS ==========================
+      document.addEventListener("DOMContentLoaded", () => {
+        requestNotificationPermission();
+        fetchCourseList();
+        fetchCourseDeadlines();
+        checkMainAccessStatus();
+        showSyaratDialogAtStart();
+        listenForManualNotifications();
+        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
+        toggleAuthView("login");
+
+        // --- FUNGSI BARU: Sembunyikan Loading setelah 2 detik ---
+        setTimeout(() => {
+          loadingOverlay.style.opacity = "0";
+          setTimeout(() => {
+            loadingOverlay.style.display = "none";
+          }, 500); // Waktu transisi opacity
+        }, 5000); // Durasi loading 2 detik
+      });
+
+      // Otentikasi Listeners
+      googleSignInBtn.addEventListener("click", handleGoogleSignIn);
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleEmailSignIn(loginEmail.value, loginPassword.value);
+      });
+      registerForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleRegister(registerUsername.value, registerEmail.value, registerPassword.value);
+      });
+      showRegisterLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleAuthView("register");
+      });
+      showLoginLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleAuthView("login");
+      });
+
+      // Navigasi
+      navHome.addEventListener("click", (e) => {
+        e.preventDefault();
+        showView("home");
+      });
+      navHistory.addEventListener("click", (e) => {
+        e.preventDefault();
+        showView("history");
+      });
+      navQuiz.addEventListener("click", (e) => {
+        e.preventDefault();
+        showView("quiz");
+      });
+
+      // Navigasi Mobile
+      if (navHomeMobile) {
+        navHomeMobile.addEventListener("click", () => showView("home"));
+      }
+      if (navHistoryMobile) {
+        navHistoryMobile.addEventListener("click", () => showView("history"));
+      }
+      if (navQuizMobile) {
+        navQuizMobile.addEventListener("click", () => showView("quiz"));
+      }
+
+      logoutBtn.addEventListener("click", handleSignOut);
+
+      courseSelect.addEventListener("change", () => {
+        const courseKey = courseSelect.value;
+        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+        checkCourseAccess(courseKey, courseName);
+        startCourseCountdown(courseKey, courseName);
+        fileInput.value = "";
+        fileNameSpan.textContent = "";
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          handleFile(file);
+        }
+      });
+
+      // Drag & Drop event listeners...
+      dropArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropArea.classList.add("dragover");
+      });
+
+      dropArea.addEventListener("dragleave", () => {
+        dropArea.classList.remove("dragover");
+      });
+
+      dropArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropArea.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFile(files[0]);
+        }
+      });
+
+      // Kuis Listeners
+      startQuizBtn.addEventListener("click", () => checkQuizAccess(accessKeyInput.value));
+      nextQuestionBtn.addEventListener("click", saveAnswerAndWait);
+      resetQuizBtn.addEventListener("click", resetQuizAttempt);
+
+      // ========================== FUNGSI OTENTIKASI (Tetap sama) ==========================
+      function toggleAuthView(view) {
+        if (view === "login") {
+          loginForm.style.display = "block";
+          registerForm.style.display = "none";
+          authTitle.textContent = "Masuk ke Portal Tugas";
+          authSubText.textContent = "Pilih metode masuk yang Anda inginkan.";
+          googleSignInBtn.style.display = "flex";
+        } else {
+          loginForm.style.display = "none";
+          registerForm.style.display = "block";
+          authTitle.textContent = "Daftar Akun Baru";
+          authSubText.textContent = "Masukkan data Anda untuk membuat akun portal tugas.";
+          googleSignInBtn.style.display = "none";
+        }
+      }
+
+      async function fetchUserName(user) {
+        if (user.displayName && user.displayName !== user.email) {
+          return user.displayName;
+        }
+        try {
+          const snapshot = await database.ref(`users/${user.uid}/username`).once("value");
+          return snapshot.val() || user.email;
+        } catch (error) {
+          console.error("Gagal mengambil username:", error);
+          return user.email;
+        }
+      }
+
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          currentUser = user;
+          const displayName = await fetchUserName(user);
+
+          database
+            .ref(`users/${user.uid}`)
+            .once("value")
+            .then((snapshot) => {
+              if (!snapshot.exists()) {
+                database.ref(`users/${user.uid}`).set({
+                  username: displayName,
+                  email: user.email,
+                  created_at: firebase.database.ServerValue.TIMESTAMP,
+                  provider: user.providerData[0] ? user.providerData[0].providerId : "email",
+                });
+              }
+            });
+
+          // 🟢 PERBAIKAN PENTING: Gunakan setProperty dengan 'important'
+          loginScreen.style.setProperty("display", "none", "important");
+          mainLayout.style.setProperty("display", "flex", "important");
+
+          userNameDisplay.textContent = displayName;
+          userEmailDisplay.textContent = user.email;
+          profilePicture.src = user.photoURL || "https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png";
+
+          showView("home");
+        } else {
+          currentUser = null;
+
+          // 🔴 PERBAIKAN PENTING: Gunakan setProperty dengan 'important'
+          mainLayout.style.setProperty("display", "none", "important");
+          loginScreen.style.setProperty("display", "flex", "important");
+
+          toggleAuthView("login");
+        }
+      });
+
+      function handleGoogleSignIn() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth
+          .signInWithPopup(provider)
+          .then(() => {
+            console.log("Berhasil masuk dengan Google!");
+          })
+          .catch((error) => {
+            console.error("Gagal masuk dengan Google:", error);
+            showFailDialog(`Masuk Google Gagal: ${error.message}`);
+          });
+      }
+
+      function handleEmailSignIn(email, password) {
+        auth
+          .signInWithEmailAndPassword(email, password)
+          .then(() => {
+            console.log("Berhasil masuk dengan Email!");
+          })
+          .catch((error) => {
+            console.error("Gagal masuk:", error);
+            let errorMessage = "Gagal masuk. Cek email/password Anda.";
+            if (error.code === "auth/user-not-found") {
+              errorMessage = "Email tidak terdaftar.";
+            } else if (error.code === "auth/wrong-password") {
+              errorMessage = "Password salah.";
+            } else if (error.code === "auth/invalid-email") {
+              errorMessage = "Format email tidak valid.";
+            }
+            showFailDialog(`Masuk Gagal: ${errorMessage}`);
+          });
+      }
+
+      function handleRegister(username, email, password) {
+        if (password.length < 6) {
+          showFailDialog("Daftar Gagal: Password minimal 6 karakter.");
+          return;
+        }
+
+        auth
+          .createUserWithEmailAndPassword(email, password)
+          .then(async (userCredential) => {
+            const user = userCredential.user;
+
+            await database.ref(`users/${user.uid}`).set({
+              username: username,
+              email: email,
+              created_at: firebase.database.ServerValue.TIMESTAMP,
+              provider: "email",
+            });
+
+            await user.updateProfile({
+              displayName: username,
+            });
+
+            console.log("Berhasil mendaftar dan menyimpan data!");
+            showSuccessDialog("Registrasi Berhasil! Anda sudah masuk.");
+          })
+          .catch((error) => {
+            console.error("Gagal mendaftar:", error);
+            let errorMessage = "Gagal mendaftar. Coba lagi.";
+            if (error.code === "auth/email-already-in-use") {
+              errorMessage = "Email ini sudah terdaftar.";
+            } else if (error.code === "auth/weak-password") {
+              errorMessage = "Password terlalu lemah (minimal 6 karakter).";
+            }
+            showFailDialog(`Daftar Gagal: ${errorMessage}`);
+          });
+      }
+
+      function handleSignOut() {
+        auth
+          .signOut()
+          .then(() => {
+            console.log("Berhasil keluar.");
+          })
+          .catch((error) => {
+            console.error("Gagal keluar:", error);
+            showFailDialog(`Gagal keluar: ${error.message}`);
+          });
+      }
+
+      // ========================== FUNGSI NAVIGASI (Tetap sama) ==========================
+      function showView(view) {
+        if (!currentUser) return;
+
+        // Nonaktifkan semua navigasi
+        navHome.classList.remove("active");
+        navHistory.classList.remove("active");
+        if (navQuiz) navQuiz.classList.remove("active");
+        if (navHomeMobile) navHomeMobile.classList.remove("active");
+        if (navHistoryMobile) navHistoryMobile.classList.remove("active");
+        if (navQuizMobile) navQuizMobile.classList.remove("active");
+
+        uploadView.style.display = "none";
+        uploadHistoryContainer.style.display = "none";
+        quizView.style.display = "none";
+
+        // Hentikan listener quiz sebelumnya jika ada
+        if (currentQuizStateRef) {
+          currentQuizStateRef.off();
+        }
+        clearInterval(timerDisplayInterval);
+
+        if (view === "home") {
+          uploadView.style.display = "block";
+          navHome.classList.add("active");
+          if (navHomeMobile) navHomeMobile.classList.add("active");
+        } else if (view === "history") {
+          uploadHistoryContainer.style.display = "block";
+          navHistory.classList.add("active");
+          if (navHistoryMobile) navHistoryMobile.classList.add("active");
+          fetchUploadHistory(currentUser.uid);
+        } else if (view === "quiz") {
+          quizView.style.display = "block";
+          navQuiz.classList.add("active");
+          if (navQuizMobile) navQuizMobile.classList.add("active");
+          loadQuizData(); // Panggil fungsi untuk memuat data dan memeriksa status kuis
+        }
+      }
+
+      // ========================== FUNGSI KUIS REAL-TIME (RANK-BASED SCORING) ==========================
+
+      /**
+       * 💰 Logika Penghitungan Poin Rank-Based:
+       * - Rank #1: MAX_QUIZ_POINTS (300)
+       * - Rank Selanjutnya: Poin berkurang 25 (MAX_QUIZ_POINTS - (rank - 1) * 25)
+       * - Poin Min Correct: MIN_CORRECT_POINTS (50)
+       * - Jawaban salah: 0
+       */
+      function calculateRankedPoints(rank, isCorrect) {
+        if (!isCorrect) {
+          return 0; // Poin 0 jika jawaban salah
+        }
+        
+        const pointReductionPerRank = 25;
+        let dynamicPoints = MAX_QUIZ_POINTS - (rank - 1) * pointReductionPerRank;
+
+        // Pastikan poin minimal adalah MIN_CORRECT_POINTS jika jawaban benar
+        return Math.max(MIN_CORRECT_POINTS, dynamicPoints);
+      }
+
+      async function loadQuizData() {
+        if (!currentUser) return;
+
+        quizQuestionCard.style.display = "none";
+        quizResultDisplay.style.display = "none";
+        quizAccessCard.style.display = "block";
+        quizFormContainer.style.display = "block";
+
+        try {
+          if (currentQuizStateRef) {
+            currentQuizStateRef.off();
+          }
+
+          // 🆕 Ambil status keikutsertaan aktif dari user
+          const userStatusSnapshot = await database.ref(`user_quiz_status/${currentUser.uid}`).once("value");
+          const isUserJoined = userStatusSnapshot.val() && userStatusSnapshot.val().isJoined === true;
+          
+          const configSnapshot = await database.ref("quiz_config").once("value");
+          const config = configSnapshot.val();
+          
+          if (!config || !config.questions || !config.key) {
+            quizStatusMessage.textContent = "Kuis belum dikonfigurasi oleh administrator.";
+            startQuizBtn.disabled = true;
+            return;
+          }
+
+          quizQuestions = Object.values(config.questions);
+          quizKey = config.key;
+          quizCanRetake = config.canRetake || false;
+
+          const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}`).once("value");
+          const userResult = scoreSnapshot.val();
+
+          // Load saved points and answers
+          const userAnswersSnapshot = await database.ref(`user_answers/${currentUser.uid}`).once("value");
+          userAnswers = userAnswersSnapshot.val() || {};
+
+          const userPointsSnapshot = await database.ref(`user_points/${currentUser.uid}`).once("value");
+          userScoredPoints = userPointsSnapshot.val() || {};
+
+          // 🆕 Logika Perbaikan Bug Relog: HANYA tampilkan hasil akhir jika dia sudah tidak aktif
+          if (userResult && userResult.finished && !isUserJoined) {
+            showQuizResult(userResult.score, userResult.totalQuestions, userResult.timestamp, quizCanRetake);
+            quizStatusMessage.textContent = "Anda sudah menyelesaikan kuis.";
+          } else if (isUserJoined) {
+            // Jika sedang aktif (isJoined=true), sembunyikan form akses dan tunggu state admin
+            quizFormContainer.style.display = "none";
+            quizStatusMessage.textContent = "Menghubungkan kembali ke kuis aktif. Menunggu Admin...";
+            startQuizBtn.disabled = true;
+
+          } else {
+            quizStatusMessage.textContent = "Masukkan Kunci Akses yang diberikan Admin untuk memulai kuis.";
+            quizFormContainer.style.display = "block";
+            startQuizBtn.disabled = false;
+          }
+
+          currentQuizStateRef = database.ref("current_quiz_state");
+          currentQuizStateRef.on("value", handleAdminQuizStateChange);
+        } catch (error) {
+          console.error("Gagal memuat data kuis:", error);
+          quizStatusMessage.textContent = "Gagal memuat kuis. Coba lagi nanti.";
+          startQuizBtn.disabled = true;
+        }
+      }
+
+      async function checkQuizAccess(enteredKey) {
+        if (enteredKey === quizKey) {
+          const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}/finished`).once("value");
+          if (scoreSnapshot.val() === true && quizCanRetake === false) {
+            showFailDialog("Anda sudah menyelesaikan kuis dan tidak diizinkan untuk mengulang.");
+            return;
+          }
+
+          // 🛑 PENTING: Hapus semua data ranking saat kuis dimulai (khusus untuk mode ini)
+          await database.ref('quiz_ranks').remove();
+
+          await database.ref(`user_quiz_status/${currentUser.uid}`).set({
+            userName: currentUser.displayName || (await fetchUserName(currentUser)),
+            email: currentUser.email,
+            lastAccess: firebase.database.ServerValue.TIMESTAMP,
+            isJoined: true, // KRITIS: Set isJoined di sini!
+            currentAnswer: null,
+          });
+
+          quizFormContainer.style.display = "none";
+          quizStatusMessage.textContent = "Kunci akses diterima. Menunggu Admin memulai soal pertama...";
+          accessKeyInput.value = "";
+        } else {
+          showFailDialog("Kunci Akses Salah!");
+          accessKeyInput.value = "";
+        }
+      }
+
+      async function handleAdminQuizStateChange(snapshot) {
+        if (!currentUser) return;
+
+        const state = snapshot.val();
+        currentQuizData = state;
+
+        // 🆕 Ambil status keikutsertaan aktif dari user
+        const isUserJoined = await database
+          .ref(`user_quiz_status/${currentUser.uid}/isJoined`)
+          .once("value")
+          .then((s) => s.val());
+
+        const scoreSnapshot = await database.ref(`quiz_results/${currentUser.uid}`).once("value");
+        const userResult = scoreSnapshot.val();
+
+        // 🆕 Logika Perbaikan Bug Relog: Jika hasil final sudah ada DAN status keikutsertaan user sudah dihapus/tidak aktif, tampilkan hasil.
+        if (userResult && userResult.finished && !isUserJoined) {
+          showQuizResult(userResult.score, userResult.totalQuestions, userResult.timestamp, quizCanRetake);
+          return;
+        }
+
+        if (!state || state.status === "WAITING" || !isUserJoined) {
+          quizQuestionCard.style.display = "none";
+          quizAccessCard.style.display = "block";
+          if (isUserJoined) {
+            quizStatusMessage.textContent = "Kunci akses diterima. Menunggu Admin memulai soal pertama...";
+            quizFormContainer.style.display = "none";
+          } else {
+            quizStatusMessage.textContent = "Masukkan Kunci Akses yang diberikan Admin untuk memulai kuis.";
+            quizFormContainer.style.display = "block";
+            startQuizBtn.disabled = false;
+          }
+          clearInterval(timerDisplayInterval);
+          quizTimer.textContent = "Waktu: --s";
+          return;
+        }
+
+        if (state.status === "ACTIVE" && isUserJoined) {
+          const questionIndex = parseInt(state.currentQuestionIndex);
+
+          // Cek apakah sudah pindah soal. Jika iya, dan soal sebelumnya belum dinilai, set poin 0.
+          if (questionIndex > 0) {
+            const prevIndex = questionIndex - 1;
+            if (userScoredPoints[prevIndex] === undefined) {
+              // Terlambat menjawab soal sebelumnya
+              await database.ref(`user_answers/${currentUser.uid}/${prevIndex}`).set(-1); // Tandai tidak jawab
+              await database.ref(`user_points/${currentUser.uid}/${prevIndex}`).set(0); // Poin 0
+              userScoredPoints[prevIndex] = 0; // Update lokal
+            }
+          }
+
+          quizAccessCard.style.display = "none";
+          quizQuestionCard.style.display = "block";
+
+          displayQuestion(questionIndex, state.startTime, state.durationSeconds);
+        }
+
+        // KRITIS: Jika admin FINISHED, panggil finishQuiz untuk menghitung skor final user dan simpan "finished: true"
+        if (state.status === "FINISHED" && isUserJoined) {
+          await finishQuiz(state.totalQuestions);
+        }
+      }
+
+      // 🛑 PERBAIKAN FUNGSI TIMER DAN DISPLAY 🛑
+      function displayQuestion(index, startTime, durationSeconds) {
+        if (index >= quizQuestions.length) {
+          // Jika ini terjadi, berarti admin lupa mengatur status FINISHED
+          finishQuiz(quizQuestions.length);
+          return;
+        }
+
+        const questionData = quizQuestions[index];
+
+        questionNumber.textContent = `Soal ${index + 1}/${quizQuestions.length}`;
+        questionText.textContent = questionData.text;
+        answerOptions.innerHTML = "";
+        nextQuestionBtn.innerHTML = `<i class="fas fa-check-circle me-2"></i> Simpan Jawaban ${index === quizQuestions.length - 1 ? "Akhir" : ""}`;
+        nextQuestionBtn.disabled = true;
+
+        // Cek apakah soal ini sudah dijawab/dinilai sebelumnya (misal setelah refresh)
+        const isAnswered = userScoredPoints[index] !== undefined;
+
+        questionData.options.forEach((option, optionIndex) => {
+          const button = document.createElement("button");
+          button.className = "list-group-item list-group-item-action list-group-item-dark mb-2 text-start";
+          button.textContent = option;
+          button.setAttribute("data-index", optionIndex);
+          button.onclick = () => selectAnswer(optionIndex);
+          answerOptions.appendChild(button);
+          
+          // Kunci opsi jika sudah dijawab/dinilai
+          if (isAnswered) {
+            button.disabled = true;
+          }
+        });
+
+        // Tandai jawaban yang sudah dipilih jika ada
+        const selectedAnswerIndex = userAnswers[index];
+        if (selectedAnswerIndex !== null && selectedAnswerIndex !== undefined && selectedAnswerIndex !== -1) {
+          const selectedButton = answerOptions.querySelector(`[data-index="${selectedAnswerIndex}"]`);
+          if (selectedButton) selectedButton.classList.add("active", "bg-primary");
+          nextQuestionBtn.disabled = isAnswered; // Disable tombol jika sudah dinilai
+        }
+
+        if (isAnswered) {
+          nextQuestionBtn.innerHTML = `Jawaban Tersimpan (Poin: ${userScoredPoints[index]}). Menunggu Admin...`;
+        }
+
+        // 🚨 Memulai Timer BARU
+        startQuestionTimer(startTime, durationSeconds, isAnswered);
+      }
+
+      function selectAnswer(optionIndex) {
+        userAnswers[currentQuizData.currentQuestionIndex] = optionIndex;
+
+        answerOptions.querySelectorAll("button").forEach((btn) => {
+          btn.classList.remove("active", "bg-primary");
+        });
+
+        const selectedButton = answerOptions.querySelector(`[data-index="${optionIndex}"]`);
+        selectedButton.classList.add("active", "bg-primary");
+
+        nextQuestionBtn.disabled = false;
+      }
+
+      async function saveAnswerAndWait() {
+        const questionIndex = currentQuizData.currentQuestionIndex;
+        const selectedAnswer = userAnswers[questionIndex];
+        const questionData = quizQuestions[questionIndex];
+
+        if (selectedAnswer === null || selectedAnswer === undefined) {
+          showFailDialog("Mohon pilih jawaban terlebih dahulu!");
+          return;
+        }
+
+        // Cek apakah sudah pernah dikirim/dinilai
+        if (userScoredPoints[questionIndex] !== undefined) {
+          showFailDialog("Jawaban untuk soal ini sudah tersimpan dan dinilai.");
+          return;
+        }
+
+        // 1. Tentukan apakah jawaban benar atau salah
+        const isCorrect = selectedAnswer === parseInt(questionData.correctOptionIndex);
+        let earnedPoints = 0;
+        let rank = 0;
+
+        nextQuestionBtn.disabled = true;
+        nextQuestionBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> Mengirim Jawaban & Menghitung Poin...`;
+
+        if (isCorrect) {
+          // 2. Lakukan transaksi untuk mendapatkan dan menyimpan peringkat jawaban
+          // PENTING: Gunakan node quiz_ranks/${questionIndex} untuk memastikan rank direset per soal
+          const rankRef = database.ref(`quiz_ranks/${questionIndex}`);
+          
+          const transactionResult = await rankRef.transaction((currentRankData) => {
+            // currentRankData adalah object {count: N, users: {UID: rank, ...}}
+            const data = currentRankData || { count: 0, users: {} };
+            
+            if (data.users && data.users[currentUser.uid]) {
+              // Jika user sudah ada di data ranking (double submit), batalkan
+              return; 
+            }
+
+            // Tambah rank
+            data.count = (data.count || 0) + 1;
+            data.users = data.users || {};
+            data.users[currentUser.uid] = data.count;
+
+            return data;
+          });
+          
+          if (transactionResult.committed && transactionResult.snapshot.val()) {
+            rank = transactionResult.snapshot.val().users[currentUser.uid];
+            earnedPoints = calculateRankedPoints(rank, true);
+          } else {
+            // Jika transaksi gagal (misal user sudah menjawab), force 0 poin untuk mencegah double scoring
+            earnedPoints = 0; 
+          }
+        } else {
+          // Jika jawaban salah, poin 0
+          earnedPoints = 0;
+        }
+        
+        try {
+          // 3. Simpan jawaban dan poin ke node masing-masing
+          await database.ref(`user_answers/${currentUser.uid}/${questionIndex}`).set(selectedAnswer);
+          await database.ref(`user_points/${currentUser.uid}/${questionIndex}`).set(earnedPoints);
+          userScoredPoints[questionIndex] = earnedPoints; // Update lokal
+          
+          // 4. Perbarui skor kumulatif total (PROGRESS)
+          const allPointsSnapshot = await database.ref(`user_points/${currentUser.uid}`).once("value");
+          const allPoints = allPointsSnapshot.val() || {};
+
+          let totalScoreSum = 0;
+          let correctCount = 0;
+
+          for (const key in allPoints) {
+            const points = allPoints[key];
+            totalScoreSum += points;
+            if (points > 0) correctCount++;
+          }
+
+          // Hitung persentase skor total
+          const maxPossiblePoints = (currentQuizData.totalQuestions || quizQuestions.length) * MAX_QUIZ_POINTS;
+          const scorePercentage = (totalScoreSum / maxPossiblePoints) * 100;
+
+          const progressiveResultData = {
+            score: parseFloat(scorePercentage.toFixed(2)),
+            totalPoints: parseFloat(totalScoreSum.toFixed(2)),
+            correctAnswers: correctCount,
+            totalQuestions: currentQuizData.totalQuestions || quizQuestions.length,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            finished: false,
+            userName: currentUser.displayName || (await fetchUserName(currentUser)),
+            userEmail: currentUser.email,
+          };
+
+          await database.ref(`quiz_results/${currentUser.uid}`).update(progressiveResultData);
+
+          // 5. Kunci tampilan
+          answerOptions.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
+          clearInterval(timerDisplayInterval); // 🛑 Hentikan timer
+
+          // 6. Tampilkan poin yang didapat
+          let pointMessage;
+          if (earnedPoints > 0) {
+            pointMessage = `Benar! Anda mendapat <b>${earnedPoints} poin</b> (Rank #${rank}).`;
+          } else {
+            pointMessage = `Jawaban Salah atau Terlambat. Poin: <b>0</b>.`;
+          }
+          showSuccessDialog(pointMessage, null);
+
+          quizTimer.textContent = "JAWABAN TERKUNCI";
+          nextQuestionBtn.innerHTML = `Jawaban Tersimpan. Menunggu Admin...`;
+        } catch (error) {
+          console.error("Gagal menyimpan jawaban/poin:", error);
+          showFailDialog("Gagal menyimpan jawaban/poin. Coba lagi.");
+          nextQuestionBtn.disabled = false;
+          nextQuestionBtn.innerHTML = `Simpan Jawaban (Gagal!)`;
+        }
+      }
+
+      // 🛑 PERBAIKAN FUNGSI TIMER KRITIS 🛑
+      function startQuestionTimer(startTime, durationSeconds, isAnswered) {
+        clearInterval(timerDisplayInterval); // KRITIS: Hentikan timer lama sebelum memulai yang baru
+
+        if (isAnswered) {
+          quizTimer.textContent = "JAWABAN TERKUNCI";
+          return; // Jangan mulai timer jika sudah dijawab/dinilai
+        }
+        
+        const targetTime = startTime + durationSeconds * 1000;
+
+        const updateTimer = async () => {
+          const now = new Date().getTime();
+          const timeLeft = targetTime - now;
+
+          if (timeLeft <= 0) {
+            clearInterval(timerDisplayInterval);
+            quizTimer.textContent = "Waktu Habis!";
+
+            // Jika waktu habis, dan user belum kirim jawaban, anggap -1 dan kirim poin 0 ke DB
+            const currentQuestionIndex = currentQuizData.currentQuestionIndex;
+            if (userAnswers[currentQuestionIndex] === null || userAnswers[currentQuestionIndex] === undefined) {
+              await database.ref(`user_answers/${currentUser.uid}/${currentQuestionIndex}`).set(-1);
+              await database.ref(`user_points/${currentUser.uid}/${currentQuestionIndex}`).set(0);
+              userScoredPoints[currentQuestionIndex] = 0; // Update lokal
+            }
+
+            answerOptions.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
+            nextQuestionBtn.disabled = true;
+            nextQuestionBtn.innerHTML = `Waktu Habis. Menunggu Admin...`;
+          } else {
+            const secondsLeft = Math.ceil(timeLeft / 1000);
+            quizTimer.textContent = `Waktu: ${secondsLeft}s`;
+            quizTimer.style.color = secondsLeft <= 5 ? "var(--accent-red)" : "var(--primary)";
+          }
+        };
+
+        updateTimer();
+        timerDisplayInterval = setInterval(updateTimer, 100);
+      }
+
+      async function finishQuiz(totalQuestions) {
+        if (quizQuestionCard.style.display !== "none") {
+          quizQuestionCard.style.display = "none";
+        }
+
+        clearInterval(timerDisplayInterval);
+
+        // 1. Ambil SEMUA POIN yang telah disimpan
+        const pointsSnapshot = await database.ref(`user_points/${currentUser.uid}`).once("value");
+        const userPoints = pointsSnapshot.val() || {};
+
+        let totalScoreSum = 0;
+        let correctCount = 0;
+
+        for (let i = 0; i < totalQuestions; i++) {
+          const points = userPoints[i] || 0;
+          totalScoreSum += points;
+          if (points > 0) {
+            correctCount++;
+          }
+        }
+
+        // Asumsi: Max total points = MAX_QUIZ_POINTS * totalQuestions.
+        const maxPossiblePoints = totalQuestions * MAX_QUIZ_POINTS;
+        const finalScorePercentage = (totalScoreSum / maxPossiblePoints) * 100;
+
+        // 2. Kirim Hasil Final ke Firebase
+        const resultData = {
+          score: parseFloat(finalScorePercentage.toFixed(2)),
+          totalPoints: parseFloat(totalScoreSum.toFixed(2)),
+          correctAnswers: correctCount,
+          totalQuestions: totalQuestions,
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+          finished: true, // KRITIS: Tandai kuis selesai
+          userName: currentUser.displayName || (await fetchUserName(currentUser)),
+          userEmail: currentUser.email,
+        };
+
+        try {
+          // Gunakan SET untuk memastikan data FINAL (finished: true) menimpa data progress sebelumnya
+          await database.ref(`quiz_results/${currentUser.uid}`).set(resultData);
+          await database.ref(`user_quiz_status/${currentUser.uid}`).remove(); // Hapus status aktif
+          // Note: quiz_ranks tidak dihapus di sini, karena admin harus menghapusnya secara manual atau saat kuis baru dimulai.
+        } catch (error) {
+          console.error("Gagal menyimpan hasil kuis:", error);
+          showFailDialog("Kuis Selesai, tapi gagal menyimpan nilai ke database. Hubungi Admin!");
+          return;
+        }
+
+        // 3. Tampilkan Hasil
+        showQuizResult(resultData.score, resultData.totalQuestions, resultData.timestamp, quizCanRetake);
+        showSuccessDialog(`Kuis Selesai! Nilai Anda: ${resultData.score.toFixed(2)}`, null);
+      }
+
+      async function showQuizResult(score, totalQuestions, timestamp, canRetake) {
+        quizAccessCard.style.display = "block";
+        quizFormContainer.style.display = "none";
+        quizResultDisplay.style.display = "block";
+
+        finalScoreTitle.textContent = `Nilai Akhir: ${score.toFixed(2)} / 100`;
+        finalScoreTitle.className = score >= 70 ? "text-primary" : "text-accent-red";
+
+        const date = new Date(timestamp).toLocaleDateString("id-ID", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        // Ambil nilai correctAnswers dan totalPoints dari resultData
+        const resultSnapshot = await database.ref(`quiz_results/${currentUser.uid}`).once("value");
+        const resultData = resultSnapshot.val() || {};
+        const totalPoints = resultData.totalPoints || 0;
+        const correctCount = resultData.correctAnswers || 0;
+
+        resultDetails.innerHTML = `Anda menjawab benar ${correctCount} dari ${totalQuestions} soal (Poin Total: ${totalPoints.toFixed(2)}).<br>Tes selesai pada ${date}.`;
+
+        if (canRetake) {
+          resetQuizBtn.style.display = "block";
+          resetQuizBtn.textContent = "Reset & Ikut Lagi";
+        } else {
+          resetQuizBtn.style.display = "none";
+        }
+      }
+
+      function resetQuizAttempt() {
+        if (quizCanRetake && confirm("Yakin ingin mereset hasil kuis Anda? Anda harus memasukkan kunci akses lagi.")) {
+          database
+            .ref(`quiz_results/${currentUser.uid}`)
+            .remove()
+            .then(() => {
+              return database.ref(`user_answers/${currentUser.uid}`).remove();
+            })
+            .then(() => {
+              return database.ref(`user_points/${currentUser.uid}`).remove(); // Hapus poin
+            })
+            .then(() => {
+              return database.ref(`user_quiz_status/${currentUser.uid}`).remove();
+            })
+            .then(() => {
+              // 🛑 PENTING: Hapus SEMUA rank yang mungkin tersisa
+              return database.ref('quiz_ranks').remove();
+            })
+            .then(() => {
+              showSuccessDialog("Status kuis berhasil direset.");
+              loadQuizData();
+              accessKeyInput.value = "";
+            })
+            .catch((error) => {
+              showFailDialog("Gagal mereset status kuis: " + error.message);
+            });
+        } else if (!quizCanRetake) {
+          showFailDialog("Reset tidak diizinkan oleh administrator.");
+        }
+      }
+
+      // ========================== FUNGSI UPLOAD DENGAN LOG (Tetap sama) ==========================
+      async function handleFile(file) {
+        if (!currentUser) {
+          showFailDialog("❗ Mohon masuk dengan akun Anda terlebih dahulu.");
+          fileInput.value = "";
+          return;
+        }
+
+        const selectedCourse = courseSelect.value;
+        const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+
+        if (!selectedCourse) {
+          showFailDialog("❗ Mohon pilih mata kuliah terlebih dahulu.");
+          fileInput.value = "";
+          return;
+        }
+
+        if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+          showFailDialog(`❌ Unggah dibatalkan. Ukuran file maksimal adalah ${MAX_FILE_SIZE_MB}MB.`);
+          fileInput.value = "";
+          return;
+        }
+
+        const fileExtension = "." + file.name.split(".").pop().toLowerCase();
+        if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
+          showFailDialog(`❌ Unggah dibatalkan. Hanya file dengan format ${ALLOWED_EXTENSIONS.join(", ")} yang diizinkan.`);
+          fileInput.value = "";
+          return;
+        }
+
+        dropArea.style.display = "none";
+        scanAnimation.style.display = "flex";
+        fileNameSpan.textContent = `File terpilih: ${file.name}`;
+        statusMessage.textContent = "Sedang memindai file untuk memastikan keamanan...";
+
+        setTimeout(() => {
+          scanAnimation.style.display = "none";
+          checkCourseAccess(selectedCourse, courseName, (isAccessOpen) => {
+            if (isAccessOpen) {
+              uploadFile(file, selectedCourse, courseName);
+            } else {
+              resetUploadState();
+            }
+          });
+        }, 3000);
+      }
+
+      function uploadFile(file, courseKey, courseName) {
+        const now = new Date();
+        const timestampMs = now.getTime();
+        const timestampFormat = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
+          now.getSeconds()
+        ).padStart(2, "0")}`;
+
+        const fileNameWithoutExt = file.name.split(".").slice(0, -1).join(".") || file.name;
+        const fileExtension = file.name.split(".").pop();
+        const storageFileName = `${fileNameWithoutExt}_${timestampFormat}.${fileExtension}`;
+
+        const folderNameForStorage = courseKey.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+        const folderPath = `dokumen/${folderNameForStorage}/`;
+        const storagePath = folderPath + storageFileName;
+        const fileRef = storage.ref(storagePath);
+
+        const uploadTask = fileRef.put(file);
+
+        dropArea.style.display = "none";
+        rocketAnimation.style.display = "flex";
+        progressContainer.style.display = "block";
+        progressBar.style.width = "0%";
+        statusMessage.textContent = "Sedang mengunggah...";
+        statusMessage.style.color = "#555";
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            progressBar.style.width = `${progress}%`;
+          },
+          (error) => {
+            console.error("Kesalahan unggah:", error);
+            rocketAnimation.style.display = "none";
+            dropArea.style.display = "flex";
+            showFailDialog(`Gagal mengunggah file: ${error.message}`);
+          },
+          async () => {
+            rocketAnimation.style.display = "none";
+            dropArea.style.display = "flex";
+
+            try {
+              const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+              console.log("File tersedia di:", downloadURL);
+
+              const folderRef = storage.ref(folderPath);
+              const result = await folderRef.listAll();
+              const fileCount = result.items.length;
+
+              const uploadLogRef = database.ref(`riwayat_unggah/${currentUser.uid}`).push();
+              const logData = {
+                uploadId: uploadLogRef.key,
+                userId: currentUser.uid,
+                userName: currentUser.displayName || (await fetchUserName(currentUser)),
+                userEmail: currentUser.email,
+                courseKey: courseKey,
+                courseName: courseName,
+                originalFileName: file.name,
+                storageFileName: storageFileName,
+                storagePath: storagePath,
+                downloadURL: downloadURL,
+                timestamp: timestampMs,
+                fileSizeMB: (file.size / (1024 * 1024)).toFixed(2),
+                uploadOrder: fileCount,
+              };
+              await uploadLogRef.set(logData);
+
+              showSuccessDialog("File Anda berhasil diunggah!", fileCount);
+            } catch (error) {
+              console.error("Gagal memproses setelah unggah:", error);
+              showFailDialog(`Unggah Berhasil, tapi Gagal mencatat riwayat: ${error.message}`);
+            }
+          }
+        );
+      }
+
+      // ========================== RIWAYAT & HAPUS (Tetap sama) ==========================
+      async function fetchUploadHistory(userUid) {
+        historyList.innerHTML = "";
+        noHistoryMessage.style.display = "block";
+
+        try {
+          const snapshot = await database.ref(`riwayat_unggah/${userUid}`).once("value");
+          const history = snapshot.val();
+
+          if (!history) {
+            return;
+          }
+
+          noHistoryMessage.style.display = "none";
+
+          const historyArray = Object.keys(history)
+            .map((key) => ({
+              id: key,
+              ...history[key],
+            }))
+            .sort((a, b) => b.timestamp - a.timestamp);
+
+          historyArray.forEach((item) => {
+            const listItem = document.createElement("li");
+            listItem.className = "history-item";
+
+            const fileDetails = document.createElement("div");
+            fileDetails.className = "file-details";
+
+            const cleanFileName = item.originalFileName.substring(0, item.originalFileName.lastIndexOf(".")) || item.originalFileName;
+
+            fileDetails.innerHTML = `
 					<strong><i class="fas fa-file-alt"></i> ${item.courseName}</strong>
 					<span>Nama File: ${cleanFileName} (${item.fileSizeMB} MB)</span>
 					<span>Diunggah: ${new Date(item.timestamp).toLocaleDateString("id-ID", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}</span>
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}</span>
 				`;
 
-            const deleteButton = document.createElement("button");
-            deleteButton.className = "delete-btn";
-            deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Hapus';
-            deleteButton.onclick = () => deleteUploadedFile(userUid, item.id, item.storagePath);
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "delete-btn";
+            deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Hapus';
+            deleteButton.onclick = () => deleteUploadedFile(userUid, item.id, item.storagePath);
 
-            listItem.appendChild(fileDetails);
-            listItem.appendChild(deleteButton);
-            historyList.appendChild(listItem);
-          });
-        } catch (error) {
-          console.error("Gagal memuat riwayat upload:", error);
-          noHistoryMessage.textContent = "Gagal memuat riwayat. Silakan coba lagi.";
-        }
-      }
+            listItem.appendChild(fileDetails);
+            listItem.appendChild(deleteButton);
+            historyList.appendChild(listItem);
+          });
+        } catch (error) {
+          console.error("Gagal memuat riwayat upload:", error);
+          noHistoryMessage.textContent = "Gagal memuat riwayat. Silakan coba lagi.";
+        }
+      }
 
-      async function deleteUploadedFile(userUid, uploadId, storagePath) {
-        if (!confirm("Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat dibatalkan.")) {
-          return;
-        }
+      async function deleteUploadedFile(userUid, uploadId, storagePath) {
+        if (!confirm("Apakah Anda yakin ingin menghapus file ini? Tindakan ini tidak dapat dibatalkan.")) {
+          return;
+        }
 
-        try {
-          const fileRef = storage.ref(storagePath);
-          await fileRef.delete();
-          console.log(`File di Storage berhasil dihapus: ${storagePath}`);
+        try {
+          const fileRef = storage.ref(storagePath);
+          await fileRef.delete();
+          console.log(`File di Storage berhasil dihapus: ${storagePath}`);
 
-          await database.ref(`riwayat_unggah/${userUid}/${uploadId}`).remove();
-          console.log(`Data di Database berhasil dihapus: ${uploadId}`);
+          await database.ref(`riwayat_unggah/${userUid}/${uploadId}`).remove();
+          console.log(`Data di Database berhasil dihapus: ${uploadId}`);
 
-          showSuccessDialog("File berhasil dihapus dari riwayat upload Anda.");
-          fetchUploadHistory(userUid);
-        } catch (error) {
-          console.error("Gagal menghapus file:", error);
-          showFailDialog(`Gagal menghapus file. Pesan Error: ${error.message}`);
-        }
-      }
+          showSuccessDialog("File berhasil dihapus dari riwayat upload Anda.");
+          fetchUploadHistory(userUid);
+        } catch (error) {
+          console.error("Gagal menghapus file:", error);
+          showFailDialog(`Gagal menghapus file. Pesan Error: ${error.message}`);
+        }
+      }
 
-      // ========================== FUNGSI DIALOG & UTILITY (Tetap sama) ==========================
-      function showSyaratDialogAtStart() {
-        syaratDialogOverlay.style.display = "flex";
-        confirmSyaratBtn.onclick = () => {
-          syaratDialogOverlay.style.display = "none";
-        };
-      }
+      // ========================== FUNGSI DIALOG & UTILITY (Tetap sama) ==========================
+      function showSyaratDialogAtStart() {
+        syaratDialogOverlay.style.display = "flex";
+        confirmSyaratBtn.onclick = () => {
+          syaratDialogOverlay.style.display = "none";
+        };
+      }
 
-      function showSuccessDialog(message, fileCount) {
-        let fullMessage = message;
-        let notificationBody = message;
+      function showSuccessDialog(message, fileCount) {
+        let fullMessage = message;
+        let notificationBody = message;
 
-        if (typeof fileCount === "number" && fileCount > 0) {
-          const fileCountMessage = `Anda menjadi No.${fileCount} yang kumpul saat ini. File Anda telah terkirim, semoga hasil tugas mu memuaskan! 😊`;
-          fullMessage += `<br><br>${fileCountMessage}`;
-          notificationBody += `\n${fileCountMessage}`;
-        }
+        if (typeof fileCount === "number" && fileCount > 0) {
+          const fileCountMessage = `Anda menjadi No.${fileCount} yang kumpul saat ini. File Anda telah terkirim, semoga hasil tugas mu memuaskan! 😊`;
+          fullMessage += `<br><br>${fileCountMessage}`;
+          notificationBody += `\n${fileCountMessage}`;
+        }
 
-        successMessage.innerHTML = fullMessage;
-        uploadSuccessOverlay.style.display = "flex";
+        successMessage.innerHTML = fullMessage;
+        uploadSuccessOverlay.style.display = "flex";
 
-        if (Notification.permission === "granted") {
-          new Notification("Unggah Berhasil!", {
-            body: notificationBody,
-            icon: "https://img.icons8.com/color/96/000000/ok--v1.png",
-          });
-        }
-      }
+        if (Notification.permission === "granted") {
+          new Notification("Unggah Berhasil!", {
+            body: notificationBody,
+            icon: "https://img.icons8.com/color/96/000000/ok--v1.png",
+          });
+        }
+      }
 
-      function showFailDialog(message) {
-        failMessage.textContent = message;
-        uploadFailOverlay.style.display = "flex";
-      }
+      function showFailDialog(message) {
+        failMessage.textContent = message;
+        uploadFailOverlay.style.display = "flex";
+      }
 
-      function closeSuccessDialog() {
-        uploadSuccessOverlay.style.display = "none";
-        resetUploadState();
-      }
+      function closeSuccessDialog() {
+        uploadSuccessOverlay.style.display = "none";
+        resetUploadState();
+      }
 
-      function closeFailDialog() {
-        uploadFailOverlay.style.display = "none";
-        resetUploadState();
-      }
+      function closeFailDialog() {
+        uploadFailOverlay.style.display = "none";
+        resetUploadState();
+      }
 
-      function resetUploadState() {
-        fileInput.value = "";
-        fileNameSpan.textContent = "";
-        progressContainer.style.display = "none";
-        rocketAnimation.style.display = "none";
-        scanAnimation.style.display = "none";
-        dropArea.style.display = "flex";
+      function resetUploadState() {
+        fileInput.value = "";
+        fileNameSpan.textContent = "";
+        progressContainer.style.display = "none";
+        rocketAnimation.style.display = "none";
+        scanAnimation.style.display = "none";
+        dropArea.style.display = "flex";
 
-        if (countdownInterval) {
-          clearInterval(countdownInterval);
-          countdownInterval = null;
-        }
+        if (countdownInterval) {
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+        }
 
-        statusMessage.classList.remove("timer-text");
-        statusMessage.style.color = "#555";
-        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
+        statusMessage.classList.remove("timer-text");
+        statusMessage.style.color = "#555";
+        statusMessage.textContent = "Pilih Mata Kuliah untuk melihat status akses dan deadline.";
 
-        if (courseSelect.value) {
-          const courseKey = courseSelect.value;
-          const courseName = courseSelect.options[courseSelect.selectedIndex].text;
-          checkCourseAccess(courseKey, courseName);
-          startCourseCountdown(courseKey, courseName);
-        }
-      }
+        if (courseSelect.value) {
+          const courseKey = courseSelect.value;
+          const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+          checkCourseAccess(courseKey, courseName);
+          startCourseCountdown(courseKey, courseName);
+        }
+      }
 
-      async function fetchCourseList() {
-        try {
-          const snapshot = await database.ref("mata_kuliah").once("value");
-          const courses = snapshot.val();
+      async function fetchCourseList() {
+        try {
+          const snapshot = await database.ref("mata_kuliah").once("value");
+          const courses = snapshot.val();
 
-          courseMap = {};
-          while (courseSelect.options.length > 1) {
-            courseSelect.remove(1);
-          }
+          courseMap = {};
+          while (courseSelect.options.length > 1) {
+            courseSelect.remove(1);
+          }
 
-          if (courses) {
-            for (const key in courses) {
-              if (Object.hasOwnProperty.call(courses, key)) {
-                const courseName = courses[key];
-                courseMap[key] = courseName;
-                const option = document.createElement("option");
-                option.value = key;
-                option.textContent = courseName;
-                courseSelect.appendChild(option);
-              }
-            }
-          }
-        } catch (error) {
-          console.error("Gagal memuat daftar mata kuliah:", error);
-        }
-      }
+          if (courses) {
+            for (const key in courses) {
+              if (Object.hasOwnProperty.call(courses, key)) {
+                const courseName = courses[key];
+                courseMap[key] = courseName;
+                const option = document.createElement("option");
+                option.value = key;
+                option.textContent = courseName;
+                courseSelect.appendChild(option);
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Gagal memuat daftar mata kuliah:", error);
+        }
+      }
 
-      async function fetchCourseDeadlines() {
-        try {
-          const snapshot = await database.ref("akses_unggah").once("value");
-          courseDeadlines = snapshot.val() || {};
-        } catch (error) {
-          console.error("Gagal memuat deadline mata kuliah:", error);
-        }
-      }
+      async function fetchCourseDeadlines() {
+        try {
+          const snapshot = await database.ref("akses_unggah").once("value");
+          courseDeadlines = snapshot.val() || {};
+        } catch (error) {
+          console.error("Gagal memuat deadline mata kuliah:", error);
+        }
+      }
 
-      function formatTime(ms) {
-        if (ms < 0) return "00 Hari 00:00:00";
+      function formatTime(ms) {
+        if (ms < 0) return "00 Hari 00:00:00";
 
-        const totalSeconds = Math.floor(ms / 1000);
-        const days = Math.floor(totalSeconds / (3600 * 24));
-        const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
+        const totalSeconds = Math.floor(ms / 1000);
+        const days = Math.floor(totalSeconds / (3600 * 24));
+        const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
 
-        const h = String(hours).padStart(2, "0");
-        const m = String(minutes).padStart(2, "0");
-        const s = String(seconds).padStart(2, "0");
+        const h = String(hours).padStart(2, "0");
+        const m = String(minutes).padStart(2, "0");
+        const s = String(seconds).padStart(2, "0");
 
-        return `${days} Hari ${h}:${m}:${s}`;
-      }
+        return `${days} Hari ${h}:${m}:${s}`;
+      }
 
-      function updateCountdownDisplay(courseKey, courseName, deadlineTime) {
-        const now = new Date().getTime();
-        let distance = deadlineTime - now;
+      function updateCountdownDisplay(courseKey, courseName, deadlineTime) {
+        const now = new Date().getTime();
+        let distance = deadlineTime - now;
 
-        clearInterval(countdownInterval);
+        clearInterval(countdownInterval);
 
-        statusMessage.style.color = "";
-        statusMessage.classList.add("timer-text");
+        statusMessage.style.color = "";
+        statusMessage.classList.add("timer-text");
 
-        const updateTimer = () => {
-          distance = deadlineTime - new Date().getTime();
+        const updateTimer = () => {
+          distance = deadlineTime - new Date().getTime();
 
-          if (distance < 0) {
-            clearInterval(countdownInterval);
-            closeCourseAccess(courseKey, courseName);
-          } else {
-            statusMessage.innerHTML = `<i class="fas fa-hourglass-half"></i> Waktu Pengumpulan Tersisa: ${formatTime(distance)}`;
-          }
-        };
+          if (distance < 0) {
+            clearInterval(countdownInterval);
+            closeCourseAccess(courseKey, courseName);
+          } else {
+            statusMessage.innerHTML = `<i class="fas fa-hourglass-half"></i> Waktu Pengumpulan Tersisa: ${formatTime(distance)}`;
+          }
+        };
 
-        updateTimer();
-        countdownInterval = setInterval(updateTimer, 1000);
-      }
+        updateTimer();
+        countdownInterval = setInterval(updateTimer, 1000);
+      }
 
-      function startCourseCountdown(courseKey, courseName) {
-        clearInterval(countdownInterval);
+      function startCourseCountdown(courseKey, courseName) {
+        clearInterval(countdownInterval);
 
-        statusMessage.classList.remove("timer-text");
-        statusMessage.style.color = "#555";
-        statusMessage.textContent = "Memuat status pengumpulan...";
+        statusMessage.classList.remove("timer-text");
+        statusMessage.style.color = "#555";
+        statusMessage.textContent = "Memuat status pengumpulan...";
 
-        const courseData = courseDeadlines[courseKey];
+        const courseData = courseDeadlines[courseKey];
 
-        if (courseData && courseData.isOpen === false) {
-          statusMessage.classList.add("timer-text");
-          statusMessage.style.color = "#dc3545";
-          statusMessage.innerHTML = '<i class="fas fa-times-circle"></i> Akses pengumpulan sudah ditutup.';
-        } else if (courseData && courseData.deadline) {
-          const deadlineString = courseData.deadline;
-          const deadlineTime = new Date(deadlineString).getTime();
-          const now = new Date().getTime();
+        if (courseData && courseData.isOpen === false) {
+          statusMessage.classList.add("timer-text");
+          statusMessage.style.color = "#dc3545";
+          statusMessage.innerHTML = '<i class="fas fa-times-circle"></i> Akses pengumpulan sudah ditutup.';
+        } else if (courseData && courseData.deadline) {
+          const deadlineString = courseData.deadline;
+          const deadlineTime = new Date(deadlineString).getTime();
+          const now = new Date().getTime();
 
-          if (deadlineTime < now) {
-            closeCourseAccess(courseKey, courseName);
-            statusMessage.classList.add("timer-text");
-            statusMessage.style.color = "#dc3545";
-            statusMessage.innerHTML = `<i class="fas fa-lock"></i> Pengumpulan ditutup karena Waktu habis sejak ${new Date(deadlineTime).toLocaleDateString("id-ID", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}`;
-          } else {
-            updateCountdownDisplay(courseKey, courseName, deadlineTime);
-          }
-        } else {
-          statusMessage.classList.add("timer-text");
-          statusMessage.style.color = "#28a745";
-          statusMessage.innerHTML = '<i class="fas fa-check-circle"></i> Akses terbuka silakan Pilih dokumen untuk diunggah.';
-        }
-      }
+          if (deadlineTime < now) {
+            closeCourseAccess(courseKey, courseName);
+            statusMessage.classList.add("timer-text");
+            statusMessage.style.color = "#dc3545";
+            statusMessage.innerHTML = `<i class="fas fa-lock"></i> Pengumpulan ditutup karena Waktu habis sejak ${new Date(deadlineTime).toLocaleDateString("id-ID", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`;
+          } else {
+            updateCountdownDisplay(courseKey, courseName, deadlineTime);
+          }
+        } else {
+          statusMessage.classList.add("timer-text");
+          statusMessage.style.color = "#28a745";
+          statusMessage.innerHTML = '<i class="fas fa-check-circle"></i> Akses terbuka silakan Pilih dokumen untuk diunggah.';
+        }
+      }
 
-      function closeCourseAccess(courseKey, courseName) {
-        courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
-        courseAccessMessage.textContent = `Waktu pengumpulan untuk mata kuliah ini telah habis. Akses ditutup secara otomatis.`;
-        courseAccessClosedOverlay.style.display = "flex";
-        fileInput.value = "";
+      function closeCourseAccess(courseKey, courseName) {
+        courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
+        courseAccessMessage.textContent = `Waktu pengumpulan untuk mata kuliah ini telah habis. Akses ditutup secara otomatis.`;
+        courseAccessClosedOverlay.style.display = "flex";
+        fileInput.value = "";
 
-        // Update status di Firebase
-        database
-          .ref(`akses_unggah/${courseKey}/isOpen`)
-          .set(false)
-          .then(() => {
-            console.log(`Akses ${courseName} berhasil ditutup di Firebase.`);
-            if (courseDeadlines[courseKey]) {
-              courseDeadlines[courseKey].isOpen = false;
-            }
-            statusMessage.classList.add("timer-text");
-            statusMessage.style.color = "#dc3545";
-            statusMessage.innerHTML = `<i class="fas fa-lock"></i> Pengumpulan tugas untuk ${courseName} telah ditutup.`;
+        // Update status di Firebase
+        database
+          .ref(`akses_unggah/${courseKey}/isOpen`)
+          .set(false)
+          .then(() => {
+            console.log(`Akses ${courseName} berhasil ditutup di Firebase.`);
+            if (courseDeadlines[courseKey]) {
+              courseDeadlines[courseKey].isOpen = false;
+            }
+            statusMessage.classList.add("timer-text");
+            statusMessage.style.color = "#dc3545";
+            statusMessage.innerHTML = `<i class="fas fa-lock"></i> Pengumpulan tugas untuk ${courseName} telah ditutup.`;
 
-            if (Notification.permission === "granted") {
-              new Notification("Pengumpulan Ditutup Otomatis", {
-                body: `Waktu pengumpulan untuk ${courseName} sudah habis.`,
-                icon: "https://img.icons8.com/ios-filled/100/fa314a/lock.png",
-              });
-            }
-          })
-          .catch((error) => {
-            console.error("Gagal menutup akses di Firebase:", error);
-            statusMessage.innerHTML = `Gagal menutup akses di Firebase, namun waktu sudah habis.`;
-          });
-      }
+            if (Notification.permission === "granted") {
+              new Notification("Pengumpulan Ditutup Otomatis", {
+                body: `Waktu pengumpulan untuk ${courseName} sudah habis.`,
+                icon: "https://img.icons8.com/ios-filled/100/fa314a/lock.png",
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Gagal menutup akses di Firebase:", error);
+            statusMessage.innerHTML = `Gagal menutup akses di Firebase, namun waktu sudah habis.`;
+          });
+      }
 
-      async function checkCourseAccess(courseKey, courseName, callback = null) {
-        try {
-          const courseData = courseDeadlines[courseKey];
-          const isOpen = courseData ? courseData.isOpen : true;
-          const deadlineString = courseData ? courseData.deadline : null;
-          const now = new Date().getTime();
+      async function checkCourseAccess(courseKey, courseName, callback = null) {
+        try {
+          const courseData = courseDeadlines[courseKey];
+          const isOpen = courseData ? courseData.isOpen : true;
+          const deadlineString = courseData ? courseData.deadline : null;
+          const now = new Date().getTime();
 
-          let isAccessOpen = isOpen;
+          let isAccessOpen = isOpen;
 
-          if (isOpen === true && deadlineString) {
-            const deadlineTime = new Date(deadlineString).getTime();
-            if (deadlineTime < now) {
-              isAccessOpen = false;
-              closeCourseAccess(courseKey, courseName);
-            }
-          }
+          if (isOpen === true && deadlineString) {
+            const deadlineTime = new Date(deadlineString).getTime();
+            if (deadlineTime < now) {
+              isAccessOpen = false;
+              closeCourseAccess(courseKey, courseName);
+            }
+          }
 
-          if (isAccessOpen === true) {
-            courseAccessClosedOverlay.style.display = "none";
-          } else {
-            courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
-            courseAccessMessage.textContent = `Pengumpulan tugas untuk mata kuliah ${courseName} telah ditutup (baik secara manual maupun otomatis karena waktu habis).`;
-            courseAccessClosedOverlay.style.display = "flex";
-            fileInput.value = "";
-          }
+          if (isAccessOpen === true) {
+            courseAccessClosedOverlay.style.display = "none";
+          } else {
+            courseAccessTitle.textContent = "Pengumpulan Tugas Ditutup";
+            courseAccessMessage.textContent = `Pengumpulan tugas untuk mata kuliah ${courseName} telah ditutup (baik secara manual maupun otomatis karena waktu habis).`;
+            courseAccessClosedOverlay.style.display = "flex";
+            fileInput.value = "";
+          }
 
-          if (callback) {
-            callback(isAccessOpen);
-          }
-          return isAccessOpen;
-        } catch (error) {
-          console.error("Gagal memeriksa status akses mata kuliah:", error);
-          courseAccessTitle.textContent = "Gagal Memuat Status";
-          courseAccessMessage.textContent = `Gagal memuat status akses mata kuliah: ${error.message}`;
-          courseAccessClosedOverlay.style.display = "flex";
-          fileInput.value = "";
-          if (callback) {
-            callback(false);
-          }
-          return false;
-        }
-      }
+          if (callback) {
+            callback(isAccessOpen);
+          }
+          return isAccessOpen;
+        } catch (error) {
+          console.error("Gagal memeriksa status akses mata kuliah:", error);
+          courseAccessTitle.textContent = "Gagal Memuat Status";
+          courseAccessMessage.textContent = `Gagal memuat status akses mata kuliah: ${error.message}`;
+          courseAccessClosedOverlay.style.display = "flex";
+          fileInput.value = "";
+          if (callback) {
+            callback(false);
+          }
+          return false;
+        }
+      }
 
-      function requestNotificationPermission() {
-        if (!("Notification" in window)) {
-          console.log("Browser ini tidak mendukung notifikasi desktop.");
-          return;
-        }
+      function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+          console.log("Browser ini tidak mendukung notifikasi desktop.");
+          return;
+        }
 
-        Notification.requestPermission().then((permission) => {
-          console.log("Izin notifikasi:", permission);
-        });
-      }
+        Notification.requestPermission().then((permission) => {
+          console.log("Izin notifikasi:", permission);
+        });
+      }
 
-      async function checkMainAccessStatus() {
-        try {
-          const snapshot = await database.ref("akses").once("value");
-          const isOpen = snapshot.val();
+      async function checkMainAccessStatus() {
+        try {
+          const snapshot = await database.ref("akses").once("value");
+          const isOpen = snapshot.val();
 
-          if (isOpen === true) {
-            mainAccessClosedOverlay.style.display = "none";
-          } else {
-            mainLayout.style.display = "none";
-            loginScreen.style.display = "none";
-            mainAccessClosedOverlay.style.display = "flex";
-            if (Notification.permission === "granted") {
-              new Notification("Pengumpulan Tugas Ditutup", {
-                body: "Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak putra untuk informasi lebih lanjut.",
-                icon: "https://img.icons8.com/ios-filled/100/fa314a/lock.png",
-              });
-            }
-          }
-        } catch (error) {
-          console.error("Gagal memeriksa status akses:", error);
-          mainLayout.style.display = "none";
-          loginScreen.style.display = "none";
-          mainAccessClosedOverlay.style.display = "flex";
-          const message = mainAccessClosedOverlay.querySelector("p");
-          message.textContent = `Gagal memuat status akses: ${error.message}`;
-        }
-      }
+          if (isOpen === true) {
+            mainAccessClosedOverlay.style.display = "none";
+          } else {
+            mainLayout.style.display = "none";
+            loginScreen.style.display = "none";
+            mainAccessClosedOverlay.style.display = "flex";
+            if (Notification.permission === "granted") {
+              new Notification("Pengumpulan Tugas Ditutup", {
+                body: "Pengumpulan tugas telah ditutup untuk saat ini. Mohon hubungi kak putra untuk informasi lebih lanjut.",
+                icon: "https://img.icons8.com/ios-filled/100/fa314a/lock.png",
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Gagal memeriksa status akses:", error);
+          mainLayout.style.display = "none";
+          loginScreen.style.display = "none";
+          mainAccessClosedOverlay.style.display = "flex";
+          const message = mainAccessClosedOverlay.querySelector("p");
+          message.textContent = `Gagal memuat status akses: ${error.message}`;
+        }
+      }
 
-      function listenForManualNotifications() {
-        const notifRef = database.ref("notifikasi_manual");
+      function listenForManualNotifications() {
+        const notifRef = database.ref("notifikasi_manual");
 
-        notifRef.on("value", (snapshot) => {
-          const notifData = snapshot.val();
-          if (notifData && notifData.aktif === true) {
-            const lastNotifId = localStorage.getItem("last-notification-id");
+        notifRef.on("value", (snapshot) => {
+          const notifData = snapshot.val();
+          if (notifData && notifData.aktif === true) {
+            const lastNotifId = localStorage.getItem("last-notification-id");
 
-            if (lastNotifId !== notifData.id) {
-              displaySystemNotification(notifData);
-            }
-          }
-        });
-      }
+            if (lastNotifId !== notifData.id) {
+              displaySystemNotification(notifData);
+            }
+          }
+        });
+      }
 
-      function displaySystemNotification(data) {
-        if (Notification.permission === "granted") {
-          new Notification(data.judul, {
-            body: data.isi,
-            icon: "https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1",
-          });
+      function displaySystemNotification(data) {
+        if (Notification.permission === "granted") {
+          new Notification(data.judul, {
+            body: data.isi,
+            icon: "https://firebasestorage.googleapis.com/v0/b/ruangbelajar-52a67.appspot.com/o/LOGO%20PRODI%202025.png?alt=media&token=a13b26cd-23c0-40bb-bd96-c4ff014673a1",
+          });
 
-          localStorage.setItem("last-notification-id", data.id);
-        } else if (Notification.permission !== "denied") {
-          Notification.requestPermission().then((permission) => {
-            if (permission === "granted") {
-              displaySystemNotification(data);
-            }
-          });
-        }
-      }
-    </script>
+          localStorage.setItem("last-notification-id", data.id);
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              displaySystemNotification(data);
+            }
+          });
+        }
+      }
+    </script>
   </body>
 </html>
